@@ -33,4 +33,9 @@ public class AppCircleArticleCommentsModel {
      * 评论日期
      */
     private Long date;
+
+    /**
+     * 扩展信息 (评论的评论)
+     */
+    private String extend;
 }

@@ -34,10 +34,6 @@ public class AppWikiModel {
      */
     private String userHeadUrl;
 
-    /**
-     * 专家
-     */
-    private AppExpertsModel experts;
 
     /**
      * 广告内容

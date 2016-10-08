@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 圈子
@@ -72,4 +73,9 @@ public class Circle {
      * 文章数
      */
     private Long articleAmount;
+
+    /**
+     * 圈子标签
+     */
+    private List<Tag> tags;
 }

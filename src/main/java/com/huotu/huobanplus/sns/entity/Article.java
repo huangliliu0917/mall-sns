@@ -22,6 +22,17 @@ public class Article extends AbstractArticle {
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH})
     private Circle circle;
 
+    /**
+     * 所属分类(百科)
+     */
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH})
+    private Category category;
 
+
+    /**
+     * 广告内容
+     */
+    @Column(length = 500)
+    private String adConent;
 
 }

@@ -1,35 +1,33 @@
 package com.huotu.huobanplus.sns.entity;
 
+import com.huotu.huobanplus.sns.model.common.AuthenticationType;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
 
 /**
- * 用户等级
- * Created by Administrator on 2016/9/30.
+ * 身份
+ * Created by Administrator on 2016/10/8.
  */
 @Entity
 @Cacheable(value = false)
 @Getter
 @Setter
-public class Level {
+public class Authentication {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     /**
-     * 商家
+     * 名称
      */
-    private Long customerId;
-
-    /**
-     * 等级名称
-     */
+    @Column(length = 20)
     private String name;
 
     /**
-     * 等级所需经验值
+     * 身份类型
      */
-    private Long experience;
+    private AuthenticationType type;
 }

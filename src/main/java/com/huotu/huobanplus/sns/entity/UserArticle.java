@@ -8,6 +8,7 @@ import javax.persistence.*;
 /**
  * 用户文章
  * 用户发布文章时，需要同时对被关注的用户发布文章
+ * todo 暂时舍弃 考虑采用redis进行处理
  * <p>
  * Created by Administrator on 2016/10/8.
  */

@@ -1,5 +1,6 @@
 package com.huotu.huobanplus.sns.entity;
 
+import com.huotu.huobanplus.sns.model.common.CommentStatus;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -45,4 +46,23 @@ public class AbstractComment {
      * 点赞量
      */
     private Long click;
+
+    /**
+     * 所属评论(评论的评论)
+     */
+    @ManyToOne
+    private ArticleComment articleComment;
+
+    /**
+     * 扩展信息 (用于评论的回复信息显示)
+     * 评论的评论内容无限循环冗余 以json格式存储
+     * {fromId:,id:,content:,date:,userName:,userPictureUrl:,data:[{fromId:,id:,content:,date:,userName:,userPictureUrl:}]}
+     */
+    @Lob
+    private String extend;
+
+    /**
+     * 评论状态
+     */
+    private CommentStatus commentStatus;
 }

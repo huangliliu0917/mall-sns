@@ -3,8 +3,9 @@ package com.huotu.huobanplus.sns.entity;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.*;
-import java.util.Date;
+import javax.persistence.Cacheable;
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
 
 /**
  * 文章评论
@@ -16,13 +17,10 @@ import java.util.Date;
 @Setter
 public class ArticleComment extends AbstractComment {
 
-
     /**
      * 所属文章
      */
     @ManyToOne
     private Article article;
-
-
 
 }
