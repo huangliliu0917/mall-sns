@@ -20,7 +20,7 @@ public abstract class AbstractArticle {
      * 发布用户
      */
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH})
-    private User user;
+    private User publisher;
 
     /**
      * 文章标题
