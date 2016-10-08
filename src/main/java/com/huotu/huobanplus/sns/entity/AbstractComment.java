@@ -1,13 +1,19 @@
 package com.huotu.huobanplus.sns.entity;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 import java.util.Date;
 
 /**
  * Created by Administrator on 2016/9/29.
  */
-public abstract class AbstractComment {
 
+@MappedSuperclass
+@Getter
+@Setter
+public class AbstractComment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

@@ -1,4 +1,4 @@
-package com.huotu.huobanplus.sns.controller;
+package com.huotu.huobanplus.sns.controller.app;
 
 import com.huotu.common.api.ApiResult;
 import com.huotu.common.api.Output;
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * 用户模块
  * Created by Administrator on 2016/9/28.
  */
-@RequestMapping("/user")
+@RequestMapping("/app/user")
 public interface UserController {
 
     /**

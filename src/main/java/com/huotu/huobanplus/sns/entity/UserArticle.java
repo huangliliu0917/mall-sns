@@ -16,6 +16,8 @@ import javax.persistence.*;
 @Getter
 @Setter
 public class UserArticle extends AbstractArticle {
+
+
     /**
      * 收到文章的用户
      */

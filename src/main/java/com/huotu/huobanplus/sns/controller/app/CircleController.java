@@ -1,4 +1,4 @@
-package com.huotu.huobanplus.sns.controller;
+package com.huotu.huobanplus.sns.controller.app;
 
 import com.huotu.common.api.ApiResult;
 import com.huotu.common.api.Output;
@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * 圈子
  * Created by Administrator on 2016/9/29.
  */
-@RequestMapping("/circle")
+@RequestMapping("/app/circle")
 public interface CircleController {
 
     /**

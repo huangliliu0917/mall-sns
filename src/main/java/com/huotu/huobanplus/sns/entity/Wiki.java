@@ -16,6 +16,9 @@ import javax.persistence.*;
 @Getter
 @Setter
 public class Wiki extends AbstractArticle {
+
+
+
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH})
     private Catalog catalog;
 

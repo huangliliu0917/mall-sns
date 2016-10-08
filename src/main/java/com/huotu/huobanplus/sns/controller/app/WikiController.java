@@ -1,4 +1,4 @@
-package com.huotu.huobanplus.sns.controller;
+package com.huotu.huobanplus.sns.controller.app;
 
 import com.huotu.common.api.ApiResult;
 import com.huotu.common.api.Output;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * 科普，百科
  * Created by Administrator on 2016/9/29.
  */
-@RequestMapping("/wiki")
+@RequestMapping("/app/wiki")
 public interface WikiController {
 
 

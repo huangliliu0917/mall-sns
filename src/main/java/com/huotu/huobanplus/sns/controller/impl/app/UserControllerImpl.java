@@ -1,4 +1,4 @@
-package com.huotu.huobanplus.sns.controller.impl;
+package com.huotu.huobanplus.sns.controller.impl.app;
 
 import org.springframework.stereotype.Controller;
 

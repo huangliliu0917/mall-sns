@@ -15,6 +15,7 @@ import javax.persistence.*;
 @Cacheable(value = false)
 public class Catalog extends AbstractCategory {
 
+
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH})
     private Catalog parent;
 

@@ -16,6 +16,7 @@ import java.util.Date;
 @Setter
 public class ArticleComment extends AbstractComment {
 
+
     /**
      * 所属文章
      */

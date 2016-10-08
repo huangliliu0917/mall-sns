@@ -1,12 +1,20 @@
 package com.huotu.huobanplus.sns.entity;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * Created by Administrator on 2016/9/29.
  */
-public abstract class AbstractArticle {
+@MappedSuperclass
+@Getter
+@Setter
+public  class AbstractArticle implements Serializable {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
