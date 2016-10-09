@@ -21,8 +21,8 @@ public interface UserController {
      * @return
      * @throws Exception
      */
-    @RequestMapping("/concerm")
-    ApiResult concerm(Long id) throws Exception;
+    @RequestMapping("/concern")
+    ApiResult concern(Long id) throws Exception;
 
     /**
      * 取消关注圈子
@@ -31,8 +31,8 @@ public interface UserController {
      * @return
      * @throws Exception
      */
-    @RequestMapping("/cancelConcerm")
-    ApiResult cancelConcerm(Long id) throws Exception;
+    @RequestMapping("/cancelConcern")
+    ApiResult cancelConcern(Long id) throws Exception;
 
     /**
      * 关注用户
@@ -41,7 +41,7 @@ public interface UserController {
      * @return
      * @throws Exception
      */
-    @RequestMapping("/concermUser")
+    @RequestMapping("/concernUser")
     ApiResult concermUser(Long id) throws Exception;
 
     /**
@@ -102,7 +102,7 @@ public interface UserController {
      * @return
      * @throws Exception
      */
-    @RequestMapping("/myConcerm")
+    @RequestMapping("/myConcern")
     ApiResult myConcerm(Output<AppUserConcermListModel[]> list, Long lastId) throws Exception;
 
     /**
@@ -113,8 +113,8 @@ public interface UserController {
      * @return
      * @throws Exception
      */
-    @RequestMapping("/myConcermed")
-    ApiResult myConcermed(Output<AppUserConcermListModel[]> list, Long lastId) throws Exception;
+    @RequestMapping("/myConcerned")
+    ApiResult myConcerned(Output<AppUserConcermListModel[]> list, Long lastId) throws Exception;
 
 
     /**
@@ -125,6 +125,6 @@ public interface UserController {
      * @return
      * @throws Exception
      */
-    @RequestMapping("concermIndex")
-    ApiResult concermIndex(Output<AppCircleArticleModel[]> articleList, Long lastId) throws Exception;
+    @RequestMapping("concernIndex")
+    ApiResult concernIndex(Output<AppCircleArticleModel[]> articleList, Long lastId) throws Exception;
 }
