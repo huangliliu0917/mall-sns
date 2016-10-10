@@ -38,4 +38,9 @@ public class AppCircleArticleCommentsModel {
      * 扩展信息 (评论的评论)
      */
     private String extend;
+
+    /**
+     * 楼层
+     */
+    private Long floor;
 }
