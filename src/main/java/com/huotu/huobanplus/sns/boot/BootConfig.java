@@ -15,7 +15,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @ComponentScan({"com.huotu.huobanplus.sns.service"})
 @EnableJpaRepositories(value = {"com.huotu.huobanplus.sns.repository"})
 @ImportResource(value = {"classpath:spring-jpa.xml"})
-@Import(LoggingConfig.class)
+@Import({LoggingConfig.class,AppSecurityConfig.class})
 public class BootConfig {
 
 }
