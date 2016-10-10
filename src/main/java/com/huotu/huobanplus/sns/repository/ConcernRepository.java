@@ -9,9 +9,8 @@
 
 package com.huotu.huobanplus.sns.repository;
 
-import com.huotu.huobanplus.sns.entity.Circle;
+import com.huotu.huobanplus.sns.entity.Concern;
 import com.huotu.huobanplus.sns.entity.User;
-import com.huotu.huobanplus.sns.entity.UserCircle;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.query.Param;
@@ -23,7 +22,7 @@ import java.util.List;
  * Created by jin on 2016/10/10.
  */
 @Repository
-public interface UserCircleRepository extends JpaRepository<UserCircle, Long>, JpaSpecificationExecutor<UserCircle> {
+public interface ConcernRepository extends JpaRepository<Concern, Long>, JpaSpecificationExecutor<Concern> {
 
-    List<UserCircle> findByUserAndCircle(@Param("user") User user, @Param("circle") Circle circle);
+    List<Concern> findByUserAndToUser(@Param("user") User user, @Param("toUser") User toUser);
 }

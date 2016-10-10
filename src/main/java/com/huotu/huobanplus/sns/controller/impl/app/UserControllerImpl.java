@@ -17,6 +17,7 @@ import com.huotu.huobanplus.sns.exception.LogException;
 import com.huotu.huobanplus.sns.model.AppCircleArticleModel;
 import com.huotu.huobanplus.sns.model.AppUserConcermListModel;
 import com.huotu.huobanplus.sns.model.common.ReportTargetType;
+import com.huotu.huobanplus.sns.service.ConcernService;
 import com.huotu.huobanplus.sns.service.UserCircleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -31,6 +32,9 @@ public class UserControllerImpl implements UserController{
 
     @Autowired
     private UserCircleService userCircleService;
+
+    @Autowired
+    private ConcernService concernService;
 
     @Override
     public ApiResult concern(Long id) {
@@ -56,18 +60,72 @@ public class UserControllerImpl implements UserController{
     }
 
     @Override
-    public ApiResult cancelConcern(Long id) throws Exception {
-        return null;
+    public ApiResult cancelConcern(Long id) {
+        ApiResult apiResult = new ApiResult();
+        try {
+            userCircleService.cancelConcern(id);
+            apiResult.setResultCode(200);
+            apiResult.setResultDescription("取消关注成功");
+        } catch (ConcernException e) {
+            apiResult.setResultCode(50001);
+            apiResult.setResultDescription(e.getMessage());
+            return apiResult;
+        } catch (LogException e) {
+            apiResult.setResultCode(50002);
+            apiResult.setResultDescription(e.getMessage());
+            return apiResult;
+        } catch (IOException e) {
+            apiResult.setResultCode(50003);
+            apiResult.setResultDescription(e.getMessage());
+            return apiResult;
+        }
+        return apiResult;
     }
 
     @Override
     public ApiResult concernUser(Long id) throws Exception {
-        return null;
+        ApiResult apiResult = new ApiResult();
+        try {
+            concernService.concernUser(id);
+            apiResult.setResultCode(200);
+            apiResult.setResultDescription("关注成功");
+        } catch (ConcernException e) {
+            apiResult.setResultCode(50001);
+            apiResult.setResultDescription(e.getMessage());
+            return apiResult;
+        } catch (LogException e) {
+            apiResult.setResultCode(50002);
+            apiResult.setResultDescription(e.getMessage());
+            return apiResult;
+        } catch (IOException e) {
+            apiResult.setResultCode(50003);
+            apiResult.setResultDescription(e.getMessage());
+            return apiResult;
+        }
+        return apiResult;
     }
 
     @Override
     public ApiResult leaveUser(Long id) throws Exception {
-        return null;
+        ApiResult apiResult = new ApiResult();
+        try {
+            concernService.leaveUser(id);
+            apiResult.setResultCode(200);
+            apiResult.setResultDescription("取消关注成功");
+        } catch (ConcernException e) {
+            apiResult.setResultCode(50001);
+            apiResult.setResultDescription(e.getMessage());
+            return apiResult;
+        } catch (LogException e) {
+            apiResult.setResultCode(50002);
+            apiResult.setResultDescription(e.getMessage());
+            return apiResult;
+        } catch (IOException e) {
+            apiResult.setResultCode(50003);
+            apiResult.setResultDescription(e.getMessage());
+            return apiResult;
+        }
+        return apiResult;
     }
 
     @Override

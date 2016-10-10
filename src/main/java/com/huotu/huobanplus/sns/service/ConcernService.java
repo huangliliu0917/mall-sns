@@ -17,25 +17,25 @@ import java.io.IOException;
 /**
  * Created by jin on 2016/10/10.
  */
-public interface UserCircleService {
+public interface ConcernService {
 
     /**
-     * 关注圈子
+     * 关注用户
      *
-     * @param id 圈子id
+     * @param id 被关注用户id
      * @throws ConcernException 关注异常
      * @throws LogException     登录异常
-     * @throws IOException      读写数据异常
+     * @throws IOException      读写异常
      */
-    void concern(Long id) throws ConcernException, LogException, IOException;
+    void concernUser(Long id) throws ConcernException, LogException, IOException;
 
     /**
-     * 取消关注圈子
+     * 取消关注用户
      *
-     * @param id 圈子id
+     * @param id 被关注用户id
      * @throws ConcernException 关注异常
      * @throws LogException     登录异常
-     * @throws IOException      读写数据异常
+     * @throws IOException      读写异常
      */
-    void cancelConcern(Long id) throws ConcernException, LogException, IOException;
+    void leaveUser(Long id) throws ConcernException, LogException, IOException;
 }

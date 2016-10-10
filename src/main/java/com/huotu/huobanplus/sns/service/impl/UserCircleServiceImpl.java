@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -49,13 +50,25 @@ public class UserCircleServiceImpl implements UserCircleService {
     public void concern(Long id) throws ConcernException, LogException, IOException {
         User user = getUser();
         Circle circle = circleRepository.getOne(id);
-        UserCircle userCircle = userCircleRepository.findByUserAndCircle(user, circle);
-        if (Objects.nonNull(userCircle))
+        List<UserCircle> userCircles = userCircleRepository.findByUserAndCircle(user, circle);
+        if (Objects.nonNull(userCircles) && userCircles.size() > 0)
             throw new ConcernException("您已关注该圈子");
-        userCircle = new UserCircle();
+        UserCircle userCircle = new UserCircle();
         userCircle.setCircle(circle);
         userCircle.setDate(new Date());
         userCircle.setUser(user);
         userCircleRepository.save(userCircle);
+    }
+
+    @Override
+    public void cancelConcern(Long id) throws ConcernException, LogException, IOException {
+        User user = getUser();
+        Circle circle = circleRepository.getOne(id);
+        List<UserCircle> userCircles = userCircleRepository.findByUserAndCircle(user, circle);
+        if (Objects.isNull(userCircles) || userCircles.size() == 0)
+            throw new ConcernException("您已经取消关注该圈子~");
+        for (UserCircle userCircle : userCircles) {
+            userCircleRepository.delete(userCircle);
+        }
     }
 }
