@@ -20,8 +20,11 @@ import com.huotu.huobanplus.sns.repository.CircleRepository;
 import com.huotu.huobanplus.sns.repository.UserCircleRepository;
 import com.huotu.huobanplus.sns.service.UserCircleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.BoundHashOperations;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
@@ -33,11 +36,13 @@ import java.util.Objects;
 @Service
 public class UserCircleServiceImpl implements UserCircleService {
 
+    private final static String circleFlag = "_circle_";
     @Autowired
     private CircleRepository circleRepository;
-
     @Autowired
     private UserCircleRepository userCircleRepository;
+    @Autowired
+    private RedisTemplate<String, String> redisTemplate;
 
     private User getUser() throws LogException {
         AppPublicModel model = PublicParameterHolder.getParameters();
@@ -46,8 +51,9 @@ public class UserCircleServiceImpl implements UserCircleService {
         return model.getCurrentUser();
     }
 
+    @Transactional
     @Override
-    public void concern(Long id) throws ConcernException, LogException, IOException {
+    public synchronized void concern(Long id) throws ConcernException, LogException, IOException {
         User user = getUser();
         Circle circle = circleRepository.getOne(id);
         List<UserCircle> userCircles = userCircleRepository.findByUserAndCircle(user, circle);
@@ -58,10 +64,18 @@ public class UserCircleServiceImpl implements UserCircleService {
         userCircle.setDate(new Date());
         userCircle.setUser(user);
         userCircleRepository.save(userCircle);
+        BoundHashOperations<String, String, Long> circleOperations = redisTemplate
+                .boundHashOps(circleFlag + id);
+        Long userAmount = circleOperations.get("userAmount");
+        if (null == userAmount) {
+            circleOperations.put("userAmount", 1L);
+        } else {
+            circleOperations.put("userAmount", userAmount + 1L);
+        }
     }
 
     @Override
-    public void cancelConcern(Long id) throws ConcernException, LogException, IOException {
+    public synchronized void cancelConcern(Long id) throws ConcernException, LogException, IOException {
         User user = getUser();
         Circle circle = circleRepository.getOne(id);
         List<UserCircle> userCircles = userCircleRepository.findByUserAndCircle(user, circle);
@@ -70,5 +84,9 @@ public class UserCircleServiceImpl implements UserCircleService {
         for (UserCircle userCircle : userCircles) {
             userCircleRepository.delete(userCircle);
         }
+        BoundHashOperations<String, String, Long> circleOperations = redisTemplate
+                .boundHashOps(circleFlag + id);
+        Long userAmount = circleOperations.get("userAmount");
+        circleOperations.put("userAmount", userAmount - userCircles.size());
     }
 }
