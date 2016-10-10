@@ -12,15 +12,18 @@ package com.huotu.huobanplus.sns.service.impl;
 import com.huotu.huobanplus.sns.boot.PublicParameterHolder;
 import com.huotu.huobanplus.sns.entity.Circle;
 import com.huotu.huobanplus.sns.entity.User;
+import com.huotu.huobanplus.sns.entity.UserCircle;
 import com.huotu.huobanplus.sns.exception.ConcernException;
 import com.huotu.huobanplus.sns.exception.LogException;
 import com.huotu.huobanplus.sns.model.AppPublicModel;
 import com.huotu.huobanplus.sns.repository.CircleRepository;
+import com.huotu.huobanplus.sns.repository.UserCircleRepository;
 import com.huotu.huobanplus.sns.service.UserCircleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.Objects;
 
 /**
@@ -31,6 +34,9 @@ public class UserCircleServiceImpl implements UserCircleService {
 
     @Autowired
     private CircleRepository circleRepository;
+
+    @Autowired
+    private UserCircleRepository userCircleRepository;
 
     private User getUser() throws LogException {
         AppPublicModel model = PublicParameterHolder.getParameters();
@@ -43,6 +49,13 @@ public class UserCircleServiceImpl implements UserCircleService {
     public void concern(Long id) throws ConcernException, LogException, IOException {
         User user = getUser();
         Circle circle = circleRepository.getOne(id);
-
+        UserCircle userCircle = userCircleRepository.findByUserAndCircle(user, circle);
+        if (Objects.nonNull(userCircle))
+            throw new ConcernException("您已关注该圈子");
+        userCircle = new UserCircle();
+        userCircle.setCircle(circle);
+        userCircle.setDate(new Date());
+        userCircle.setUser(user);
+        userCircleRepository.save(userCircle);
     }
 }

@@ -12,10 +12,16 @@ package com.huotu.huobanplus.sns.controller.impl.app;
 import com.huotu.common.api.ApiResult;
 import com.huotu.common.api.Output;
 import com.huotu.huobanplus.sns.controller.app.UserController;
+import com.huotu.huobanplus.sns.exception.ConcernException;
+import com.huotu.huobanplus.sns.exception.LogException;
 import com.huotu.huobanplus.sns.model.AppCircleArticleModel;
 import com.huotu.huobanplus.sns.model.AppUserConcermListModel;
 import com.huotu.huobanplus.sns.model.common.ReportTargetType;
+import com.huotu.huobanplus.sns.service.UserCircleService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+
+import java.io.IOException;
 
 /**
  * Created by Administrator on 2016/9/28.
@@ -23,9 +29,30 @@ import org.springframework.stereotype.Controller;
 @Controller
 public class UserControllerImpl implements UserController{
 
+    @Autowired
+    private UserCircleService userCircleService;
+
     @Override
-    public ApiResult concern(Long id) throws Exception {
-        return null;
+    public ApiResult concern(Long id) {
+        ApiResult apiResult = new ApiResult();
+        try {
+            userCircleService.concern(id);
+            apiResult.setResultCode(200);
+            apiResult.setResultDescription("关注成功");
+        } catch (ConcernException e) {
+            apiResult.setResultCode(50001);
+            apiResult.setResultDescription(e.getMessage());
+            return apiResult;
+        } catch (LogException e) {
+            apiResult.setResultCode(50002);
+            apiResult.setResultDescription(e.getMessage());
+            return apiResult;
+        } catch (IOException e) {
+            apiResult.setResultCode(50003);
+            apiResult.setResultDescription(e.getMessage());
+            return apiResult;
+        }
+        return apiResult;
     }
 
     @Override
