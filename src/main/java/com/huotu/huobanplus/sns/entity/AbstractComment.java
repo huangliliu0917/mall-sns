@@ -65,4 +65,9 @@ public class AbstractComment {
      * 评论状态
      */
     private CommentStatus commentStatus;
+
+    /**
+     * 楼层
+     */
+    private Long floor;
 }
