@@ -1,0 +1,207 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>订单详情</title>
+
+    <link href="http://resali.huobanplus.com/cdn/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+    <link href="http://resali.huobanplus.com/cdn/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+    <!-- Morris -->
+    <link href="css/plugins/morris/morris-0.4.3.min.css" rel="stylesheet">
+    <link href="css/style.min.css?v=4.0.0" rel="stylesheet">
+
+    <!--checkbox-->
+    <link href="css/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" rel="stylesheet">
+
+    <link href="js/plugins/SearchableSelect/jquery.searchableSelect.css" rel="stylesheet" />
+    <style type="text/css">
+        #deliver_form table input[type=text] {
+            width: 200px;
+        }
+    </style>
+</head>
+
+<body>
+    <form id="deliver_form">
+        <div class="wrapper wrapper-content tooltip-demo" style="max-height: 492px; overflow-y: auto;">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="ibox float-e-margins" style="margin-bottom: 0;">
+                        <div class="ibox-title" style="padding: 0; min-height: initial;">
+                            <div class="form-inline">
+                                <div class="form-group m-r-sm">
+                                    <label style="font-size: 17px;">订单：2016082289875463</label>
+                                </div>
+                                <div class="form-group m-r-sm" style="float: right;">
+                                    <label style="font-size: 14px; font-weight: normal;">
+                                        <span class="glyphicon glyphicon-time"></span>
+                                        8/22/2016 11:06:27 AM</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="ibox float-e-margins m-b-none">
+                        <div class="ibox-content p-xxs" style="border-top: none;">
+                            <table class="table table-bordered">
+                                <tbody>
+                                    <tr>
+                                        <th>物流公司：</th>
+                                        <td class="form-inline">
+                                            <div class="form-group m-b-none">
+                                                <input type="text" style="width: 118px;" required class="form-control input-sm mb10" id="userLoginName" name="userLoginName" runat="server" />
+                                                <select class="form-control input-sm">
+                                                    <option selected="selected" value="0">按下单时间</option>
+                                                    <option value="1">按支付时间</option>
+                                                    <option value="2">按订单金额</option>
+                                                </select>
+                                            </div>
+                                        </td>
+                                        <th>物流单号：</th>
+                                        <td>
+                                            <div class="form-group m-b-none">
+                                                <input type="text" required class="form-control input-sm mb10" id="Text1" name="userLoginName" runat="server" placeholder="物流单号" />
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>物流费用：</th>
+                                        <td>
+                                            <div class="form-group m-b-none">
+                                                <div class="input-group" style="width: 130px;">
+                                                    <span class="input-group-addon">¥</span>
+                                                    <input type="text" class="form-control input-sm" placeholder="物流费用">
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <th>邮政编码：</th>
+                                        <td>
+                                            <input type="text" class="form-control input-sm" placeholder="邮政编码">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>收货人姓名：</th>
+                                        <td>
+                                            <input type="text" class="form-control input-sm" required placeholder="收货人姓名">
+                                        </td>
+                                        <th>电话：</th>
+                                        <td>
+                                            <input type="text" class="form-control input-sm" placeholder="电话">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>手机：</th>
+                                        <td>
+                                            <input type="text" class="form-control input-sm" required placeholder="手机">
+                                        </td>
+                                        <th>地址：</th>
+                                        <td>
+                                            <input type="text" style="width: 300px;" required class="form-control input-sm" placeholder="地址">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>发货单备注：</th>
+                                        <td colspan="3">
+                                            <textarea id="markText" name="markText" required class="form-control" rows="5" style="height: 56px;"></textarea>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="ibox float-e-margins m-b-none">
+                        <div class="ibox-content p-xxs" style="border-top: none;">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>商家编码</th>
+                                        <th>商品名称</th>
+                                        <th>当前库存</th>
+                                        <th>购买数量</th>
+                                        <th>已发货</th>
+                                        <th class="text-center">此单发货</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>296x1fLvC5B-1</td>
+                                        <td>快递鸟测试商品(深卡其布色)(1)</td>
+                                        <td>可用(1107),预占(4)</td>
+                                        <td>1</td>
+                                        <td>1</td>
+                                        <td class="text-center">
+                                            <div class="checkbox checkbox-primary">
+                                                <input type="checkbox" id="raSortType_0" name="raSortType" runat="server" checked="checked" value="1" />
+                                                <label for="raSortType_0"></label>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>296x1fLvC5B-1</td>
+                                        <td>快递鸟测试商品(深卡其布色)(1)</td>
+                                        <td>可用(1107),预占(4)</td>
+                                        <td>1</td>
+                                        <td>1</td>
+                                       <td class="text-center">
+                                            <div class="checkbox checkbox-primary">
+                                                <input type="checkbox" id="Checkbox1" name="raSortType" runat="server" checked="checked" value="1" />
+                                                <label for="raSortType_0"></label>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="row" style="padding: 0 15px; position: absolute; bottom: 0; width: 100%;">
+            <div class="col-lg-12">
+                <div class="ibox float-e-margins" style="margin-bottom: 0;">
+                    <div class="ibox-title" style="padding: 0; min-height: initial;">
+                        <div class="form-group m-r-sm" style="float: right;">
+                            <button type="submit" class="btn btn-success" id="btnConsignFlow" runat="server">发货</button>
+                            <button type="button" class="btn btn-white" id="btnPayed" runat="server" style="margin-left: 10px;">关闭</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <!--基础框架js-->
+    <script src="http://resali.huobanplus.com/cdn/jquery/2.2.4/jquery.min.js"></script>
+    <script src="http://resali.huobanplus.com/cdn/bootstrap/3.3.5/bootstrap.min.js"></script>
+    <script src="js/content.min.js?v=1.0.0"></script>
+    <!--validate-->
+    <script src="http://resali.huobanplus.com/cdn/jquery-validation/1.15.0/jquery.validate.min.js"></script>
+    <script src="http://resali.huobanplus.com/cdn/jquery-validation/1.15.0/additional-methods.min.js"></script>
+    <script src="http://resali.huobanplus.com/cdn/jquery-validation/1.15.0/localization/messages_zh.min.js"></script>
+    <script src="js/plugins/hot/bootstrap.hot.extra-validate.js"></script>
+
+    <script src="js/plugins/SearchableSelect/jquery.searchableSelect.js"></script>
+
+    <script src="js/plugins/hot/bootstrap.hot.extra-utils.js"></script>
+
+    <script type="text/javascript">
+        $(function () {
+            $("#deliver_form").validateCustom(function () { }, {
+                debug: true
+            });
+        })
+    </script>
+</body>
+
+</html>

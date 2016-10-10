@@ -1,0 +1,463 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+    <title>H+ 后台主题UI框架 - 布局</title>
+
+    <link href="http://resali.huobanplus.com/cdn/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+    <link href="http://resali.huobanplus.com/cdn/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+    <!-- Morris -->
+    <link href="css/plugins/morris/morris-0.4.3.min.css" rel="stylesheet">
+    <link href="css/animate.min.css" rel="stylesheet">
+    <link href="css/style.min.css?v=4.0.0" rel="stylesheet">
+
+    <!--checkbox-->
+    <link href="css/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" rel="stylesheet">
+
+    <!--datetimepick-->
+    <link href="js/plugins/datetimepick/css/daterangepicker.css" rel="stylesheet" />
+</head>
+
+<body class="gray-bg">
+    <div class="wrapper wrapper-content animated fadeInRight tooltip-demo">
+        <!--search-->
+        <form role="form" class="search-panel">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-content p-m">
+                            <div class="form-inline">
+                                <div class="form-group m-r-sm">
+                                    <label class=" control-label" for="orderId">订单号：</label>
+                                    <input type="text" class="form-control input-sm mb10" id="orderId" name="orderId" runat="server" placeholder="订单号" style="width: 156px;" />
+                                </div>
+                                <div class="form-group m-r-sm">
+                                    <label class=" control-label" for="userLoginName">用户名：</label>
+                                    <input type="text" class="form-control input-sm mb10" id="userLoginName" name="userLoginName" runat="server" placeholder="用户名" />
+                                </div>
+                                <div class="form-group m-r-sm">
+                                    <label class=" control-label" for="shipName">收货人姓名：</label>
+                                    <input type="text" class="form-control input-sm mb10" id="shipName" name="shipName" runat="server" placeholder="收货人姓名" />
+                                </div>
+                                <div class="form-group m-r-sm">
+                                    <label class=" control-label" for="shipMobile">收货人电话：</label>
+                                    <input type="text" class="form-control input-sm mb10" id="shipMobile" name="shipMobile" runat="server" placeholder="收货人电话" />
+                                </div>
+                            </div>
+                            <p style="height: 8px;"></p>
+                            <div class="form-inline">
+                                <div class="form-group m-r-sm">
+                                    <label class=" control-label" for="createTimePick">下单时间：</label>
+                                    <input type="text" class="form-control input-sm mb10 data-range-pick" runat="server" id="createTimePick" name="createTimePick" start-element="#beginTime" end-element="#endTime" placeholder="开始时间-结束时间" style="width: 277px;" />
+                                    <input type="hidden" id="beginTime" name="beginTime" runat="server" />
+                                    <input type="hidden" id="endTime" name="endTime" runat="server" />
+                                </div>
+                                <div class="form-group m-r-sm">
+                                    <label class=" control-label" for="payTimePick">支付时间：</label>
+                                    <input type="text" class="form-control input-sm mb10 data-range-pick" runat="server" id="payTimePick" name="payTimePick" start-element="#payBeginTime" end-element="#payEndTime" placeholder="开始时间-结束时间" style="width: 277px;" />
+                                    <input type="hidden" id="payBeginTime" name="payBeginTime" runat="server" />
+                                    <input type="hidden" id="payEndTime" name="payEndTime" runat="server" />
+                                </div>
+                            </div>
+                            <p style="height: 8px;"></p>
+                            <div class="form-inline" style="max-width: 926px;">
+                                <div class="form-group m-r-sm">
+                                    <label class=" control-label" for="supplierName">供应商：</label>
+                                    <input type="text" class="form-control input-sm mb10" id="supplierName" name="supplierName" runat="server" placeholder="供应商" />
+                                    <div class="checkbox checkbox-primary" style="padding-left: 8px;">
+                                        <input type="checkbox" id="chkOwner" name="chkOwner" runat="server"/>
+                                        <label for="chkOwner">自有商品</label>
+                                    </div>
+                                </div>
+                                <div class="form-group m-r-sm">
+                                    <label class=" control-label">排序：</label>
+                                    <select class="form-control input-sm" name="sortBy" runat="server">
+                                        <option selected="selected" value="0">按下单时间</option>
+                                        <option value="1">按支付时间</option>
+                                        <option value="2">按订单金额</option>
+                                    </select>
+                                </div>
+                                <div class="form-group m-r-sm">
+                                    <div class="radio radio-primary" style="padding-left: 8px;">
+                                        <input type="radio" id="raSortType_0" name="raSortType" runat="server" checked="checked" value="1" />
+                                        <label for="raSortType_0">倒序</label>
+                                    </div>
+                                    <div class="radio radio-primary" style="padding-left: 8px;">
+                                        <input type="radio" id="raSortType_1" name="raSortType" runat="server" value="0" />
+                                        <label for="raSortType_1">顺序</label>
+                                    </div>
+                                    <span class="fa fa-angle-double-down cursor-point" data-placement="top" data-toggle="tooltip" data-original-title="高级筛选" id="extraSearch" style="margin-left: 30px;"></span>
+                                </div>
+                            </div>
+                            <p style="height: 8px;"></p>
+                            <div id="extraSearch_panel" style="display: none;">
+                                <div class="form-inline">
+                                    <div class="form-group m-r-sm">
+                                        <label class=" control-label" for="unionOrderId">联合单号：</label>
+                                        <input type="text" class="form-control input-sm mb10" id="unionOrderId" name="unionOrderId" runat="server" placeholder="联合单号" style="width: 156px;" />
+                                    </div>
+                                    <div class="form-group m-r-sm">
+                                        <label class=" control-label" for="ddlPayStatus">支付状态：</label>
+                                        <select class="form-control input-sm mb10" id="ddlPayStatus" name="ddlPayStatus" runat="server"></select>
+                                    </div>
+                                    <div class="form-group m-r-sm">
+                                        <label class=" control-label" for="ddlShipStatus">发货状态：</label>
+                                        <select class="form-control input-sm mb10" id="ddlShipStatus" name="ddlShipStatus" runat="server"></select>
+                                    </div>
+                                    <div class="form-group m-r-sm">
+                                        <label class=" control-label" for="ddlOrderSource">订单类型：</label>
+                                        <select class="form-control input-sm mb10" id="ddlOrderSource" name="ddlOrderSource" runat="server"></select>
+                                    </div>
+                                </div>
+                                <p style="height: 8px;"></p>
+                                <div class="form-inline">
+                                    <div class="form-group m-r-sm">
+                                        <label class=" control-label" for="goodName">商品名称：</label>
+                                        <input type="text" class="form-control input-sm mb10" id="goodName" name="goodName" runat="server" placeholder="商品名称" />
+                                    </div>
+                                    <div class="form-group m-r-sm">
+                                        <label class=" control-label" for="ddlUserType">用户类型：</label>
+                                        <select class="form-control input-sm mb10" id="ddlUserType" name="ddlUserType" runat="server">
+                                            <option selected="selected" value="-1">全部类型</option>
+                                            <option value="0">会员</option>
+                                            <option value="1">小伙伴</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group m-r-sm">
+                                        <label class=" control-label" for="ddlPayType">支付类型：</label>
+                                        <select class="form-control input-sm mb10" id="ddlPayType" name="ddlPayType" runat="server"></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <p style="height: 8px;"></p>
+                            <div class="form-inline" style="max-width: 926px; text-align: right;">
+                                <button type="button" onclick="orderListHandler.search(1)" class="btn btn-success">筛选</button>
+                                <button type="button" onclick="orderListHandler.searchAll()" class="btn btn-success">显示全部</button>
+                                <button type="button" class="btn btn-white" id="btnBatchExplor">批量导出</button>
+                                <button type="button" id="btnBatchDeliver" class="btn btn-white">批量发货</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <!--search-->
+
+        <!--list-->
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="tabs-container">
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a href="#tab-1">全部</a></li>
+                            <li class=""><a href="#tab-2">待付款</a></li>
+                            <li class=""><a href="#tab-2">待处理</a></li>
+                            <li class=""><a href="#tab-2">已发货</a></li>
+                            <li class=""><a href="#tab-2">已归档</a></li>
+                            <li class=""><a href="#tab-2">已退款</a></li>
+                            <li class=""><a href="#tab-2">已退货</a></li>
+                            <li class=""><a href="#tab-2">已关闭</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="tab-pane active">
+                                <div class="panel-body">
+                                    <table class="table table-bordered table-hover table-center">
+                                        <thead>
+                                            <tr>
+                                                <th colspan="8" style="color: #636e7b; padding-bottom: 0px; text-align: left;">
+                                                    <label>
+                                                        <img src="/images/remark_icons/b1.gif" width="20" height="20" /></label>
+                                                    订单号：2016081638541286（活动）
+                                                    &nbsp;
+                                                    联合单号：2016081638541286
+                                                    &nbsp;
+                                                    支付类型：支付宝
+
+                                                    <p style="float: right;"><span class="glyphicon glyphicon-time"></span>：8/16/2016 4:13:56 PM<span style="color: #aaa; padding-left: 5px;">(10天6小时前)</span></p>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>商品信息</td>
+                                                <td>金额</td>
+                                                <td>收货人</td>
+                                                <td>支付状态</td>
+                                                <td>发货状态</td>
+                                                <td>买家用户名</td>
+                                                <td>备注</td>
+                                                <td>操作</td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <p style="width: 100%; height: 50px;">
+                                                        <!--商品-->
+                                                        <img style="width: 50px; height: 50px; float: left; margin-left: 5px;" src="" />
+                                                        <span style="overflow: hidden; text-align: left; margin-left: 10px; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; width: 54%; float: left;">商品名称</span>
+                                                        <span style="float: right; margin-top: 30px">X1</span>
+                                                    </p>
+                                                </td>
+                                                <td>100.00</td>
+                                                <td>allan</td>
+                                                <td>已支付</td>
+                                                <td>已发货</td>
+                                                <td>18777876675</td>
+                                                <td></td>
+                                                <td>
+                                                    <span onclick="javascript:hot.newTab('order_detail.html','订单详情')" class="cursor-point"><i class="fa fa-pencil tooltips" data-placement="top" data-toggle="tooltip" data-original-title="操作订单"></i></span>
+                                                    &nbsp;
+                                                <span class="cursor-point" onclick="orderListHandler.remark()"><i class="fa fa-edit tooltips" data-placement="top" data-toggle="tooltip" data-original-title="备注"></i></span>
+                                                    &nbsp;
+                                                <span class="cursor-point"><i class="fa fa-truck tooltips" data-placement="top" data-toggle="tooltip" data-original-title="查看物流"></i></span>
+                                                    &nbsp;<br />
+                                                    <br />
+                                                    <span style="margin-left: -8px;"><i class="fa fa-print tooltips" data-placement="top" data-toggle="tooltip" data-original-title="订单打印"></i></span>
+                                                    &nbsp;
+                                                <button style="padding: 0px 5px;" title="" data-placement="top" data-toggle="tooltip" class="btn btn-default tooltips" type="button" data-original-title="购买清单打印">购</button>
+                                                    &nbsp;
+                                                <button style="padding: 0px 5px;" title="" data-placement="top" data-toggle="tooltip" class="btn btn-default tooltips" type="button" data-original-title="配货清单打印">配</button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+
+                                    <table class="table table-bordered table-hover table-center">
+                                        <thead>
+                                            <tr>
+                                                <th colspan="8" style="color: #636e7b; font-size: 14px; padding-bottom: 0px; text-align: left;">
+                                                    <label>
+                                                        <img src="/images/remark_icons/b1.gif" width="20" height="20" /></label>
+                                                    订单号：2016081638541286（活动）
+                                                联合单号：2016081638541286
+                                                支付类型：支付宝
+
+                                                        <p style="float: right;"><span class="glyphicon glyphicon-time"></span>：8/16/2016 4:13:56 PM<span style="color: #aaa; padding-left: 5px;">(10天6小时前)</span></p>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>商品信息</td>
+                                                <td>金额</td>
+                                                <td>收货人</td>
+                                                <td>支付状态</td>
+                                                <td>发货状态</td>
+                                                <td>买家用户名</td>
+                                                <td>备注</td>
+                                                <td>操作</td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <p style="width: 100%; height: 50px;">
+                                                        <!--商品-->
+                                                        <img style="width: 50px; height: 50px; float: left; margin-left: 5px;" src="" />
+                                                        <span style="overflow: hidden; text-align: left; margin-left: 10px; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; width: 54%; float: left;">商品名称</span>
+                                                        <span style="float: right; margin-top: 30px">X1</span>
+                                                    </p>
+                                                </td>
+                                                <td>100.00</td>
+                                                <td>allan</td>
+                                                <td>已支付</td>
+                                                <td>已发货</td>
+                                                <td>18777876675</td>
+                                                <td></td>
+                                                <td>
+                                                    <span onclick="hot.newTab('order_detail.html','订单详情')" class="cursor-point"><i class="fa fa-pencil tooltips" data-placement="top" data-toggle="tooltip" data-original-title="操作订单"></i></span>
+                                                    &nbsp;
+                                                <span class="cursor-point" onclick="orderListHandler.remark()"><i class="fa fa-edit tooltips" data-placement="top" data-toggle="tooltip" data-original-title="备注"></i></span>
+                                                    &nbsp;
+                                                <span class="cursor-point"><i class="fa fa-truck tooltips" data-placement="top" data-toggle="tooltip" data-original-title="查看物流"></i></span>
+                                                    &nbsp;<br />
+                                                    <br />
+                                                    <span style="margin-left: -8px;"><i class="fa fa-print tooltips" data-placement="top" data-toggle="tooltip" data-original-title="订单打印"></i></span>
+                                                    &nbsp;
+                                                <button style="padding: 0px 5px;" title="" data-placement="top" data-toggle="tooltip" class="btn btn-default tooltips" type="button" data-original-title="购买清单打印">购</button>
+                                                    &nbsp;
+                                                <button style="padding: 0px 5px;" title="" data-placement="top" data-toggle="tooltip" class="btn btn-default tooltips" type="button" data-original-title="配货清单打印">配</button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+
+                                    <p style="float: left; margin: 20px 0;">共1条记录，当前第1/1，每页20条记录</p>
+                                    <ul style="float: right;" class="pagination pagination-split">
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--批量发货modal-->
+    <div id="batchDeliverModal" class="modal-content-tag tooltip-demo">
+        <div class="form-horizontal" style="width: 500px;">
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Excel：</label>
+                <div class="col-sm-8">
+                    <div class="form-group">
+                        <input type="file" class="form-control">
+                    </div>
+                </div>
+                <label class="col-sm-2 control-label"><span class="fa fa-download tooltips cursor-point" data-placement="top" data-toggle="tooltip" data-original-title="批量发货模板下载"></span></label>
+
+            </div>
+            <div class="form-group">
+                <label class="col-sm-12 control-label" style="text-align:left;color:#d9534f;">2015年8月10日晚模板已更新，请重新下载。</label>
+            </div>
+        </div>
+    </div>
+
+    <!--批量导出-->
+    <div id="batchExplorModal" class="modal-content-tag">
+        <div class="form-inline">
+            <div class="form-group">
+                <label class=" control-label" for="orderId">导出订单：</label>
+                第<input type="text" class="form-control input-sm mb10" id="Text7" style="width: 80px;" />页 至
+                第<input type="text" class="form-control input-sm mb10" id="Text8" style="width: 80px;" />页
+            </div>
+        </div>
+
+    </div>
+
+    <!--订单备注-->
+    <div id="remarkModal" class="modal-content-tag">
+        <div class="form-horizontal" style="width: 479px;">
+            <div class="form-group">
+                <label class="col-sm-2 control-label" style="padding-top: 0px;">标记：</label>
+                <div class="col-sm-10">
+                    <label>
+                        <input type="radio" checked="checked" name="raMarkTypes" />
+                        <label for="raMarkTypes_0">
+                            <img src="/images/remark_icons/b1.gif" width="20" height="20" /></label></label>
+                    <label>
+                        <input type="radio" name="raMarkTypes" />
+                        <label for="raMarkTypes_0">
+                            <img src="/images/remark_icons/b2.gif" width="20" height="20" /></label></label>
+                    <label>
+                        <input type="radio" name="raMarkTypes" />
+                        <label for="raMarkTypes_0">
+                            <img src="/images/remark_icons/b3.gif" width="20" height="20" /></label></label>
+                    <label>
+                        <input type="radio" name="raMarkTypes" />
+                        <label for="raMarkTypes_0">
+                            <img src="/images/remark_icons/b4.gif" width="20" height="20" /></label></label>
+                    <label>
+                        <input type="radio" name="raMarkTypes" />
+                        <label for="raMarkTypes_0">
+                            <img src="/images/remark_icons/b5.gif" width="20" height="20" /></label></label>
+                    <label>
+                        <input type="radio" name="raMarkTypes" />
+                        <label for="raMarkTypes_0">
+                            <img src="/images/remark_icons/b0.gif" width="20" height="20" /></label></label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">备注：</label>
+                <div class="col-sm-10">
+                    <textarea id="orderRemark" class="form-control" rows="5" style="height: 90px; width: 100%;"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--基础框架js-->
+    <script src="http://resali.huobanplus.com/cdn/jquery/2.2.4/jquery.min.js"></script>
+    <script src="http://resali.huobanplus.com/cdn/bootstrap/3.3.5/bootstrap.min.js"></script>
+    <script src="http://resali.huobanplus.com/cdn/hotui/js/content.min.js"></script>
+
+    <!--日期选择-->
+    <script src="js/plugins/datetimepick/js/moment.js"></script>
+    <script src="js/plugins/datetimepick/js/daterangepicker.js"></script>
+    <!--file-->
+    <script src="js/plugins/prettyfile/bootstrap-prettyfile.js"></script>
+    <!--validate-->
+    <script src="http://resali.huobanplus.com/cdn/jquery-validation/1.15.0/jquery.validate.min.js"></script>
+    <script src="http://resali.huobanplus.com/cdn/jquery-validation/1.15.0/additional-methods.min.js"></script>
+    <script src="http://resali.huobanplus.com/cdn/jquery-validation/1.15.0/localization/messages_zh.min.js"></script>
+    <script src="js/plugins/hot/bootstrap.hot.extra-validate.js"></script>
+
+    <script src="js/plugins/SearchableSelect/jquery.searchableSelect.js"></script>
+
+    <script src="js/plugins/ajaxfileupload.js"></script>
+
+    <script src="js/plugins/hot/bootstrap.hot.extra-utils.js"></script>
+    <script src="js/plugins/hot/bootstrap.hot.extra-init.js"></script>
+
+    <script type="text/javascript">
+        var pageIndex = 1;
+        var totalPage = 20;
+
+        //初始化modal
+        var remarkModal = $("#remarkModal").modal("备注", function () {
+
+        });
+        var batchExplorModal = $("#batchExplorModal").modal("批量导出", function () {
+            batchExplorModal.hide();
+        });
+        var batchDeliverModal = $("#batchDeliverModal").modal("批量发货", function () {
+
+        });
+
+        $(function () {
+
+            setTimeout(function () {
+                hot.tip.success("这是一条正确的提示")
+            }, 3000);
+
+            //初始化分页
+            var pageinate = new hot.paging(".pagination", pageIndex, totalPage, 7);
+
+            pageinate.init(function (p) {
+
+            });
+
+            $("#extraSearch").click(function () {
+                var $self = $(this);
+                $("#extraSearch_panel").slideToggle();
+                $self.toggleClass("fa-angle-double-down");
+                $self.toggleClass("fa-angle-double-up");
+            });
+            $("input[name=chkOwner]").change(function () {
+                if (this.checked) {
+                    $("#supplierName").attr("disabled", "disabled");
+                } else {
+                    $("#supplierName").removeAttr("disabled");
+                }
+            });
+
+            $("#btnBatchDeliver").click(function () {
+                batchDeliverModal.show();
+            });
+
+            $("#btnBatchExplor").click(function () {
+                batchExplorModal.show();
+            });
+        });
+
+        var orderListHandler = {
+            remark: function () {
+                remarkModal.show();
+            },
+            search: function (pageIndex) {
+                $("#pageIndex").val(pageIndex);
+                $("#searchForm").submit();
+            },
+            searchAll: function () {
+                window.location.href = "?ordertype=<%=(int)CurrentOrderFilter%>&customerid=<%=currentCustomerID%>";
+            },
+            orderFilter: function (filterOption) {
+                window.location.href = "?ordertype=" + filterOption + "&customerid=<%=currentCustomerID%>";
+            }
+        }
+    </script>
+</body>
+
+</html>
