@@ -26,7 +26,7 @@ public class User {
     private Long customerId;
 
     /**
-     * 圈子关注人数
+     * 关注人数
      */
     private Long userAmount;
 

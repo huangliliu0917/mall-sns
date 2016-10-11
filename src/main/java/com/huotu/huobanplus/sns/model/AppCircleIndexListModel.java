@@ -24,7 +24,7 @@ public class AppCircleIndexListModel {
     /**
      * 关注人数
      */
-    private String num;
+    private Long num;
 
     /**
      * 圈子介绍连接地址

@@ -60,8 +60,8 @@ public interface UserController {
      * @return
      * @throws Exception
      */
-    @RequestMapping("/leaveUser")
-    ApiResult leaveUser(Long id) throws Exception;
+    @RequestMapping("/cancelUser")
+    ApiResult cancelUser(Long id) throws Exception;
 
     /**
      * 发布一篇文章

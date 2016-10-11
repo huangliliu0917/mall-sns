@@ -1,5 +1,6 @@
 package com.huotu.huobanplus.sns.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,6 +9,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@AllArgsConstructor
 public class AppCircleIndexSuggestModel {
     /**
      * 标题
@@ -24,5 +26,5 @@ public class AppCircleIndexSuggestModel {
     /**
      * 人数
      */
-    private String num;
+    private Long num;
 }

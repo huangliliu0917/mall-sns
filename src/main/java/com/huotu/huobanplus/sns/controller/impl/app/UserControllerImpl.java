@@ -106,7 +106,7 @@ public class UserControllerImpl implements UserController{
     }
 
     @Override
-    public ApiResult leaveUser(Long id) throws Exception {
+    public ApiResult cancelUser(Long id) throws Exception {
         ApiResult apiResult = new ApiResult();
         try {
             concernService.leaveUser(id);
