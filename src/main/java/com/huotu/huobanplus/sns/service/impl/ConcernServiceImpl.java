@@ -18,6 +18,7 @@ import com.huotu.huobanplus.sns.repository.UserRepository;
 import com.huotu.huobanplus.sns.service.ConcernService;
 import com.huotu.huobanplus.sns.utils.UserHelper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -37,8 +38,13 @@ public class ConcernServiceImpl implements ConcernService {
     @Autowired
     private ConcernRepository concernRepository;
 
+    @Autowired
+    private RedisTemplate<String, String> redisTemplate;
+
+//    private final static String userFlag =
+
     @Override
-    public void concernUser(Long id) throws ConcernException, LogException, IOException {
+    public synchronized void concernUser(Long id) throws ConcernException, LogException, IOException {
         User user = UserHelper.getUser();
         User toUser = userRepository.getOne(id);
         List<Concern> concerns = concernRepository.findByUserAndToUser(user, toUser);
@@ -49,6 +55,7 @@ public class ConcernServiceImpl implements ConcernService {
         concern.setDate(new Date());
         concern.setUser(user);
         concernRepository.save(concern);
+//        redisTemplate
     }
 
     @Override
