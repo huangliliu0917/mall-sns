@@ -3,6 +3,7 @@ package com.huotu.huobanplus.sns.boot;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -40,8 +41,7 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {
         super.configure(web);
-        web.ignoring().antMatchers("/app/**",//前台请求忽略
-                "/back/css/**","/back/fonts/**","/back/plugins/**","/back/img/**","/back/js/**");//后台静态资源忽略
+        web.ignoring().antMatchers("/app/**","/admin/resource/**");//前台请求忽略
     }
 
     @Override
@@ -50,14 +50,14 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .headers().frameOptions().sameOrigin().and()
                 .authorizeRequests().antMatchers(
-                "/back/login.html").permitAll()
+                "/admin/login.html").permitAll()
                 .anyRequest().authenticated()//任何请求都需要验证
                 .and()
                 .csrf().disable()//关闭csrf功能
                 .formLogin()     //表单验证
-                .loginPage("/back/login.html")
-                .defaultSuccessUrl("/back/index.html", true)//登录成功跳转的页面
-                .failureUrl("/back/loginError")
+                .loginPage("/admin/login.html")
+                .defaultSuccessUrl("/admin/index.html", true)//登录成功跳转的页面
+//                .failureUrl("/admin/loginError")
                 .permitAll()
                 .and()
                 .httpBasic();
