@@ -12,6 +12,7 @@ package com.huotu.huobanplus.sns.controller.admin;
 import com.huotu.huobanplus.sns.entity.Level;
 import com.huotu.huobanplus.sns.repository.LevelRepository;
 import com.huotu.huobanplus.sns.repository.UserRepository;
+import com.huotu.huobanplus.sns.service.CommonConfigService;
 import com.huotu.huobanplus.sns.utils.ContractHelper;
 import com.huotu.huobanplus.sns.utils.ResultUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,8 @@ public class AdminLevelController {
     private UserRepository userRepository;
     @Autowired
     private LevelRepository levelRepository;
+    @Autowired
+    private CommonConfigService commonConfigService;
 
     @RequestMapping(value = "/index", method = RequestMethod.GET)
     public String index(@RequestParam(required = false) Integer page,
@@ -58,6 +61,7 @@ public class AdminLevelController {
         model.addAttribute("page", page);
         model.addAttribute("pageCount", pageCount);
         model.addAttribute("list", pages.getContent());
+        model.addAttribute("url", commonConfigService.getWebUrl() + "/top/level/index?page=");
         return "/admin/user/levelList";
     }
 
@@ -87,5 +91,12 @@ public class AdminLevelController {
         }
         levelRepository.delete(id);
         return ResultUtil.success();
+    }
+
+    @RequestMapping(value = "/getOne", method = RequestMethod.GET)
+    @ResponseBody
+    public ModelMap getOne(@RequestParam Long id) throws IOException {
+        Level level = levelRepository.getOne(id);
+        return ResultUtil.success(null, level);
     }
 }

@@ -12,10 +12,8 @@
 
 <head>
 
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>等级列表</title>
 
     <link href="http://resali.huobanplus.com/cdn/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet"/>
@@ -24,27 +22,28 @@
     <link href="http://resali.huobanplus.com/cdn/hotui/css/plugins/morris/morris-0.4.3.min.css" rel="stylesheet"/>
     <link href="http://resali.huobanplus.com/cdn/hotui/css/animate.min.css" rel="stylesheet"/>
     <link href="http://resali.huobanplus.com/cdn/hotui/css/style.min-1.0.2.css" rel="stylesheet"/>
+    <script th:inline="javascript">
+        var rootURL = /*[[${url}]]*/'www.baidu.com';
+        var pageIndex = /*[[${page}]]*/'1';
+        var totalPage = /*[[${pageSize}]]*/'20';
+    </script>
 </head>
 
 <body class="gray-bg">
 <div class="wrapper wrapper-content animated fadeInRight tooltip-demo">
-    <!--search-->
-    <form role="form" class="search-panel">
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="ibox float-e-margins">
-                    <div class="ibox-content p-m no-borders">
-                        <div class="form-inline">
-                            <div class="form-inline">
-                                <label class="control-label">等级列表</label>
-                                <button class="btn btn-success btn-sm">新增等级</button>
-                            </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content p-m no-borders">
+                    <div class="form-inline">
+                        <div class="form-inline" style="text-align: right;">
+                            <button class="btn btn-success btn-sm" onclick="levelHandler.open(1)">新增等级</button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </form>
+    </div>
     <!--list-->
     <div class="row">
         <div class="col-lg-12">
@@ -64,12 +63,18 @@
 
                             <tr th:each="level:${list}">
                                 <td th:text="${level.id}">1</td>
-                                <td th:text="${level.title}">0.0001</td>
-                                <td th:text="${level.redeemPeriod}">1</td>
+                                <td th:text="${level.name}">等级一</td>
+                                <td th:text="${level.experience}">1</td>
                                 <td>
-                                    <a class="btn btn-success btn-sm" href="javascript:void(0)"
-                                       th:href="@{/financialGoods/editPage(id=${financial.id})}">
-                                        <i class="fa fa-paste"></i>&nbsp;编辑</a>
+                                    <button class="btn btn-success btn-sm" th:attr="levelId=${level.id}"
+                                            onclick="levelHandler.edit(this)">
+                                        <i class="fa fa-paste"></i>&nbsp;编辑
+                                    </button>
+                                    &nbsp;&nbsp;
+                                    <button class="btn btn-success btn-sm" th:attr="levelId=${level.id}"
+                                            onclick="levelHandler.deleteLevel(this)">
+                                        <i class="fa fa-paste"></i>&nbsp;删除
+                                    </button>
                                 </td>
                             </tr>
                             </tbody>
@@ -85,6 +90,45 @@
         </div>
     </div>
 </div>
+<div id="level" class="wrapper wrapper-content animated fadeInRight" style="display: none">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <form method="get" class="form-horizontal" id="level_form">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">等级名称</label>
+
+                            <div class="col-sm-10">
+                                <input id="id" name="id" type="hidden"/>
+                                <input type="text" required="required" class="form-control input-sm"
+                                       id="name" name="name" placeholder="必填"
+                                       style="width: 250px;"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">经验值</label>
+
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control input-sm mb10" required="required"
+                                       style="width: 250px;"
+                                       id="experience" name="experience" runat="server" placeholder="升级所需经验值"/>
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <button class="btn btn-success btn-sm" id="saveLevel" type="submit">保存</button>
+                                <button class="btn btn-white" type="button" onclick="levelHandler.reset()">返回</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
 
 <!--基础框架js-->
 <script src="http://resali.huobanplus.com/cdn/jquery/2.2.4/jquery.min.js"></script>
@@ -93,31 +137,115 @@
 
 <!--validate-->
 <script src="http://resali.huobanplus.com/cdn/jquery-validation/1.15.0/jquery.validate.min.js"></script>
-<!--<script src="http://resali.huobanplus.com/cdn/jquery-validation/1.15.0/additional-methods.min.js"></script>-->
+<script src="http://resali.huobanplus.com/cdn/jquery-validation/1.15.0/additional-methods.min.js"></script>
 <script src="http://resali.huobanplus.com/cdn/jquery-validation/1.15.0/localization/messages_zh.min.js"></script>
 <script src="../../js/bootstrap.hot.extra-validate.js"></script>
 
 <script src="../../js/bootstrap.hot.extra-utils.js"></script>
 <script src="../../js/bootstrap.hot.extra-init.js"></script>
 
+<!--suppress JSUnresolvedFunction -->
 <script type="text/javascript">
-    var pageIndex = 1;
-    var totalPage = 20;
+    var win;
 
     $(function () {
         //初始化分页
         var pageinate = new hot.paging(".pagination", pageIndex, totalPage, 7);
 
         pageinate.init(function (p) {
-
+            window.location.href = rootURL + p;
         });
+
+        $("#level_form").validateCustom(function () {
+        }, {
+            debug: true
+        });
+
+        $("#saveLevel").click(function () {
+
+            if ($("#name").val() == "") {
+                layer.msg("请填写等级名称~");
+                return;
+            }
+            if ($("#experience").val() == "") {
+                layer.msg("请填写所需经验值~");
+                return;
+            }
+            $.ajax({
+                url: 'save',
+                type: "POST",
+                timeout: 5000,
+                data: {
+                    id: $("#id").val(), name: $("#name").val(),
+                    experience: $("#experience").val()
+                },
+                success: function (result) {
+                    if (result.success) {
+                        layer.msg('保存成功');
+                        window.location.reload();
+                    }
+                }, error: function () {
+                    layer.msg('连接超时~');
+                }
+            })
+        })
     });
 
-    var goodListHandler = {
-        deleteGood: function (goodId) {
-            hot.confirm("确定要删除该商品?", function () {
-                hot.tip.success("删除成功");
+    var levelHandler = {
+        open: function (status) {
+            var title = status == 1 ? "新增等级" : "编辑等级";
+            win = layer.open({
+                type: 1,
+                title: title,
+                shadeClose: true,
+                shade: false,
+                //maxmin: true, //开启最大化最小化按钮
+                area: ['550px', '350px'],
+                content: $("#level")
+            });
+        },
+        reset: function () {
+            $("#level_form")[0].reset();
+            layer.close(win);
+        },
+        edit: function (obj) {
+            var id = $(obj).attr("levelId");
+            $.ajax({
+                url: 'getOne',
+                type: 'GET',
+                data: {id: id},
+                success: function (result) {
+                    var data = result.data;
+                    $("#id").val(data.id);
+                    $("#name").val(data.name);
+                    $("#experience").val(data.experience);
+                    levelHandler.open(2);
+                },
+                error: function () {
+                    layer.msg("连接超时");
+                }
             })
+        }, deleteLevel: function (obj) {
+            layer.confirm('确认删除该等级?', {icon: 3, title: '提示'}, function () {
+                var id = $(obj).attr("levelId");
+                $.ajax({
+                    url: 'delete',
+                    type: 'POST',
+                    data: {id: id},
+                    success: function (result) {
+                        if (result.success) {
+                            layer.msg("删除成功");
+                            window.location.reload();
+                        } else {
+                            layer.msg(result.msg);
+                        }
+                    },
+                    error: function () {
+                        layer.msg("连接超时");
+                    }
+                })
+            });
+
         }
     }
 </script>
