@@ -1,6 +1,7 @@
 package com.huotu.huobanplus.sns.boot;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -10,6 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
  * Created by Administrator on 2016/10/10.
@@ -39,7 +41,7 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity web) throws Exception {
         super.configure(web);
         web.ignoring().antMatchers("/app/**",//前台请求忽略
-                "/back/css/**","/back/fonts/**","/back/holder.js/**","/back/images/**","/back/js/**");//后台静态资源忽略
+                "/back/css/**","/back/fonts/**","/back/plugins/**","/back/img/**","/back/js/**");//后台静态资源忽略
     }
 
     @Override
@@ -48,17 +50,20 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .headers().frameOptions().sameOrigin().and()
                 .authorizeRequests().antMatchers(
-                "/back/signin.html").permitAll()
+                "/back/login.html").permitAll()
                 .anyRequest().authenticated()//任何请求都需要验证
                 .and()
                 .csrf().disable()//关闭csrf功能
                 .formLogin()     //表单验证
-                .loginPage("/back/signin.html")
+                .loginPage("/back/login.html")
                 .defaultSuccessUrl("/back/index.html", true)//登录成功跳转的页面
+                .failureUrl("/back/loginError")
+                .permitAll()
                 .and()
                 .httpBasic();
 
     }
+
 
 
 

@@ -86,7 +86,7 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
         ThymeleafViewResolver resolver = new ThymeleafViewResolver();
         SpringTemplateEngine engine = new SpringTemplateEngine();
         ServletContextTemplateResolver rootTemplateResolver = new ServletContextTemplateResolver();
-        rootTemplateResolver.setPrefix("/WEB-INF/content/");
+        rootTemplateResolver.setPrefix("/");
         rootTemplateResolver.setSuffix(".html");
         rootTemplateResolver.setCharacterEncoding("UTF-8");
 
