@@ -37,6 +37,7 @@ import java.util.Objects;
 public class UserCircleServiceImpl implements UserCircleService {
 
     private final static String circleFlag = "_circle_";
+    volatile Long userAmount;
     @Autowired
     private CircleRepository circleRepository;
     @Autowired
@@ -53,7 +54,7 @@ public class UserCircleServiceImpl implements UserCircleService {
 
     @Transactional
     @Override
-    public synchronized void concern(Long id) throws ConcernException, LogException, IOException {
+    public void concern(Long id) throws ConcernException, LogException, IOException {
         User user = getUser();
         Circle circle = circleRepository.getOne(id);
         List<UserCircle> userCircles = userCircleRepository.findByUserAndCircle(user, circle);
@@ -66,16 +67,20 @@ public class UserCircleServiceImpl implements UserCircleService {
         userCircleRepository.save(userCircle);
         BoundHashOperations<String, String, Long> circleOperations = redisTemplate
                 .boundHashOps(circleFlag + id);
-        Long userAmount = circleOperations.get("userAmount");
-        if (null == userAmount) {
-            circleOperations.put("userAmount", 1L);
-        } else {
-            circleOperations.put("userAmount", userAmount + 1L);
+
+        synchronized (userAmount) {
+            userAmount = circleOperations.get("userAmount");
+            if (null == userAmount) {
+                circleOperations.put("userAmount", 1L);
+            } else {
+                circleOperations.put("userAmount", userAmount + 1L);
+            }
         }
+
     }
 
     @Override
-    public synchronized void cancelConcern(Long id) throws ConcernException, LogException, IOException {
+    public void cancelConcern(Long id) throws ConcernException, LogException, IOException {
         User user = getUser();
         Circle circle = circleRepository.getOne(id);
         List<UserCircle> userCircles = userCircleRepository.findByUserAndCircle(user, circle);
@@ -86,7 +91,11 @@ public class UserCircleServiceImpl implements UserCircleService {
         }
         BoundHashOperations<String, String, Long> circleOperations = redisTemplate
                 .boundHashOps(circleFlag + id);
-        Long userAmount = circleOperations.get("userAmount");
-        circleOperations.put("userAmount", userAmount - userCircles.size());
+        synchronized (userAmount) {
+            userAmount = circleOperations.get("userAmount");
+            circleOperations.put("userAmount", userAmount - userCircles.size());
+        }
+//        Long userAmount = circleOperations.get("userAmount");
+//        circleOperations.put("userAmount", userAmount - userCircles.size());
     }
 }

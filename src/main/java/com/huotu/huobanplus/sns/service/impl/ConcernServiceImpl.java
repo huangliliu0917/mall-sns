@@ -32,16 +32,13 @@ import java.util.Objects;
 @Service
 public class ConcernServiceImpl implements ConcernService {
 
+    private final static String userFlag = "_user_";
     @Autowired
     private UserRepository userRepository;
-
     @Autowired
     private ConcernRepository concernRepository;
-
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
-
-//    private final static String userFlag =
 
     @Override
     public synchronized void concernUser(Long id) throws ConcernException, LogException, IOException {
