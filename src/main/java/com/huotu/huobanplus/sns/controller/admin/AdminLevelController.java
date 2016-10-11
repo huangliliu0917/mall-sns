@@ -11,7 +11,9 @@ package com.huotu.huobanplus.sns.controller.admin;
 
 import com.huotu.huobanplus.sns.entity.Level;
 import com.huotu.huobanplus.sns.repository.LevelRepository;
+import com.huotu.huobanplus.sns.repository.UserRepository;
 import com.huotu.huobanplus.sns.utils.ContractHelper;
+import com.huotu.huobanplus.sns.utils.ResultUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,10 +21,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.Objects;
 
@@ -33,6 +38,8 @@ import java.util.Objects;
 @RequestMapping(value = "/top/level")
 public class AdminLevelController {
 
+    @Autowired
+    private UserRepository userRepository;
     @Autowired
     private LevelRepository levelRepository;
 
@@ -51,6 +58,34 @@ public class AdminLevelController {
         model.addAttribute("page", page);
         model.addAttribute("pageCount", pageCount);
         model.addAttribute("list", pages.getContent());
-        return "";
+        return "/admin/user/levelList";
+    }
+
+    @Transactional
+    @RequestMapping(value = "/save", method = RequestMethod.POST)
+    @ResponseBody
+    public ModelMap save(
+            @RequestParam(required = false) Long id, @RequestParam String name, @RequestParam Long experience
+    ) throws IOException {
+        Level level;
+        if (Objects.isNull(id)) level = new Level();
+        else level = levelRepository.findOne(id);
+        level.setName(name);
+        level.setExperience(experience);
+        levelRepository.save(level);
+        ModelMap map = new ModelMap();
+        map.addAttribute("success", true);
+        return map;
+    }
+
+    @RequestMapping(value = "/delete", method = RequestMethod.POST)
+    @ResponseBody
+    public ModelMap delete(@RequestParam Long id) throws IOException {
+        Long count = userRepository.countByLevelId(id);
+        if (count.intValue() > 0) {
+            return ResultUtil.failure("该等级已有用户，无法删除");
+        }
+        levelRepository.delete(id);
+        return ResultUtil.success();
     }
 }
