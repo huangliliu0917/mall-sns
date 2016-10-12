@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -98,5 +99,12 @@ public class AdminLevelController {
     public ModelMap getOne(@RequestParam Long id) throws IOException {
         Level level = levelRepository.getOne(id);
         return ResultUtil.success(null, level);
+    }
+
+    @RequestMapping(value = "/findAll", method = RequestMethod.GET)
+    @ResponseBody
+    public List<Level> findAll() throws IOException {
+        List<Level> levels = levelRepository.findAll(new Sort(Sort.Direction.ASC, "experience"));
+        return levels;
     }
 }

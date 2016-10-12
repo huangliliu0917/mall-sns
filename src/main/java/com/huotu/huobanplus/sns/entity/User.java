@@ -13,6 +13,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -32,6 +33,16 @@ public class User {
      * 商家
      */
     private Long customerId;
+
+    /**
+     * 昵称
+     */
+    private String nickName;
+
+    /**
+     * 头像
+     */
+    private String imgURL;
 
     /**
      * 关注人数
@@ -54,6 +65,12 @@ public class User {
     private Long experience;
 
     /**
+     * 注册时间
+     */
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createDate;
+
+    /**
      * 身份
      */
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH})
@@ -69,6 +86,12 @@ public class User {
      * 排名 （计算规则待定 todo）
      */
     private Long rank;
+
+    /**
+     * 权限：**，两位，0代表禁用，1：代表可用
+     * 第一位：发帖权限，第二位：评论权限
+     */
+    private String power = "11";
 
     /**
      * 用户标签
