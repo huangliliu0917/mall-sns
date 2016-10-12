@@ -23,28 +23,29 @@ public interface WikiController {
      * @return
      */
     @RequestMapping("/getCatalogList")
-    ApiResult getCatalogList(Output<AppCatalogModel[]> catalogList, Long id);
+    ApiResult getCatalogList(Output<AppCatalogModel[]> catalogList, Integer id);
 
     /**
      * 百科列表
      *
      * @param wikilist  百科列表
-     * @param catalogId 分类Id
-     * @param lastId    上一个id
+     * @param catalogId 分类Id 值为空或0 显示全部
+     * @param lastId    上一个id 值为空或0 显示第一页
      * @return
      * @throws Exception
      */
     @RequestMapping("/wikiList")
-    ApiResult wikiList(Output<AppWikiListModel[]> wikilist, Long catalogId, Long lastId) throws Exception;
+    ApiResult wikiList(Output<AppWikiListModel[]> wikilist, Integer catalogId, Long lastId) throws Exception;
 
 
     /**
      * 百科详情
      *
      * @param data 百科数据
+     * @param id   百科id
      * @return
      * @throws Exception
      */
     @RequestMapping("/wiki")
-    ApiResult wiki(Output<AppWikiModel> data) throws Exception;
+    ApiResult wiki(Output<AppWikiModel> data, Long id) throws Exception;
 }

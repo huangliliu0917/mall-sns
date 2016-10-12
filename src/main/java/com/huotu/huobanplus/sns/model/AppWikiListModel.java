@@ -14,6 +14,16 @@ public class AppWikiListModel {
      * 百科id
      */
     private Long pid;
+
+    /**
+     * 标题
+     */
+    private String name;
+
+    /**
+     * 图片
+     */
+    private String pictureUrl;
     /**
      * 简介
      */

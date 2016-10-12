@@ -12,7 +12,7 @@ public class AppCatalogModel {
     /**
      * 分类Id
      */
-    private Long pid;
+    private Integer pid;
     /**
      * 分类名称
      */

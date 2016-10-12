@@ -57,6 +57,12 @@ public class AbstractArticle {
     private String content;
 
     /**
+     * 简介
+     */
+    @Column(length = 500)
+    private String summary;
+
+    /**
      * 发布时间
      */
     @Temporal(TemporalType.TIMESTAMP)

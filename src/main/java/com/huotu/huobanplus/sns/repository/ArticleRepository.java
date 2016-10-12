@@ -10,13 +10,36 @@
 package com.huotu.huobanplus.sns.repository;
 
 import com.huotu.huobanplus.sns.entity.Article;
+import com.huotu.huobanplus.sns.entity.Category;
+import com.huotu.huobanplus.sns.model.common.ArticleType;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * Created by slt on 2016/10/9.
  */
 @Repository
 public interface ArticleRepository extends JpaRepository<Article, Long>, JpaSpecificationExecutor<Article> {
+
+    @Query("select article from Article article where article.articleType=?1")
+    Page<Article> findByArticleType(ArticleType articleType, Pageable pageable);
+
+
+    @Query("select article from Article article where article.articleType=?1 and article.id<?2")
+    List<Article> findByArticleType(ArticleType articleType, Long lastId);
+
+    @Query("select article from Article article where article.articleType=?1 and article.category=?2")
+    Page<Article> findByArticleTypeAndCategory(ArticleType articleType, Category category, Pageable pageable);
+
+
+    @Query("select article from Article article where article.articleType=?1 and article.category=?2 and article.id<?3")
+    List<Article> findByArticleTypeAndCategory(ArticleType articleType, Category category, Long lastId);
+
+
 }
