@@ -14,6 +14,7 @@ import javax.persistence.*;
 @Cacheable(value = false)
 @Getter
 @Setter
+@Deprecated
 public class Authentication {
 
     @Id

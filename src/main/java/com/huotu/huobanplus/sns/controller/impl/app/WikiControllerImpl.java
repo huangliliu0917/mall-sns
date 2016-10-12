@@ -3,7 +3,7 @@ package com.huotu.huobanplus.sns.controller.impl.app;
 import com.huotu.common.api.ApiResult;
 import com.huotu.common.api.Output;
 import com.huotu.huobanplus.sns.controller.app.WikiController;
-import com.huotu.huobanplus.sns.model.AppCatalogModel;
+import com.huotu.huobanplus.sns.model.AppCategoryModel;
 import com.huotu.huobanplus.sns.model.AppWikiListModel;
 import com.huotu.huobanplus.sns.model.AppWikiModel;
 import com.huotu.huobanplus.sns.model.common.AppCode;
@@ -28,9 +28,9 @@ public class WikiControllerImpl implements WikiController {
 
 
     @Override
-    public ApiResult getCatalogList(Output<AppCatalogModel[]> catalogList, Integer id) {
-        List<AppCatalogModel> appCatalogModels = categoryService.getAppCatalogList(id);
-        catalogList.outputData(appCatalogModels.toArray(new AppCatalogModel[appCatalogModels.size()]));
+    public ApiResult getCatalogList(Output<AppCategoryModel[]> catalogList, Integer id) {
+        List<AppCategoryModel> appCategoryModels = categoryService.getAppWikiCatalogList(id);
+        catalogList.outputData(appCategoryModels.toArray(new AppCategoryModel[appCategoryModels.size()]));
         return ApiResult.resultWith(AppCode.SUCCESS);
     }
 

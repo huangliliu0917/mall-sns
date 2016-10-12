@@ -8,7 +8,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class AppCatalogModel {
+public class AppCategoryModel {
     /**
      * 分类Id
      */

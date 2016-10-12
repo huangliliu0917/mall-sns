@@ -1,6 +1,7 @@
 package com.huotu.huobanplus.sns.service;
 
-import com.huotu.huobanplus.sns.model.AppCatalogModel;
+import com.huotu.huobanplus.sns.model.AppCategoryModel;
+import com.huotu.huobanplus.sns.model.admin.AdminCategoryModel;
 
 import java.util.List;
 
@@ -10,5 +11,7 @@ import java.util.List;
 
 public interface CategoryService {
 
-    List<AppCatalogModel> getAppCatalogList(Integer id);
+    List<AppCategoryModel> getAppWikiCatalogList(Integer parentId);
+
+    List<AdminCategoryModel> getAdminCategoryList(Integer categoryType, Integer parentId);
 }

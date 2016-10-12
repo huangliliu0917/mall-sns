@@ -2,7 +2,7 @@ package com.huotu.huobanplus.sns.controller.app;
 
 import com.huotu.common.api.ApiResult;
 import com.huotu.common.api.Output;
-import com.huotu.huobanplus.sns.model.AppCatalogModel;
+import com.huotu.huobanplus.sns.model.AppCategoryModel;
 import com.huotu.huobanplus.sns.model.AppWikiListModel;
 import com.huotu.huobanplus.sns.model.AppWikiModel;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,7 +23,7 @@ public interface WikiController {
      * @return
      */
     @RequestMapping("/getCatalogList")
-    ApiResult getCatalogList(Output<AppCatalogModel[]> catalogList, Integer id);
+    ApiResult getCatalogList(Output<AppCategoryModel[]> catalogList, Integer id);
 
     /**
      * 百科列表
