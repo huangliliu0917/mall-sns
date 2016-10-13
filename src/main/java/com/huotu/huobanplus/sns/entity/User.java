@@ -26,56 +26,49 @@ import java.util.List;
 @Setter
 public class User {
 
+    /**
+     * 身份
+     *
+     * @see {@link com.huotu.huobanplus.sns.entity.support.AuthenticationType}
+     */
+//    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH})
+//    private Authentication authentication;
+    int authenticationType;
     @Id
     private Long id;
-
     /**
      * 商家
      */
     private Long customerId;
-
     /**
      * 昵称
      */
     private String nickName;
-
     /**
      * 头像
      */
     private String imgURL;
-
     /**
      * 关注人数
      */
     private Long userAmount;
-
     /**
      * 粉丝数
      */
     private Long fansAmount;
-
     /**
      * 发布文章数
      */
     private Long articleAmount;
-
     /**
      * 经验
      */
     private Long experience;
-
     /**
      * 注册时间
      */
     @Temporal(TemporalType.TIMESTAMP)
     private Date createDate;
-
-    /**
-     * 身份
-     */
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH})
-    private Authentication authentication;
-
     /**
      * 等级 todo 评级标准
      */

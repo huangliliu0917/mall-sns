@@ -49,6 +49,6 @@ public interface UserService {
      * @throws IOException
      */
     Page<User> findByNickNameAndAuthenticationIdAndLevelId(String nickName,
-                                                           Long authenticationId,
+                                                           Integer authenticationId,
                                                            Long levelId, Pageable pageable) throws IOException;
 }

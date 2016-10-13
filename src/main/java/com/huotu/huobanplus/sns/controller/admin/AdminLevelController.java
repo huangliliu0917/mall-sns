@@ -47,6 +47,15 @@ public class AdminLevelController {
     @Autowired
     private CommonConfigService commonConfigService;
 
+    /**
+     * 等级列表页
+     *
+     * @param page     页码
+     * @param pageSize 每页条数
+     * @param model
+     * @return
+     * @throws IOException
+     */
     @RequestMapping(value = "/index", method = RequestMethod.GET)
     public String index(@RequestParam(required = false) Integer page,
                         @RequestParam(required = false) Integer pageSize, Model model) throws IOException {
@@ -66,6 +75,15 @@ public class AdminLevelController {
         return "/admin/user/levelList";
     }
 
+    /**
+     * 保存等级
+     *
+     * @param id         等级id
+     * @param name       等级名字
+     * @param experience 升级所需经验
+     * @return
+     * @throws IOException
+     */
     @Transactional
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     @ResponseBody
@@ -83,6 +101,13 @@ public class AdminLevelController {
         return map;
     }
 
+    /**
+     * 删除等级
+     *
+     * @param id 等级id
+     * @return
+     * @throws IOException
+     */
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     @ResponseBody
     public ModelMap delete(@RequestParam Long id) throws IOException {
@@ -94,6 +119,13 @@ public class AdminLevelController {
         return ResultUtil.success();
     }
 
+    /**
+     * 根据主键得到等级详情
+     *
+     * @param id 等级id
+     * @return
+     * @throws IOException
+     */
     @RequestMapping(value = "/getOne", method = RequestMethod.GET)
     @ResponseBody
     public ModelMap getOne(@RequestParam Long id) throws IOException {
@@ -101,6 +133,12 @@ public class AdminLevelController {
         return ResultUtil.success(null, level);
     }
 
+    /**
+     * 得到所有等级
+     *
+     * @return
+     * @throws IOException
+     */
     @RequestMapping(value = "/findAll", method = RequestMethod.GET)
     @ResponseBody
     public List<Level> findAll() throws IOException {
