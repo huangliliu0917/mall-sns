@@ -8,17 +8,24 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class AdminCategoryModel {
 
-    private Integer id;
-
-    /**
-     * 分类名称
-     */
-    private String name;
-
+public class AdminCategoryModel extends AdminBaseCategoryModel {
     /**
      * 排序
      */
     private Integer sort;
+
+    private Integer parentId;
+    /**
+     * 父级名称
+     */
+    private String parentName;
+
+    private Integer categoryType;
+
+
+
+
+
+
 }
