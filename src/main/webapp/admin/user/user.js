@@ -27,7 +27,12 @@ $(function () {
 
     $("#saveAuthentication").click(function () {
         page.updateAuthentication();
+    });
+
+    $("#savePower").click(function () {
+        page.updatePower();
     })
+
 });
 
 var page = {};
@@ -123,6 +128,7 @@ page.edit = function (id) {
 };
 var levelWin;
 var authenticationWin;
+var powerWin;
 page.openLevel = function (userId, levelId) {
     $("#userId").val(userId);
     $("#levelSelect option[value='" + levelId + "']").attr("selected", true);
@@ -201,8 +207,62 @@ page.closeAuthenticationWin = function () {
     layer.close(authenticationWin);
 };
 
-page.openPower = function () {
 
+page.openPower = function (userId, power) {
+    $("#userId").val(userId);
+    power += "";
+    var one = power.substr(0, 1);
+    var two = power.substr(1, 2);
+    if ($("input[name='articlePower']").val() == one) {
+        $("input[name='articlePower']").attr("checked", true);
+    }
+    if ($("input[name='commentPower']").val() == two) {
+        $("input[name='commentPower']").attr("checked", true);
+    }
+    powerWin = layer.open({
+        type: 1,
+        title: "更改权限",
+        shadeClose: true,
+        shade: false,
+        area: ['450px', '300px'],
+        content: $("#powerList")
+    });
+};
+
+page.updatePower = function () {
+    var userId = $("#userId").val();
+    var power = "";
+    if ($("input[name='articlePower']").is(":checked")) {
+        power += "1";
+    } else {
+        power += "0";
+    }
+    if ($("input[name='commentPower']").is(":checked")) {
+        power += "1";
+    } else {
+        power += "0";
+    }
+    page.closePowerWin();
+    $.ajax({
+        url: 'updatePower',
+        type: "POST",
+        timeout: 5000,
+        data: {
+            userId: userId, power: power
+        },
+        success: function (result) {
+            if (result.success) {
+                layer.msg('保存成功');
+                window.location.reload();
+            }
+        }, error: function () {
+            layer.msg('连接超时~');
+        }
+    })
+};
+
+page.closePowerWin = function () {
+    layer.close(powerWin);
 };
 
 function format(obj) {
