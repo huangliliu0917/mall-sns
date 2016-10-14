@@ -74,8 +74,10 @@ public class ArticleServiceImpl implements ArticleService {
         appWikiModel.setContent(article.getContent());
         appWikiModel.setTime(article.getDate().getTime());
         appWikiModel.setAdConent(article.getAdConent());
-//        appWikiModel.setUserHeadUrl();
-//        appWikiModel.setUserName();
+        if (article.getPublisher() != null) {
+            appWikiModel.setUserHeadUrl(article.getPublisher().getImgURL());
+            appWikiModel.setUserName(article.getPublisher().getNickName());
+        }
         return appWikiModel;
     }
 
@@ -89,11 +91,12 @@ public class ArticleServiceImpl implements ArticleService {
             appWikiListModel.setPictureUrl(x.getPictureUrl());
             appWikiListModel.setTime(x.getDate().getTime());
             appWikiListModel.setViewAmount(x.getView());
-            //todo
-//            appWikiListModel.setUserHeadUrl();
-//            appWikiListModel.setUserLevel();
-//            appWikiListModel.setUserName();
+            if (x.getPublisher() != null) {
+                appWikiListModel.setUserHeadUrl(x.getPublisher().getImgURL());
+                appWikiListModel.setUserLevel(x.getPublisher().getLevel().getId());
+                appWikiListModel.setUserName(x.getPublisher().getNickName());
 //            appWikiListModel.setUrl();
+            }
             appWikiListModels.add(appWikiListModel);
         });
 

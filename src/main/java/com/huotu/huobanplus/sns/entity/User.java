@@ -89,5 +89,6 @@ public class User {
     /**
      * 用户标签
      */
+    @OneToMany(cascade = {CascadeType.REFRESH})
     private List<Tag> tags;
 }
