@@ -41,7 +41,7 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {
         super.configure(web);
-        web.ignoring().antMatchers("/app/**","/admin/resource/**");//前台请求忽略
+        web.ignoring().antMatchers("/app/**","/js/**","/css/**");//前台请求忽略
     }
 
     @Override

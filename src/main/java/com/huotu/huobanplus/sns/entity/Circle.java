@@ -18,12 +18,17 @@ import java.util.List;
 public class Circle {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     /**
      * 商家
      */
     private Long customerId;
+
+    /**
+     * 是否可用
+     */
+    private boolean enabled=true;
 
     /**
      * 圈子所属分类
@@ -34,10 +39,11 @@ public class Circle {
     /**
      * 圈子组长
      */
-    private Long leader;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH})
+    private User leader;
 
     /**
-     * 分类名称
+     * 圈子名称
      */
     @Column(length = 10)
     private String name;
@@ -62,17 +68,17 @@ public class Circle {
     /**
      * 是否热门推荐
      */
-    private Boolean suggested;
+    private boolean suggested;
 
     /**
      * 圈子关注人数
      */
-    private Long userAmount;
+    private long userAmount;
 
     /**
      * 文章数
      */
-    private Long articleAmount;
+    private long articleAmount;
 
     /**
      * 圈子标签
