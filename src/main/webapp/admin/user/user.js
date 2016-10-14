@@ -61,12 +61,12 @@ page.list = function () {
                 }
                 html += '</td><td>' + row.nickName + '</td><td>' + row.experience + '</td><td>'
                     + moment(row.createDate).format("YYYY-MM-DD, hh:mm:ss a")
-                    + '</td><td>' + row.articleAmount + '</td><td>';
+                    + '</td><td>';
                 var power = row.power;
                 if (power.indexOf("1") >= 0 && power.indexOf("0") < 0) {
-                    html += '启用';
+                    html += '拥有';
                 } else if (power.indexOf("1") >= 0 && power.indexOf("0") >= 0) {
-                    html += '部分启用';
+                    html += '部分拥有';
                 } else if (power.indexOf("1") < 0 && power.indexOf("0") >= 0) {
                     html += '禁用';
                 }
@@ -84,15 +84,19 @@ page.list = function () {
                 html += '</td><td>' + row.level.name;
                 html += '</td><td><button class="btn btn-success btn-sm" th:attr="levelId=${level.id}"'
                     + 'onclick="page.edit(' + row.id + ')">'
-                    + '<i class="fa fa-paste"></i>&nbsp;编辑'
+                    + '<i class="fa fa-paste"></i>&nbsp;查看'
                     + '</button>&nbsp;&nbsp;';
                 html += '<button class="btn btn-success btn-sm"'
                     + 'onclick="page.openLevel(' + row.id + ',' + row.level.id + ')">'
-                    + '<i class="fa fa-toggle-up"></i>&nbsp;升级'
+                    + '<i class="fa fa-toggle-up"></i>&nbsp;等级'
+                    + '</button>&nbsp;&nbsp;';
+                html += '<button class="btn btn-success btn-sm"'
+                    + 'onclick="page.openPower(' + row.id + ',' + row.power + ')">'
+                    + '<i class="fa fa-user-secret"></i>&nbsp;权限'
                     + '</button>&nbsp;&nbsp;';
                 html += '<button class="btn btn-success btn-sm"'
                     + 'onclick="page.openAuthentication(' + row.id + ',' + row.authenticationType + ')">'
-                    + '<i class="fa fa-user"></i>&nbsp;更改身份'
+                    + '<i class="fa fa-user"></i>&nbsp;身份'
                     + '</button></td></tr>';
             }
             $("#userList").html(html);
@@ -115,7 +119,7 @@ page.paging = function (totalPage) {
 };
 
 page.edit = function (id) {
-    window.location.href = 'edit?id=' + id;
+    window.location.href = 'edit?userId=' + id;
 };
 var levelWin;
 var authenticationWin;
@@ -195,6 +199,10 @@ page.updateAuthentication = function () {
 
 page.closeAuthenticationWin = function () {
     layer.close(authenticationWin);
+};
+
+page.openPower = function () {
+
 };
 
 function format(obj) {

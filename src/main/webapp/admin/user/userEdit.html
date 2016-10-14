@@ -8,296 +8,136 @@
   -->
 
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 
 <head>
 
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-    <title>订单详情</title>
+    <title>用户详情</title>
 
-    <link href="http://resali.huobanplus.com/cdn/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
-    <link href="http://resali.huobanplus.com/cdn/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
-    <!-- Morris -->
-    <link href="css/plugins/morris/morris-0.4.3.min.css" rel="stylesheet">
-    <link href="css/animate.min.css" rel="stylesheet">
-    <link href="css/style.min.css?v=4.0.0" rel="stylesheet">
-
-    <!--checkbox-->
-    <link href="css/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" rel="stylesheet">
-
-    <!--datetimepick-->
-    <link href="js/plugins/datetimepick/css/daterangepicker.css" rel="stylesheet"/>
-
-    <link href="js/plugins/SearchableSelect/jquery.searchableSelect.css" rel="stylesheet"/>
+    <link href="http://resali.huobanplus.com/cdn/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="http://resali.huobanplus.com/cdn/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet"/>
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/animate.min.css" rel="stylesheet"/>
+    <link href="../../css/style.min.css?v=4.0.0" rel="stylesheet"/>
 </head>
 
 <body class="gray-bg">
-<div class="animated fadeInRight" style="padding:0 6px;position:fixed;width:100%;top: 0;z-index:101;">
-    <div class="col-lg-12">
-        <div class="ibox float-e-margins" style="margin-bottom:0;">
-            <div class="ibox-title" style="padding: 14px 15px 11px;">
-                <div class="form-inline">
-                    <div class="form-group m-r-sm">
-                        <label style="font-size: 17px; margin-top: 5px;">订单-2016082289875463 [已支付] [已发货] [活动]</label>
-                    </div>
-                    <div class="form-group m-r-sm" style="float: right;">
-                        <label class=" control-label">订单状态操作：</label>
-                        <button type="button" class="btn btn-warning btn-sm">支付</button>
-                        <button type="button" class="btn btn-success btn-sm"
-                                onclick="orderDocManager.showConsignFlow()">发货
-                        </button>
-                        <button type="button" class="btn btn-primary btn-sm">完成</button>
-                        <button type="button" style="margin-left: 20px;" class="btn btn-white btn-sm">恢复售后期</button>
-                        <button type="button" class="btn btn-white btn-sm">联合订单恢复</button>
-
-                        <button type="button" style="margin-left: 20px;" class="btn btn-danger btn-sm">作废</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="wrapper wrapper-content animated fadeInRight tooltip-demo" style="margin-top:59px;">
+<div class="wrapper wrapper-content animated fadeInRight tooltip-demo" style="margin-top:30px;">
     <div class="row">
         <div class="col-sm-12">
             <div class="ibox float-e-margins">
                 <div class="tabs-container">
                     <ul class="nav nav-tabs">
                         <li class="active"><a href="javascript:orderListHandler.orderFilter(0);">基本信息</a></li>
-                        <li class=""><a href="javascript:orderListHandler.orderFilter(1)">收退款记录</a></li>
-                        <li class=""><a href="javascript:orderListHandler.orderFilter(2)">收发货记录</a></li>
-                        <li class=""><a href="javascript:orderListHandler.orderFilter(3)">返利记录</a></li>
-                        <li class=""><a href="javascript:orderListHandler.orderFilter(4)">订单日志</a></li>
-                        <li class=""><a href="javascript:orderListHandler.orderFilter(5)">订单备注</a></li>
+                        <!--<li class=""><a href="javascript:void(0)">敬请期待</a></li>-->
+                        <!--<li class=""><a href="javascript:void(0)">敬请期待</a></li>-->
+                        <!--<li class=""><a href="javascript:void(0)">敬请期待</a></li>-->
+                        <!--<li class=""><a href="javascript:void(0)">敬请期待</a></li>-->
+                        <!--<li class=""><a href="javascript:void(0)">敬请期待</a></li>-->
                     </ul>
                     <div class="tab-content">
                         <div class="tab-pane active">
                             <div class="panel-body">
-                                <div class="row">
-                                    <div class="col-lg-12">
-                                        <div class="ibox float-e-margins m-b-none">
-                                            <div class="ibox-content p-xxs" style="border-top: none;">
-                                                <label>商品列表：</label>
-                                                <p style="height: 5px;"></p>
-                                                <table class="table table-bordered">
-                                                    <thead>
-                                                    <tr>
-                                                        <th>商家编码</th>
-                                                        <th>商品名称</th>
-                                                        <th>价格</th>
-                                                        <th>购买数量</th>
-                                                        <th>小计</th>
-                                                        <th>已发数量</th>
-                                                        <th>操作</th>
-                                                    </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                    <tr>
-                                                        <td>296x1fLvC5B-1</td>
-                                                        <td>快递鸟测试商品(深卡其布色)(1)</td>
-                                                        <td>111.00</td>
-                                                        <td>1</td>
-                                                        <td>111.00</td>
-                                                        <td>1</td>
-                                                        <td></td>
-                                                    </tr>
-                                                    </tbody>
-                                                </table>
+                                <div class="wrapper wrapper-content">
+                                    <div class="row animated fadeInRight">
+                                        <div class="col-sm-4">
+                                            <div class="ibox float-e-margins" style="border:1px solid #e7eaec">
+                                                <div class="ibox-title">
+                                                    <h5>个人资料</h5>
+                                                </div>
+                                                <div>
+                                                    <div class="ibox-content no-padding border-left-right">
+                                                        <img alt="image" class="img-responsive" src="../../img/user.png"
+                                                             style="margin-left: 20px;margin-top: 5px;"
+                                                             th:src="${imgURL}"/>
+                                                    </div>
+                                                    <div class="ibox-content profile-content">
+                                                        <h5><strong>昵称</strong></h5>
+                                                        <p th:text="${user.nickName}">天空飘来五个字</p>
+                                                        <h5>
+                                                            经验值
+                                                        </h5>
+                                                        <p th:text="${user.experience}">
+                                                            1000
+                                                        </p>
+                                                        <h5>
+                                                            注册时间
+                                                        </h5>
+                                                        <p th:text="${#calendars.format(user.createDate,'yyyy-MM-dd HH:mm:ss')}">
+                                                            2014-08-11 11:20:30
+                                                        </p>
+                                                        <h5>等级</h5>
+                                                        <p th:text="${user.level.name}">等级一</p>
+                                                        <h5>身份</h5>
+                                                        <p th:text="${authenticationType}">普通用户</p>
+                                                        <h5>标签</h5>
+                                                        <p th:text="${tags}">80后</p>
+                                                        <div class="row m-t-lg">
+                                                            <div class="col-sm-4">
+                                                                <span class="bar">5,3,9,6,5,9,7,3,5,2</span>
+                                                                <h5><strong th:text="${articleAmount}">169</strong> 文章
+                                                                </h5>
+                                                            </div>
+                                                            <div class="col-sm-4">
+                                                                <span class="line">5,3,9,6,5,9,7,3,5,2</span>
+                                                                <h5><strong th:text="${userAmount}">28</strong> 关注</h5>
+                                                            </div>
+                                                            <div class="col-sm-4">
+                                                                <span class="bar">5,3,2,-1,-3,-2,2,3,5,2</span>
+                                                                <h5><strong th:text="${fansAmount}">240</strong> 粉丝</h5>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-sm-7">
-                                        <div class="ibox float-e-margins">
-                                            <div class="ibox-content p-xxs">
-                                                <label>订单详情：</label>
-                                                <p style="height: 5px;"></p>
-                                                <table class="table table-bordered">
-                                                    <tbody>
-                                                    <tr>
-                                                        <th style="width: 140px;">订单号：</th>
-                                                        <td>2016082289875463
-                                                        </td>
-                                                        <th style="width: 140px;">商品总金额：</th>
-                                                        <td>111.00
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th style="width: 140px;">下单日期：</th>
-                                                        <td>8/22/2016 11:06:27 AM
-                                                        </td>
-                                                        <th style="width: 140px;">支付时间：</th>
-                                                        <td>8/22/2016 11:06:27 AM
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th style="width: 140px;">订单总金额：</th>
-                                                        <td>￥111 （已支付）
-                                                        </td>
-                                                        <th style="width: 140px;">订单折扣或涨价：</th>
-                                                        <td>￥111 （已支付）
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th style="width: 140px;">余额支付：</th>
-                                                        <td>￥111
-                                                        </td>
-                                                        <th style="width: 140px;">积分抵用金额：</th>
-                                                        <td>￥111
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th style="width: 140px;">余额代付支付：</th>
-                                                        <td>￥0
-                                                        </td>
-                                                        <th style="width: 140px;">积分代付金额：</th>
-                                                        <td>￥0
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th style="width: 140px;">红包抵用金额：</th>
-                                                        <td>￥0
-                                                        </td>
-                                                        <th style="width: 140px;">优惠金额：</th>
-                                                        <td>￥0
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th style="width: 140px;">在线支付：</th>
-                                                        <td>￥0
-                                                        </td>
-                                                        <th style="width: 140px;">众筹代付：</th>
-                                                        <td>￥0
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th style="width: 140px;">合伙人金币：</th>
-                                                        <td>￥0
-                                                        </td>
-                                                        <th style="width: 140px;">运费：</th>
-                                                        <td>￥0
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th style="width: 140px;">支付方式：</th>
-                                                        <td>支付宝
-                                                        </td>
-                                                        <th style="width: 140px;">配送方式：</th>
-                                                        <td>支付宝
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th style="width: 140px;">所属区域大伙伴：</th>
-                                                        <td>支付宝
-                                                        </td>
-                                                        <th style="width: 140px;">订单来源：</th>
-                                                        <td>
-                                                            普通
-                                                            <p style="color: #bbb;">(状态:{0},开团单号:{1},截止时间:{2})</p>
-                                                            <p style="color: #ed5565;" runat="server"
-                                                               id="divPintuanTip">拼团商品必须成团后才能发货!</p>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th style="width: 140px;">发票信息：</th>
-                                                        <td>支付宝
-                                                        </td>
-                                                    </tr>
-                                                    </tbody>
-                                                </table>
+                                        <div class="col-sm-8">
+                                            <div class="ibox float-e-margins" style="border:1px solid #e7eaec">
+                                                <div class="ibox-title">
+                                                    <h5>最新动态</h5>
+                                                    <div class="ibox-tools">
+                                                        <a class="collapse-link">
+                                                            <i class="fa fa-chevron-up"></i>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                                <div class="ibox-content">
 
-                                                <p>
-                                                    <span style="font-weight: bold;">订单附言：</span>就是离开jfk理解谁的离开弗兰克教授的离开分厘卡圣诞节了开发是的旅客谨防离开士大夫
-                                                </p>
+                                                    <div>
+                                                        <div class="feed-activity-list">
 
-                                                <p>
-                                                    订单备注：
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
+                                                            <div class="feed-element">
+                                                                <a href="profile.html#" class="pull-left">
+                                                                    <img alt="image" class="img-circle"
+                                                                         src="../../img/user.png"/>
+                                                                </a>
+                                                                <div class="media-body ">
+                                                                    <small class="pull-right text-navy">1天前</small>
+                                                                    <strong>奔波儿灞</strong> 关注了 <strong>灞波儿奔</strong>.
+                                                                    <br/>
+                                                                    <small class="text-muted">54分钟前 来自 皮皮时光机</small>
+                                                                    <div class="actions">
+                                                                        <a class="btn btn-xs btn-white"><i
+                                                                                class="fa fa-thumbs-up"></i> 赞 </a>
+                                                                        <a class="btn btn-xs btn-danger"><i
+                                                                                class="fa fa-heart"></i> 收藏</a>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
 
-                                    <div class="col-sm-5">
-                                        <div class="ibox float-e-margins m-b-none">
-                                            <div class="ibox-content p-xxs">
-                                                <label>购买会员信息：</label>
-                                                <p style="height: 5px;"></p>
-                                                <table class="table table-bordered">
-                                                    <tbody>
-                                                    <tr>
-                                                        <th style="width: 90px;">用户名：</th>
-                                                        <td>
-                                                            <a title="点击查看会员信息" href="javascript:viewMember();">
-                                                                <span id="Span1">18657135843</span></a>
-                                                            <a href="javascript:giftCoupon()">[送优惠券]</a>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th style="width: 90px;">类型：</th>
-                                                        <td>
-                                                            <span id="Span2">小伙伴</span>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th style="width: 90px;">姓名：</th>
-                                                        <td>刘
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th style="width: 90px;">电话：</th>
-                                                        <td>18657135843
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th style="width: 90px;">地区：</th>
-                                                        <td>北京-东城区-null
-                                                        </td>
-                                                    </tr>
-                                                    </tbody>
-                                                </table>
+                                                        </div>
+
+                                                        <!--<button class="btn btn-primary btn-block m"><i-->
+                                                        <!--class="fa fa-arrow-down"></i> 显示更多-->
+                                                        <!--</button>-->
+
+                                                    </div>
+
+                                                </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-5">
-                                        <div class="ibox float-e-margins m-b-none">
-                                            <div class="ibox-content p-xxs">
-                                                <label>收货人信息：</label>
-                                                <button type="button" class="btn btn-success btn-sm"
-                                                        style="float:right;">修改收货信息
-                                                </button>
-                                                <p style="height: 5px;"></p>
-                                                <table class="table table-bordered">
-                                                    <tbody>
-                                                    <tr>
-                                                        <th style="width: 90px;">姓名：</th>
-                                                        <td>allan
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th style="width: 90px;">电话：</th>
-                                                        <td></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th style="width: 90px;">手机：</th>
-                                                        <td>15255254545
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th style="width: 90px;">地区：</th>
-                                                        <td>江苏省/南通市/崇川区
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th style="width: 90px;">地址：</th>
-                                                        <td>江苏省南通市崇川区sdfsdf
-                                                        </td>
-                                                    </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
+
                                         </div>
                                     </div>
                                 </div>
@@ -312,18 +152,21 @@
 <!--基础框架js-->
 <script src="http://resali.huobanplus.com/cdn/jquery/2.2.4/jquery.min.js"></script>
 <script src="http://resali.huobanplus.com/cdn/bootstrap/3.3.5/bootstrap.min.js"></script>
-<script src="js/content.min.js?v=1.0.0"></script>
+<script src="http://resali.huobanplus.com/cdn/hotui/js/content.min.js"></script>
 
 <!--validate-->
 <script src="http://resali.huobanplus.com/cdn/jquery-validation/1.15.0/jquery.validate.min.js"></script>
 <script src="http://resali.huobanplus.com/cdn/jquery-validation/1.15.0/additional-methods.min.js"></script>
 <script src="http://resali.huobanplus.com/cdn/jquery-validation/1.15.0/localization/messages_zh.min.js"></script>
-<script src="js/plugins/hot/bootstrap.hot.extra-validate.js"></script>
+<script src="../../js/bootstrap.hot.extra-validate.js"></script>
 
-<script src="js/plugins/SearchableSelect/jquery.searchableSelect.js"></script>
+<script src="http://resali.huobanplus.com/cdn/hotui/js/plugins/peity/jquery.peity.min.js"></script>
+<!--<script src="js/demo/peity-demo.min.js"></script>-->
+<script type="text/javascript" src="http://tajs.qq.com/stats?sId=9051096" charset="UTF-8"></script>
 
-<script src="js/plugins/hot/bootstrap.hot.extra-utils.js"></script>
-<script src="js/plugins/hot/bootstrap.hot.extra-init.js"></script>
+<script src="../../js/bootstrap.hot.extra-utils.js"></script>
+<script src="../../js/bootstrap.hot.extra-init.js"></script>
+
 
 <script type="text/javascript">
     var orderDocManager = {

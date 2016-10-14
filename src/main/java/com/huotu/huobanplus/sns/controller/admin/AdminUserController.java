@@ -10,6 +10,7 @@
 package com.huotu.huobanplus.sns.controller.admin;
 
 import com.huotu.huobanplus.sns.entity.Level;
+import com.huotu.huobanplus.sns.entity.Tag;
 import com.huotu.huobanplus.sns.entity.User;
 import com.huotu.huobanplus.sns.entity.support.AuthenticationType;
 import com.huotu.huobanplus.sns.model.AuthenticationTypeModel;
@@ -23,6 +24,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.redis.core.BoundHashOperations;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -34,6 +37,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * Created by Administrator on 2016/10/11.
@@ -49,6 +53,8 @@ public class AdminUserController {
     private LevelRepository levelRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private RedisTemplate<String, String> redisTemplate;
 
 //    private final static String lessThan = "<";
 
@@ -141,6 +147,58 @@ public class AdminUserController {
     public ModelMap updateAuthentication(Long userId, int authenticationId) throws IOException {
         User user = userRepository.getOne(userId);
         user.setAuthenticationType(authenticationId);
+        userRepository.save(user);
+        return ResultUtil.success();
+    }
+
+    /**
+     * 用户详情页
+     *
+     * @param userId 用户id
+     * @param model
+     * @return
+     * @throws IOException
+     */
+    @RequestMapping(value = "/edit", method = RequestMethod.GET)
+    public String edit(Long userId, Model model) throws IOException {
+        User user = userRepository.getOne(userId);
+        model.addAttribute("user", user);
+        BoundHashOperations<String, String, Long> userOperations = redisTemplate
+                .boundHashOps(ContractHelper.userFlag + userId);
+        Long userAmount = userOperations.get("userAmount");
+        Long fansAmount = userOperations.get("fansAmount");
+        Long articleAmount = userOperations.get("articleAmount");
+        Set<Tag> set = user.getTags();
+        StringBuffer buffer = new StringBuffer();
+        for (Tag tag : set) {
+            if (buffer.length() == 0) {
+                buffer.append(tag.getName());
+            } else {
+                buffer.append(",").append(tag.getName());
+            }
+        }
+        model.addAttribute("tags", buffer.toString());
+        model.addAttribute("authenticationType", AuthenticationType.getDescription(user.getAuthenticationType()));
+        model.addAttribute("imgURL", user.getImgURL() == null ? "../../img/user.png" : user.getImgURL());
+        model.addAttribute("userAmount", userAmount == null ? 0 : userAmount);
+        model.addAttribute("fansAmount", fansAmount == null ? 0 : fansAmount);
+        model.addAttribute("articleAmount", articleAmount == null ? 0 : articleAmount);
+        return "/admin/user/userEdit";
+    }
+
+    /**
+     * 更新权限
+     *
+     * @param userId 用户id
+     * @param power  权限
+     * @return
+     * @throws IOException
+     */
+    @RequestMapping(value = "/updatePower", method = RequestMethod.POST)
+    @ResponseBody
+    public ModelMap updatePower(Long userId, String power) throws IOException {
+        User user = userRepository.getOne(userId);
+        user.setPower(power);
         userRepository.save(user);
         return ResultUtil.success();
     }

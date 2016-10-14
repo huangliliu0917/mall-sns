@@ -14,7 +14,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
 
 /**
  * 用户
@@ -26,14 +26,6 @@ import java.util.List;
 @Setter
 public class User {
 
-    /**
-     * 身份
-     *
-     * @see {@link com.huotu.huobanplus.sns.entity.support.AuthenticationType}
-     */
-//    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH})
-//    private Authentication authentication;
-    int authenticationType;
     @Id
     private Long id;
     /**
@@ -76,6 +68,13 @@ public class User {
     private Level level;
 
     /**
+     * 身份
+     *
+     * @see {@link com.huotu.huobanplus.sns.entity.support.AuthenticationType}
+     */
+    private int authenticationType;
+
+    /**
      * 排名 （计算规则待定 todo）
      */
     private Long rank;
@@ -90,5 +89,5 @@ public class User {
      * 用户标签
      */
     @OneToMany(cascade = {CascadeType.REFRESH})
-    private List<Tag> tags;
+    private Set<Tag> tags;
 }
