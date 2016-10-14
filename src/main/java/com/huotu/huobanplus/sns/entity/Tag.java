@@ -1,6 +1,7 @@
 package com.huotu.huobanplus.sns.entity;
 
 import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 
@@ -11,6 +12,7 @@ import javax.persistence.*;
 @Entity
 @Cacheable(value = false)
 @Getter
+@Setter
 public class Tag {
 
     @Id
