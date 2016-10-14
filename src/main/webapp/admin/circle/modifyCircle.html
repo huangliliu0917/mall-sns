@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<!--
+  ~ 版权所有:杭州火图科技有限公司
+  ~ 地址:浙江省杭州市滨江区西兴街道阡陌路智慧E谷B幢4楼
+  ~
+  ~ (c) Copyright Hangzhou Hot Technology Co., Ltd.
+  ~ Floor 4,Block B,Wisdom E Valley,Qianmo Road,Binjiang District
+  ~ 2013-2016. All rights reserved.
+  -->
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    
+
+    <title>编辑圈子</title>
+    <meta name="keywords" content=""/>
+    <meta name="description" content=""/>
+
+    <link href="http://resali.huobanplus.com/cdn/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="http://resali.huobanplus.com/cdn/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet"/>
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/plugins/iCheck/custom.css" rel="stylesheet"/>
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/animate.min.css" rel="stylesheet"/>
+    <link href="../../css/style.min.css" rel="stylesheet"/>
+    <link href="../../css/layer.css" rel="stylesheet"/>
+
+</head>
+
+<body class="gray-bg">
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>编辑圈子</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <!--/*@thymesVar id="circle" type="com.huotu.huobanplus.sns.entity.Circle"*/-->
+                        <form method="post" class="form-horizontal" th:action="@{/top/circle/saveCircle}" th:object="${circle}">
+                            <input type="hidden" name="id" th:value="*{id}"/>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">圈子名称</label>
+
+                                <div class="col-sm-2">
+                                    <input name="name" th:value="*{name}" type="text" class="form-control"/>
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">圈子简介</label>
+                                <div class="col-sm-10">
+                                    <input name="summary" th:value="*{summary}" type="text" class="form-control"/> <span class="help-block m-b-none">对于圈子的简单介绍，比如该圈子讨论什么</span>
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">是否热门
+                                </label>
+                                <div class="col-sm-10">
+                                    <div class="radio i-checks">
+                                        <label>
+                                            <input th:checked="*{suggested}" type="radio" value="true" name="suggested"/> <i></i> 热门</label>
+                                    </div>
+                                    <div class="radio i-checks">
+                                        <label>
+                                            <input th:checked="*{!suggested}" type="radio" checked="" value="false" name="suggested"/> <i></i>普通</label>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">指定组长</label>
+
+                                <div class="col-sm-1">
+                                    <button class="btn btn-primary" type="button">选择组长</button>
+
+                                </div>
+                                <div class="">
+                                    <label class="">当前组长:小编</label>
+                                </div>
+
+                            </div>
+
+
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">所属分类</label>
+
+                                <div class="col-sm-1">
+                                    <button onclick="circleConfig.showCategoryList()" class="btn btn-primary" type="button">选择分类</button>
+                                </div>
+
+                                <div class="">
+                                    <label class="">当前分类:健康</label>
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">圈子图片</label>
+
+                                <div class="col-sm-10">
+                                    <div class="col-md-3">
+                                        <div class="image-crop">
+                                            <img src="http://placehold.it/300x200?text=300x200"/>
+                                        </div>
+                                    </div>
+
+                                    <!--<div id="uploadpicCover" style="width: 450px; height: 280px; border: 1px solid #ccc; float: left; background: #efefef; line-height: 80px; text-align: center; color: #ccc;">-->
+                                        <!--<span th:style="'display:none'">450×280</span>-->
+                                        <!--<img th:src="*{SharePic}==''?'':@{*{SharePic}}" id="share_img"  width="80px" height="80px"/>-->
+                                    <!--</div>-->
+
+                                    <div class="btn-group">
+                                        <label title="上传图片" for="inputImage" class="btn btn-primary">
+                                            <input onchange=" circleConfig.uploadImage()" type="file" accept="image/*"  id="inputImage" class="hide"/> 上传新图片
+                                        </label>
+                                    </div>
+                                    <span class="help-block m-b-none">推荐图片大小:300x200</span>
+
+                                    <!--<div style="margin-left: 10px; float: left; line-height: 300px;padding-top: 30px;">-->
+                                        <!--<a id="uploadpic">-->
+                                            <!--<button class="btn btn-primary">上传</button>-->
+                                            <!--<input type="file" onchange="uploadImage()"  name="imgFile" id="imgFile"-->
+                                                   <!--style="position: absolute; right: 0px; top: 0px; margin: 0px; opacity: 0; padding: 0px;-->
+                                                   <!--font-family: Arial; font-size: 118px; vertical-align: baseline; cursor: pointer;"/>-->
+                                        <!--</a>-->
+                                    <!--</div>-->
+                                    <!--<input name="txtReplyUrl1" type="hidden" id="txtReplyUrl1" value="/resource/images/wechat/mall_cat_def.png"/>-->
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <div class="col-sm-4 col-sm-offset-2">
+                                    <button class="btn btn-primary" type="submit">保存圈子</button>
+                                    <button onclick="" class="btn btn-white" type="button">取消</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="showCategoryList" class="row" style="display: none;">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>基本 <small>分类，查找</small></h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="table_data_tables.html#">
+                            <i class="fa fa-wrench"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-user">
+                            <li><a href="table_data_tables.html#">选项1</a>
+                            </li>
+                            <li><a href="table_data_tables.html#">选项2</a>
+                            </li>
+                        </ul>
+                        <a class="close-link">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+
+                    <table class="table table-striped table-bordered table-hover dataTables-example">
+                        <thead>
+                        <tr>
+                            <th>渲染引擎</th>
+                            <th>浏览器</th>
+                            <th>平台</th>
+                            <th>引擎版本</th>
+                            <th>CSS等级</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr class="gradeX">
+                            <td>Trident</td>
+                            <td>Internet Explorer 4.0
+                            </td>
+                            <td>Win 95+</td>
+                            <td class="center">4</td>
+                            <td class="center">X</td>
+                        </tr>
+                        </tbody>
+                        <tfoot>
+                        <tr>
+                            <th>渲染引擎</th>
+                            <th>浏览器</th>
+                            <th>平台</th>
+                            <th>引擎版本</th>
+                            <th>CSS等级</th>
+                        </tr>
+                        </tfoot>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="http://resali.huobanplus.com/cdn/jquery/2.2.4/jquery.min.js"></script>
+    <script src="http://resali.huobanplus.com/cdn/bootstrap/3.3.5/bootstrap.min.js"></script>
+    <script src="http://resali.huobanplus.com/cdn/hotui/js/content.min.js"></script>
+    <script src="http://resali.huobanplus.com/cdn/hotui/js/plugins/iCheck/icheck.min.js"></script>
+    <script src="http://resali.huobanplus.com/cdn/layer/2.4/layer.js"></script>
+    <script src="http://resali.huobanplus.com/cdn/hotui/js/plugins/ajaxfileupload/ajaxfileupload.js"></script>
+    <script>
+        $(document).ready(function(){$(".i-checks").iCheck({checkboxClass:"icheckbox_square-green",radioClass:"iradio_square-green",})});
+    </script>
+    <script type="text/javascript" src="http://tajs.qq.com/stats?sId=9051096" charset="UTF-8"></script>
+    <script type="text/javascript" th:inline="javascript">
+        /*<![CDATA[*/
+        var circleConfig={};
+        circleConfig.sharePicPath=/*[[${sharePicPath}]]*/ '';
+        //图片上传
+        circleConfig.uploadImage=function(){
+            var loadPic=layer.load(0, {shade: false});
+//            $.ajaxFileUpload({
+//                url: 'UploadImg',
+//                secureuri: false,
+//                fileElementId: 'imgFile',
+//                dataType: 'json',
+//                data: null,
+//                success: function(resultModel) {
+//                    if(resultModel.code==1){
+//                        layer.close(loadPic);
+//                        layer.msg("上传成功");
+//                        $("#share_img").attr("src",resultModel.url);
+//                        $("#share_img").show();
+//                        $("#uploadpicCover").children("span").hide();
+////                    $("input[name='SharePic']").val(resultModel.message);
+//                        sharePicPath=resultModel.message;
+//                    }
+//                },
+//                error: function(data, status, e) {
+//                    layer.close(loadPic);
+//                    layer.msg("上传失败，请检查网络后重试"+e);
+//                }
+//            });
+        };
+
+        //提交圈子
+        circleConfig.submitForm=function() {
+        };
+
+        //初始化进页面
+        circleConfig.firstLoad=function() {
+        };
+
+        circleConfig.showCategoryList=function(){
+            var choseCateGory=layer.open({
+                type: 1,
+                title: '选择分类',
+                area: ['60%', '50%'],
+                content:$("#showCategoryList"),
+                end:function(){
+
+                }
+            });
+        };
+        /*]]>*/
+
+    </script>
+</body>
+
+</html>

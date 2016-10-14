@@ -50,4 +50,11 @@ public class AuthenticationType {
     public static int defaultType() {
         return AuthenticationType.normal;
     }
+
+    public static String getDescription(int type) {
+        for (AuthenticationTypeModel model : allTypes) {
+            if (model.getId() == type) return model.getName();
+        }
+        return null;
+    }
 }

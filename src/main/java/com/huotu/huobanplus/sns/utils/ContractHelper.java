@@ -15,4 +15,5 @@ package com.huotu.huobanplus.sns.utils;
 public class ContractHelper {
     public static final int list_pageSize = 20;
     public static final int list_page = 1;
+    public static final String userFlag = "_user_";
 }
