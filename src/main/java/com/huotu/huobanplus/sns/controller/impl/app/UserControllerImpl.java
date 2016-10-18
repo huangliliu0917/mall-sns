@@ -18,6 +18,8 @@ import com.huotu.huobanplus.sns.model.AppCircleArticleModel;
 import com.huotu.huobanplus.sns.model.AppUserConcermListModel;
 import com.huotu.huobanplus.sns.model.common.ReportTargetType;
 import com.huotu.huobanplus.sns.service.ConcernService;
+import com.huotu.huobanplus.sns.service.ReportService;
+import com.huotu.huobanplus.sns.service.SensitiveService;
 import com.huotu.huobanplus.sns.service.UserCircleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -35,6 +37,12 @@ public class UserControllerImpl implements UserController{
 
     @Autowired
     private ConcernService concernService;
+
+    @Autowired
+    private ReportService reportService;
+
+    @Autowired
+    private SensitiveService sensitiveService;
 
     @Override
     public ApiResult concern(Long id) {
@@ -130,6 +138,13 @@ public class UserControllerImpl implements UserController{
 
     @Override
     public ApiResult publishArticle(Long id, String name, String content, String pictureUrl, Long circleId) throws Exception {
+        ApiResult apiResult = new ApiResult();
+        if (sensitiveService.ContainSensitiveWords(content)) {
+            apiResult.setResultCode(50001);
+            apiResult.setResultDescription("您发表的内容包含敏感词汇");
+            return apiResult;
+        }
+
         return null;
     }
 
@@ -140,7 +155,21 @@ public class UserControllerImpl implements UserController{
 
     @Override
     public ApiResult report(ReportTargetType type, Long id, String note) throws Exception {
-        return null;
+        ApiResult apiResult = new ApiResult();
+        try {
+            reportService.report(type, id, note);
+            apiResult.setResultCode(200);
+            apiResult.setResultDescription("举报成功");
+        } catch (IOException e) {
+            apiResult.setResultCode(50003);
+            apiResult.setResultDescription(e.getMessage());
+            return apiResult;
+        } catch (LogException e) {
+            apiResult.setResultCode(50002);
+            apiResult.setResultDescription(e.getMessage());
+            return apiResult;
+        }
+        return apiResult;
     }
 
     @Override
