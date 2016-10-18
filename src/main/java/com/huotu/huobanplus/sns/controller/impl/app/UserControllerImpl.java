@@ -149,7 +149,7 @@ public class UserControllerImpl implements UserController {
             return apiResult;
         }
         User user = UserHelper.getUser();
-        articleService.save(ArticleType.Normal.getValue(), "add", id, name, user.getId(), pictureUrl, content, null,
+        articleService.save(ArticleType.Normal.getValue(), id, name, user.getId(), pictureUrl, content, null,
                 null, circleId, null);
         apiResult.setResultCode(200);
         apiResult.setResultDescription("发表成功");
