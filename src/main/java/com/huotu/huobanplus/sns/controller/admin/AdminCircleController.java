@@ -10,16 +10,17 @@
 package com.huotu.huobanplus.sns.controller.admin;
 
 import com.huotu.huobanplus.sns.entity.Circle;
-import com.huotu.huobanplus.sns.model.admin.AdminArticleEditModel;
 import com.huotu.huobanplus.sns.model.admin.AdminArticlePageModel;
 import com.huotu.huobanplus.sns.model.admin.CircleListModel;
 import com.huotu.huobanplus.sns.model.admin.CircleSearchModel;
 import com.huotu.huobanplus.sns.repository.CircleRepository;
 import com.huotu.huobanplus.sns.service.ArticleService;
 import com.huotu.huobanplus.sns.service.CircleService;
+import com.huotu.huobanplus.sns.utils.ResultUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
@@ -95,9 +96,31 @@ public class AdminCircleController {
         return "/admin/circle/circleList";
     }
 
+    /**
+     * 推荐圈子首页
+     *
+     * @param model
+     * @return
+     * @throws IOException
+     */
     @RequestMapping(value = "/commandIndex", method = RequestMethod.GET)
     public String commandIndex(Model model) throws IOException {
-        return "/admin/circle/circleIndex";
+        List<Circle> list = circleService.findBySuggested(true);
+        model.addAttribute("list", list);
+//        List<Long> idList = new ArrayList<>();
+//        list.stream().forEach(t -> idList.add(t.getId()));
+//        model.addAttribute("idList", idList);
+        return "/admin/circle/circleCommand";
+    }
+
+    @Transactional
+    @RequestMapping(value = "/updateSuggest", method = RequestMethod.POST)
+    @ResponseBody
+    public ModelMap updateSuggest(Long[] ids, boolean suggested) throws IOException {
+        for (Long id : ids) {
+            circleRepository.updateSuggest(suggested, id);
+        }
+        return ResultUtil.success();
     }
 
 

@@ -12,11 +12,21 @@ package com.huotu.huobanplus.sns.repository;
 import com.huotu.huobanplus.sns.entity.Circle;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import java.io.IOException;
 
 /**
  * Created by jin on 2016/10/10.
  */
+@SuppressWarnings("JpaQlInspection")
 @Repository
 public interface CircleRepository extends JpaRepository<Circle, Long>, JpaSpecificationExecutor<Circle> {
+
+    @Modifying(clearAutomatically = true)
+    @Query("update Circle c set c.suggested=:suggested where c.id = :id")
+    void updateSuggest(@Param("suggested") boolean suggested, @Param("id") Long id) throws IOException;
 }
