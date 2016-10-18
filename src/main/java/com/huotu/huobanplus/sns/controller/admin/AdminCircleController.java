@@ -68,26 +68,60 @@ public class AdminCircleController {
      */
     @RequestMapping(value = "/editCircle",method = RequestMethod.GET)
     public String editCircle(Long id, Model model) throws Exception{
+
         Circle circle=null;
         if(id!=null){
             circle=circleRepository.findOne(id);
         }
-        if(circle==null){
-            circle=new Circle();
-        }
-        model.addAttribute("circle",circle);
+        CircleListModel circleListModel=circleService.circleToDetailsCircleModel(circle);
+        model.addAttribute("circleListModel",circleListModel);
         return "/admin/circle/modifyCircle";
     }
 
     /**
+     * 获取一个圈子实体
+     * @param id
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "getCircle",method = RequestMethod.GET)
+    @ResponseBody
+    public ModelMap getCircle(Long id) throws Exception{
+        ModelMap modelMap=new ModelMap();
+        Circle circle=null;
+        if(id!=null){
+            circle=circleRepository.findOne(id);
+        }
+
+        CircleListModel circleListModel=circleService.circleToDetailsCircleModel(circle);
+
+
+
+//        if(circle==null){
+//            modelMap.addAttribute("status","500");
+//        }else {
+//            modelMap.addAttribute("status","200");
+//            modelMap.addAttribute("circle",circle);
+//        }
+        return modelMap;
+    }
+
+    /**
      * 保存圈子
-     * @param circle
+     * @param circleListModel
      * @return
      * @throws Exception
      */
     @RequestMapping(value = "saveCircle",method = RequestMethod.POST)
-    public String saveCircle(Circle circle) throws Exception{
-        return "/admin/circle/circleList";
+    @ResponseBody
+    public ModelMap saveCircle(@RequestBody CircleListModel circleListModel) throws Exception{
+        ModelMap modelMap=new ModelMap();
+        if(circleListModel.getCircleId()==null){
+            circleService.addCircle(circleListModel);
+        }else {
+            circleService.updateCircle(circleListModel);
+        }
+        return modelMap;
     }
 
     @RequestMapping(value = "/commandIndex", method = RequestMethod.GET)

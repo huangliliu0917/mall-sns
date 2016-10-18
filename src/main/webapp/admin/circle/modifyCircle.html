@@ -39,13 +39,13 @@
                     </div>
                     <div class="ibox-content">
                         <!--/*@thymesVar id="circle" type="com.huotu.huobanplus.sns.entity.Circle"*/-->
-                        <form method="post" class="form-horizontal" th:action="@{/top/circle/saveCircle}" th:object="${circle}">
-                            <input type="hidden" name="id" th:value="*{id}"/>
+                        <form method="post" class="form-horizontal" th:action="@{/top/circle/saveCircle}" th:object="${circleListModel}">
+                            <input type="hidden" name="circleId" th:value="*{circleId}"/>
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">圈子名称</label>
 
                                 <div class="col-sm-2">
-                                    <input name="name" th:value="*{name}" type="text" class="form-control"/>
+                                    <input name="circleName" th:value="*{circleName}" type="text" class="form-control"/>
                                 </div>
                             </div>
                             <div class="hr-line-dashed"></div>
@@ -66,7 +66,7 @@
                                     </div>
                                     <div class="radio i-checks">
                                         <label>
-                                            <input th:checked="*{!suggested}" type="radio" checked="" value="false" name="suggested"/> <i></i>普通</label>
+                                            <input th:checked="!*{suggested}" type="radio" checked="" value="false" name="suggested"/> <i></i>普通</label>
                                     </div>
 
                                 </div>
@@ -76,11 +76,12 @@
                                 <label class="col-sm-2 control-label">指定组长</label>
 
                                 <div class="col-sm-1">
-                                    <button class="btn btn-primary" type="button">选择组长</button>
+                                    <button onclick="circleConfig.showUserList()" class="btn btn-primary" type="button">选择组长</button>
 
                                 </div>
                                 <div class="">
-                                    <label class="">当前组长:小编</label>
+                                    <label class="" th:text="*{leaderName}==null?'未选择组长':'当前组长:'+*{leaderName}">当前组长:小编</label>
+                                    <input type="hidden" name="leaderId" th:value="*{leaderId}"/>
                                 </div>
 
                             </div>
@@ -95,9 +96,30 @@
                                 </div>
 
                                 <div class="">
-                                    <label class="">当前分类:健康</label>
+                                    <label class="" th:text="*{categoryName}==null?'未选择分类':'当前分类:'+*{categoryName}">当前组长:小编</label>
+                                    <input type="hidden" name="categoryId" th:value="*{categoryId}"/>
                                 </div>
                             </div>
+
+
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">圈子标签</label>
+
+                                <div class="col-sm-1">
+                                    <button onclick="circleConfig.showTagList()" class="btn btn-primary" type="button">选择标签</button>
+                                </div>
+
+                                <div id="tags" class="">
+                                    <label th:each="t:*{tags}" class="">
+                                        <span th:text="${t.name}"></span>
+                                        <input type="hidden" th:value="${t.id}"/>
+                                    </label>
+                                </div>
+                            </div>
+
+
+
                             <div class="hr-line-dashed"></div>
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">圈子图片</label>
@@ -105,7 +127,7 @@
                                 <div class="col-sm-10">
                                     <div class="col-md-3">
                                         <div class="image-crop">
-                                            <img src="http://placehold.it/300x200?text=300x200"/>
+                                            <img th:src="*{pictureUrl}==null?'http://placehold.it/300x200?text=300x200':*{pictureUrl}" src="http://placehold.it/300x200?text=300x200"/>
                                         </div>
                                     </div>
 
@@ -135,8 +157,9 @@
                             <div class="hr-line-dashed"></div>
                             <div class="form-group">
                                 <div class="col-sm-4 col-sm-offset-2">
-                                    <button class="btn btn-primary" type="submit">保存圈子</button>
+                                    <button class="btn btn-primary" type="button" onclick="circleConfig.submitForm()">保存圈子</button>
                                     <button onclick="" class="btn btn-white" type="button">取消</button>
+                                    <button onclick="circleConfig.check()" class="btn btn-white" type="button">敏感词检查</button>
                                 </div>
                             </div>
                         </form>
@@ -146,7 +169,9 @@
         </div>
     </div>
 
-    <div id="showCategoryList" class="row" style="display: none;">
+
+    <!--显示数据列表-->
+    <div id="showList" class="row" style="display: none;">
         <div class="col-sm-12">
             <div class="ibox float-e-margins">
                 <div class="ibox-content">
@@ -155,25 +180,25 @@
                         <div class="row">
                             <div class="col-sm-12">
                                 <div id="DataTables_Table_0_filter" class="dataTables_filter">
-                                    <label>查找：<input class="form-control input-sm" type="search">
+                                    <label>查找：<input name="search" class="form-control input-sm" type="search"/>
                                     </label>
+                                    <button onclick="circleConfig.searchList(0)" class="btn btn-primary" type="button">查找</button>
                                 </div>
                             </div>
                         </div>
-                        <table class="table table-striped table-bordered table-hover ">
+                        <table id="dataSearchTable" class="table table-striped table-bordered table-hover ">
                             <thead>
                             <tr role="row">
-                                <th>分类ID</th>
-                                <th>分类名称</th>
-                                <th>父类名称</th>
+                                <th>ID</th>
+                                <th>名称</th>
                                 <th>操作</th>
+                            </tr>
                             </thead>
                             <tbody>
                             <tr>
                                 <td class="center ">1</td>
                                 <td class="center ">健康</td>
-                                <td class="center ">男性</td>
-                                <td class="center ">选择</td>
+                                <td class="center "><a href="#" onclick="circleConfig.userChoice.clickChoice(this)">选择</a></td>
                             </tr>
                             </tbody>
                         </table>
@@ -183,11 +208,8 @@
                             </div><div class="col-sm-6">
                             <div class="dataTables_paginate paging_simple_numbers" id="DataTables_Table_0_paginate">
                                 <ul class="pagination">
-                                    <li class="paginate_button previous disabled" aria-controls="DataTables_Table_0" tabindex="0"
-                                        id="DataTables_Table_0_previous"><a href="#">上一页</a></li>
-                                    <li class="paginate_button active" aria-controls="DataTables_Table_0" tabindex="0"><a href="#">1</a></li>
-                                    <li class="paginate_button " aria-controls="DataTables_Table_0" tabindex="0"><a href="#">2</a></li>
-                                    <li class="paginate_button " aria-controls="DataTables_Table_0" tabindex="0"><a href="#">4</a></li>
+                                    <li class="paginate_button previous" aria-controls="DataTables_Table_0" tabindex="0"><a href="#" onclick="circleConfig.searchList(-1)">上一页</a></li>
+                                    <li class="paginate_button previous" aria-controls="DataTables_Table_0" tabindex="0"><a href="#" onclick="circleConfig.searchList(1)">下一页</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -214,9 +236,41 @@
     <script type="text/javascript" src="http://tajs.qq.com/stats?sId=9051096" charset="UTF-8"></script>
     <script type="text/javascript" th:inline="javascript">
         /*<![CDATA[*/
+
+
         var circleConfig={};
-        circleConfig.sharePicPath=/*[[${sharePicPath}]]*/ '';
+
+
+
+        circleConfig.check=function(){
+            var summary=$("input[name='summary']").val();
+            $.ajax({
+                type: "GET", //请求方式
+                url: "http://www.hoapi.com/index.php/Home/Api/check",
+                data: {str: summary,token:"1bfc6c8a90c45c29ff4b8a3ec0d411ee"}, //数据
+                dataType : "jsonp",
+                success: function(data) {
+                    layer.msg(data);
+//                    layer.msg(data);
+//                    if (data.data == 0) {
+//                        layer.msg("，未发现敏感词");
+//                    } else {
+//                        layer.msg("，发现以下敏感词：" + data.data);
+//                    }
+                },
+                error: function(e) {
+//                    alert("获取错误"+ JSON.stringify(e));
+                }
+
+            });
+
+        };
+        circleConfig.searchModel={};
+        circleConfig.currentSearchType=0;
+//        circleConfig.sharePicPath=/*[[${sharePicPath}]]*/ '';
         //图片上传
+
+
         circleConfig.uploadImage=function(){
             var loadPic=layer.load(0, {shade: false});
 //            $.ajaxFileUpload({
@@ -245,23 +299,233 @@
 
         //提交圈子
         circleConfig.submitForm=function() {
+
+
+            var circleModel={};
+            circleModel.circleId=$("input[name='circleId']").val();
+            circleModel.circleName=$("input[name='circleName']").val();
+            circleModel.summary=$("input[name='summary']").val();
+            circleModel.categoryId=$("input[name='categoryId']").val();
+            circleModel.pictureUrl=$("input[name='pictureUrl']").val();
+            circleModel.suggested=$("input[name='suggested']").val();
+            circleModel.leaderId=$("input[name='leaderId']").val();
+            var tags=[];
+            $("#tags label").each(function(index,val){
+                var tag={};
+                tag.name=$("span",val).text();
+                tag.id=$("input",val).val();
+                tags.push(tag);
+            });
+            circleModel.tags=tags;
+            $.ajax({
+                type:'POST',
+                url: '/top/circle/saveCircle',
+                dataType: 'json',
+                contentType:"application/json",
+                data: JSON.stringify(circleModel),
+                success:function(result){
+                    layer.msg("保存成功！");
+                },
+                error:function(e){
+                    layer.msg("保存圈子失败！");
+                }
+            });
         };
 
         //初始化进页面
         circleConfig.firstLoad=function() {
         };
 
+
+
+
+        circleConfig.searchModel.userLayer=0;
+        circleConfig.searchModel.categoryLayer=0;
+        circleConfig.searchModel.tagLayer=0;
+        circleConfig.showUserList=function(){
+            circleConfig.currentSearchType=1;
+            circleConfig.userChoice.clickChoice();
+            circleConfig.searchModel.userLayer=layer.open({
+                type: 1,
+                title: '选择组长',
+                area: ['60%', '70%'],
+                content:$("#showList"),
+                end:function(){
+                    $("#dataSearchTable").unbind();
+                }
+            });
+            circleConfig.searchInit();
+            circleConfig.userChoice.searchList(0);
+        };
+
+
         circleConfig.showCategoryList=function(){
-            var choseCateGory=layer.open({
+            circleConfig.currentSearchType=2;
+            circleConfig.searchModel.categoryLayer=layer.open({
                 type: 1,
                 title: '选择分类',
-                area: ['60%', '50%'],
-                content:$("#showCategoryList"),
+                area: ['60%', '70%'],
+                content:$("#showList"),
                 end:function(){
+                    $("#dataSearchTable").unbind();
+                }
+            });
+            circleConfig.searchInit();
+            circleConfig.categoryChoice.searchList();
+        };
 
+
+        circleConfig.showTagList=function(){
+            circleConfig.currentSearchType=3;
+            circleConfig.searchModel.tagLayer=layer.open({
+                type: 1,
+                title: '选择标签',
+                area: ['60%', '70%'],
+                content:$("#showList"),
+                end:function(){
+                    $("#dataSearchTable").unbind();
+                }
+            });
+            circleConfig.searchInit();
+            circleConfig.tagChoice.searchList(0);
+        };
+
+
+
+
+
+
+        circleConfig.searchList=function(pageNo){
+            switch (circleConfig.currentSearchType){
+                case 1:
+                    circleConfig.categoryChoice.searchList(pageNo);
+                    break;
+                case 2:
+                    circleConfig.userChoice.searchList(pageNo);
+                    break;
+                case 3:
+                    circleConfig.tagChoice.searchList(pageNo);
+                    break;
+                default:
+                    break;
+            }
+        };
+
+        circleConfig.searchInit=function(){
+            circleConfig.searchModel.searchPage=0;
+            circleConfig.searchModel.searchPageSize=10;
+            circleConfig.searchModel.searchName="";
+            circleConfig.searchModel.searchTotalPage=0;
+            $("input[name='search']").val("");
+            $("#dataSearchTable tbody tr").remove();
+        };
+
+        circleConfig.setSearchModel=function(pageNo){
+            circleConfig.searchModel.searchName=$("input[name='search']").val();
+            circleConfig.searchModel.searchPage=circleConfig.searchModel.searchPage+pageNo;
+            if(circleConfig.searchModel.searchPage>=circleConfig.searchModel.searchTotalPage){
+                circleConfig.searchModel.searchPage=circleConfig.searchModel.searchTotalPage-1;
+            }
+            if(circleConfig.searchModel.searchPage<0){
+                circleConfig.searchModel.searchPage=0;
+            }
+        };
+
+
+
+
+        //用户查询
+        circleConfig.userChoice={};
+
+        circleConfig.userChoice.searchList=function(pageNo){
+            circleConfig.setSearchModel(pageNo);
+            circleConfig.userChoice.searchListAjax(circleConfig.searchModel);
+        };
+
+        circleConfig.userChoice.searchListAjax=function(searchModel){
+            var ld=layer.load(5, {shade: false});
+            $.ajax({
+                type:'GET',
+                url: '/top/user/list',
+//                dataType: 'json',
+                data: {page:searchModel.searchPage+1,
+                    pageSize:searchModel.searchPageSize,
+                    nickName:searchModel.searchName,sortName:"id",sortType:"asc"},
+                success:function(result){
+                    layer.close(ld);
+                    circleConfig.searchModel.searchTotalPage=result.pageCount;
+                    circleConfig.userChoice.buildTable(result);
+
+
+                },
+                error:function(e){
+                    layer.close(ld);
+                    layer.msg("获取信息出错！");
                 }
             });
         };
+
+        circleConfig.userChoice.clickChoice=function(obj){
+            $("#dataSearchTable").on('click','a',function(){
+                layer.close(circleConfig.searchModel.userLayer);
+
+            });
+        };
+
+        circleConfig.userChoice.buildTable=function(result){
+            var showList=$("#dataSearchTable tbody");
+            $(showList).children("tr").remove();
+            $("#DataTables_Table_0_info").text("显示 "+((result.page-1)*result.pageSize+1)+" 到 "+(result.page)*result.pageSize+" 项，共 "+result.total+" 项");
+
+            for(var i=0;i<result.list.length;i++){
+                var user=result.list[i];
+                var tr='<tr> ' +
+                        '<td class="center ">'+user.id+'</td> ' +
+                        '<td class="center ">'+user.nickName+'</td> ' +
+                        '<td class="center ">' + '<a href="#">选择</a>' + '</td> ' +
+                        '</tr>';
+                $(showList).append(tr);
+            }
+        };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        //分类查询
+        circleConfig.categoryChoice={};
+
+        circleConfig.categoryChoice.searchList=function(){};
+
+        circleConfig.categoryChoice.searchListAjax=function(){};
+
+        circleConfig.categoryChoice.buildTable=function(){};
+
+        circleConfig.categoryChoice.clickChoice=function(){};
+
+
+
+
+        //标签查询
+        circleConfig.tagChoice={};
+
+        circleConfig.tagChoice.searchList=function(){};
+
+        circleConfig.tagChoice.searchListAjax=function(){};
+
+        circleConfig.tagChoice.buildTable=function(){};
+
+        circleConfig.tagChoice.clickChoice=function(){};
         /*]]>*/
 
     </script>

@@ -68,17 +68,17 @@ public class Circle {
     /**
      * 是否热门推荐
      */
-    private boolean suggested;
+    private boolean suggested=true;
 
     /**
      * 圈子关注人数
      */
-    private long userAmount;
+    private long userAmount=0;
 
     /**
      * 文章数
      */
-    private long articleAmount;
+    private long articleAmount=0;
 
     /**
      * 圈子标签
