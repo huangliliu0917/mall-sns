@@ -123,11 +123,11 @@ public class AdminCircleController {
     }
 
     @RequestMapping("/articleEdit.save")
-    public String articleEditSave(Integer articleType, String type, Long id
+    public String articleEditSave(Integer articleType, Long id
             , String name, Long userId, String pictureUrl, String content
             , String summary, Integer categoryId, Long circleId, String adConent) throws Exception {
 
-        articleService.save(articleType, type, id, name, userId, pictureUrl, content, summary, categoryId, circleId, adConent);
+        articleService.save(articleType, id, name, userId, pictureUrl, content, summary, categoryId, circleId, adConent);
         return "redirect:/top/circle/articleList/" + articleType;
     }
 }

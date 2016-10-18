@@ -11,12 +11,12 @@ page.search = function () {
 page.list = function () {
     $.get("/top/category/list", requestData, function (data) {
         if (data) {
-//                alert(data.list.length);
             var html = "";
             for (var i = 0; data.list.length > i; i++) {
                 var row = data.list[i];
                 html += '<tr>' +
-                    '<td>' + ((extend == extendType.radio) ? '<input type="radio" />' : '' ) + row.id + '</td>' +
+                    ((extend == extendType.radio) ? '<td><input type="radio" name="radio" value="' + row.id + '" extend="' + row.name + '" /></td>' : '' ) +
+                    '<td>' + row.id + '</td>' +
                     '<td>' + row.name + '</td>' +
                     '<td>' + (row.parentName == null ? "" : row.parentName) + '</td>' +
                     '<td>' + row.sort + '</td>' +
@@ -58,13 +58,24 @@ page.getQueryString = function (name) {
     return null;
 }
 
+page.select = function () {
+    if (extend == extendType.radio) {
+        var id = $('#list input[name="radio"]:checked').val();
+        var name = $('#list input[name="radio"]:checked').attr("extend");
+        console.log(id);
+        console.log(name);
+
+    }
+}
+
+
 //页面扩展
 var extendType = {radio: "radio", checkbox: "checkbox"};
 var extend = page.getQueryString("extend");
-
-
 var requestData = {categoryType: categoryType, name: "", pageNo: 1, pageSize: 10};
-
 $(function () {
     page.init();
+    if (extend == extendType.radio) {
+        $("table thead td").show();
+    }
 })

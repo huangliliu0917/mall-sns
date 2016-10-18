@@ -52,7 +52,6 @@
                                         <span th:text="${data.id}"></span>
                                         <input type="hidden" id="id" name="id" th:value="${data.id}"/>
                                         <input type="hidden" id="articleType" name="articleType" th:value="${data.articleType}"/>
-                                        <input type="hidden" id="type" name="type" th:value="${data.type}"/>
                                     </div>
                                 </div>
                                 <div class="hr-line-dashed "></div>
@@ -104,7 +103,7 @@
                                     <label class="col-sm-2 control-label">分类:</label>
                                     <div class="col-sm-10">
                                         <input type="hidden" class="form-control input-sm" th:value="${data.categoryId}" id="categoryId" name="categoryId"/>
-                                        <div id="divCategory" data-toggle="modal" data-target="#modal_category" >选择分类</div>
+                                        <div id="divCategory">选择分类</div>
                                     </div>
                                 </div>
 
@@ -131,9 +130,26 @@
             </div>
         </div>
     </form>
-    <div id="modal_category"  class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <iframe id="frame_category" width="100%" height="100%" frameborder="0" src="/top/category/categoryList/1?extend=radio"></iframe>
+
+    <div class="modal fade" id="modal_category">
+        <div class="modal-dialog" style="width: 1000px;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" onclick="">×</button>
+                    <h4 class="modal-title">选择分类</h4>
+                </div>
+                <div class="modal-body" style="height: 600px;">
+                    <iframe id="frame_category" width="100%" height="100%" frameborder="0"></iframe>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-success" type="button" onclick="">确定选择</button>
+                </div>
+            </div>
+        </div>
     </div>
+    <!--<div id="modal_category" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">-->
+    <!--<iframe id="frame_category" width="100%" height="100%" frameborder="0" src="/top/category/categoryList/1?extend=radio"></iframe>-->
+    <!--</div>-->
 </div>
 
 <!--基础框架js-->
@@ -233,10 +249,11 @@
             });
         })
 
-//        $("#divCategory").click(function () {
-//            $("#frame_category").attr("src", "/top/category/categoryList/1?extend=radio");
-//            $("#modal_category").modal('show');
-//        })
+        $("#divCategory").click(function () {
+            $("#frame_category").attr("src", "/top/category/categoryList/1?extend=radio");
+            $(this).attr("data-toggle", "modal");
+            $(this).attr("data-target", "#modal_category");
+        })
     })
 
 

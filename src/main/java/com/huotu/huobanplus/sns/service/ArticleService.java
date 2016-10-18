@@ -19,7 +19,21 @@ public interface ArticleService {
 
     AdminArticleEditModel getAdminArticle(String type, Integer articleType, Long id);
 
-    void  save(Integer articleType, String type, Long id
+
+    /**
+     *
+     * @param articleType
+     * @param id
+     * @param name
+     * @param userId
+     * @param pictureUrl
+     * @param content
+     * @param summary
+     * @param categoryId
+     * @param circleId
+     * @param adConent
+     */
+    void  save(Integer articleType, Long id
             , String name, Long userId, String pictureUrl, String content
             , String summary, Integer categoryId, Long circleId, String adConent);
 }

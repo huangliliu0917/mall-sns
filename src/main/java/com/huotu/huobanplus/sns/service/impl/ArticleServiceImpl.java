@@ -196,12 +196,12 @@ public class ArticleServiceImpl implements ArticleService {
     @Autowired
     private CircleRepository circleRepository;
 
-    public void save(Integer articleType, String type, Long id
+    public void save(Integer articleType, Long id
             , String name, Long userId, String pictureUrl, String content
             , String summary, Integer categoryId, Long circleId, String adConent) {
 
         Article article = null;
-        if (type.equals("edit") && id != null && id > 0) {
+        if (id != null && id > 0) {
             article = articleRepository.findOne(id);
         }
         if (article == null) article = new Article();

@@ -38,7 +38,7 @@
                     </div>
                     <div class="form-inline" style="max-width: 926px; text-align: right;">
                         <button type="button" onclick="page.search()" class="btn btn-success">搜索</button>
-                        <button type="button" onclick="page.add()" class="btn btn-success" id="add" name="add">添加
+                        <button type="button" onclick="page.add()" class="btn btn-success">添加
                         </button>
                     </div>
                 </div>
@@ -58,6 +58,7 @@
                             <table class="table table-bordered table-hover table-center">
                                 <thead>
                                 <tr>
+                                    <td style="display: none"></td>
                                     <td>Id</td>
                                     <td>名称</td>
                                     <td>父级分类</td>
@@ -73,6 +74,9 @@
                             </table>
 
 
+                            <!--<p style="float: left;margin:10px 20px 0px 10px;">-->
+                                <!--<button type="button" onclick="page.select()" class="btn btn-success">确定选择</button>-->
+                            <!--</p>-->
                             <p style="float: left; margin: 20px 0;">共<i id="recordCount"></i>条记录，当前第<i id="pageIndex"></i>/<i id="pageCount"></i>，每页<i id="pageSize"></i>条记录</p>
                             <ul style="float: right;" class="pagination pagination-split">
                             </ul>
