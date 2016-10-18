@@ -12,15 +12,18 @@ package com.huotu.huobanplus.sns.controller.impl.app;
 import com.huotu.common.api.ApiResult;
 import com.huotu.common.api.Output;
 import com.huotu.huobanplus.sns.controller.app.UserController;
+import com.huotu.huobanplus.sns.entity.User;
 import com.huotu.huobanplus.sns.exception.ConcernException;
 import com.huotu.huobanplus.sns.exception.LogException;
 import com.huotu.huobanplus.sns.model.AppCircleArticleModel;
 import com.huotu.huobanplus.sns.model.AppUserConcermListModel;
+import com.huotu.huobanplus.sns.model.common.ArticleType;
 import com.huotu.huobanplus.sns.model.common.ReportTargetType;
-import com.huotu.huobanplus.sns.service.ConcernService;
-import com.huotu.huobanplus.sns.service.UserCircleService;
+import com.huotu.huobanplus.sns.service.*;
+import com.huotu.huobanplus.sns.utils.UserHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 
@@ -28,13 +31,21 @@ import java.io.IOException;
  * Created by Administrator on 2016/9/28.
  */
 @Controller
-public class UserControllerImpl implements UserController{
+public class UserControllerImpl implements UserController {
 
     @Autowired
     private UserCircleService userCircleService;
 
     @Autowired
     private ConcernService concernService;
+
+    @Autowired
+    private ReportService reportService;
+
+    @Autowired
+    private SensitiveService sensitiveService;
+    @Autowired
+    private ArticleService articleService;
 
     @Override
     public ApiResult concern(Long id) {
@@ -128,9 +139,21 @@ public class UserControllerImpl implements UserController{
         return apiResult;
     }
 
+    @Transactional
     @Override
     public ApiResult publishArticle(Long id, String name, String content, String pictureUrl, Long circleId) throws Exception {
-        return null;
+        ApiResult apiResult = new ApiResult();
+        if (sensitiveService.ContainSensitiveWords(content)) {
+            apiResult.setResultCode(50001);
+            apiResult.setResultDescription("您发表的内容包含敏感词汇");
+            return apiResult;
+        }
+        User user = UserHelper.getUser();
+        articleService.save(ArticleType.Normal.getValue(), id, name, user.getId(), pictureUrl, content, null,
+                null, circleId, null);
+        apiResult.setResultCode(200);
+        apiResult.setResultDescription("发表成功");
+        return apiResult;
     }
 
     @Override
@@ -140,7 +163,21 @@ public class UserControllerImpl implements UserController{
 
     @Override
     public ApiResult report(ReportTargetType type, Long id, String note) throws Exception {
-        return null;
+        ApiResult apiResult = new ApiResult();
+        try {
+            reportService.report(type, id, note);
+            apiResult.setResultCode(200);
+            apiResult.setResultDescription("举报成功");
+        } catch (IOException e) {
+            apiResult.setResultCode(50003);
+            apiResult.setResultDescription(e.getMessage());
+            return apiResult;
+        } catch (LogException e) {
+            apiResult.setResultCode(50002);
+            apiResult.setResultDescription(e.getMessage());
+            return apiResult;
+        }
+        return apiResult;
     }
 
     @Override
