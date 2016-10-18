@@ -41,5 +41,5 @@ public interface ArticleRepository extends JpaRepository<Article, Long>, JpaSpec
     @Query("select article from Article article where article.articleType=?1 and article.category=?2 and article.id<?3")
     List<Article> findByArticleTypeAndCategory(ArticleType articleType, Category category, Long lastId);
 
-
+    Page<Article> findByArticleTypeAndNameLike(ArticleType articleType, String name, Pageable pageable);
 }

@@ -62,7 +62,7 @@ public class AdminCategoryController {
 
     @RequestMapping("/categoryEdit.save")
     public String categoryEditSave(Integer categoryType, Integer id, String name, Integer parent, Integer sort) throws Exception {
-        if (id != null && parent != null && id.equals(parent)) {
+        if (id != null && parent != null && id > 0 && id.equals(parent)) {
             throw new Exception("父级不能设置为自己");
         }
 

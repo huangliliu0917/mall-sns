@@ -4,9 +4,15 @@ import com.huotu.huobanplus.sns.entity.Article;
 import com.huotu.huobanplus.sns.entity.Category;
 import com.huotu.huobanplus.sns.model.AppWikiListModel;
 import com.huotu.huobanplus.sns.model.AppWikiModel;
+import com.huotu.huobanplus.sns.model.admin.AdminArticleEditModel;
+import com.huotu.huobanplus.sns.model.admin.AdminArticleModel;
+import com.huotu.huobanplus.sns.model.admin.AdminArticlePageModel;
+import com.huotu.huobanplus.sns.model.admin.PagingModel;
 import com.huotu.huobanplus.sns.model.common.ArticleType;
 import com.huotu.huobanplus.sns.repository.ArticleRepository;
 import com.huotu.huobanplus.sns.repository.CategoryRepository;
+import com.huotu.huobanplus.sns.repository.CircleRepository;
+import com.huotu.huobanplus.sns.repository.UserRepository;
 import com.huotu.huobanplus.sns.service.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -14,6 +20,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -103,4 +110,114 @@ public class ArticleServiceImpl implements ArticleService {
         return appWikiListModels;
     }
 
+    public AdminArticlePageModel getAdminArticleList(Integer articleType, String name, Integer pageNo, Integer pageSize) {
+        AdminArticlePageModel adminArticlePageModel = new AdminArticlePageModel();
+
+        Pageable pageable = new PageRequest(pageNo - 1, pageSize, new Sort(Sort.Direction.ASC, "id"));
+        Page<Article> articles = null;
+        if (!StringUtils.isEmpty(name)) {
+            articles = articleRepository.findByArticleTypeAndNameLike(articleType.equals(1) ? ArticleType.Wiki : ArticleType.Normal, name, pageable);
+        } else {
+            articles = articleRepository.findByArticleType(articleType.equals(1) ? ArticleType.Wiki : ArticleType.Normal, pageable);
+        }
+
+        adminArticlePageModel.setPage(new PagingModel(pageNo, pageSize, articles.getTotalPages(), articles.getTotalElements()));
+        adminArticlePageModel.setList(toAdminArticle(articles.getContent()));
+
+        return adminArticlePageModel;
+    }
+
+    private List<AdminArticleModel> toAdminArticle(List<Article> articles) {
+        List<AdminArticleModel> adminArticleModels = new ArrayList<>();
+        articles.forEach(x -> {
+            AdminArticleModel adminArticleModel = new AdminArticleModel();
+            adminArticleModel.setId(x.getId());
+            adminArticleModel.setName(x.getName());
+            adminArticleModel.setDate(x.getDate());
+            if (x.getPublisher() != null)
+                adminArticleModel.setPublisher(x.getPublisher().getNickName());
+            adminArticleModel.setClick(x.getClick());
+            adminArticleModel.setView(x.getView());
+            adminArticleModels.add(adminArticleModel);
+        });
+        return adminArticleModels;
+    }
+
+    public AdminArticleEditModel getAdminArticle(String type, Integer articleType, Long id) {
+        AdminArticleEditModel adminArticleEditModel = new AdminArticleEditModel();
+
+        if (type != null && type.equals("edit") && id != null && id > 0) {
+            Article article = articleRepository.findOne(id);
+            if (article != null) {
+                adminArticleEditModel.setType(type);
+                adminArticleEditModel.setId(article.getId());
+                adminArticleEditModel.setName(article.getName());
+                adminArticleEditModel.setArticleType(article.getArticleType().getValue());
+                adminArticleEditModel.setContent(article.getContent());
+                adminArticleEditModel.setPictureUrl(article.getPictureUrl());
+                adminArticleEditModel.setSummary(article.getSummary());
+                adminArticleEditModel.setAdConent(article.getAdConent());
+                if (article.getPublisher() != null) {
+                    adminArticleEditModel.setUserId(article.getPublisher().getId());
+                    adminArticleEditModel.setUserName(article.getPublisher().getNickName());
+                }
+                if (article.getCategory() != null) {
+                    adminArticleEditModel.setCategoryId(article.getCategory().getId());
+                    adminArticleEditModel.setCategoryName(article.getCategory().getName());
+                }
+
+                if (article.getCircle() != null) {
+                    adminArticleEditModel.setCircleId(article.getCircle().getId());
+                    adminArticleEditModel.setCircleName(article.getCircle().getName());
+                }
+                return adminArticleEditModel;
+            }
+        }
+
+        //add缺省值
+        adminArticleEditModel.setType(type);
+        adminArticleEditModel.setId(0L);
+        adminArticleEditModel.setName("");
+        adminArticleEditModel.setArticleType(articleType);
+        adminArticleEditModel.setContent("");
+        adminArticleEditModel.setPictureUrl("");
+        adminArticleEditModel.setSummary("");
+        adminArticleEditModel.setAdConent("");
+        adminArticleEditModel.setUserId(0L);
+        adminArticleEditModel.setUserName("");
+        adminArticleEditModel.setCategoryId(0);
+        adminArticleEditModel.setCircleId(0L);
+        return adminArticleEditModel;
+    }
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private CircleRepository circleRepository;
+
+    public void save(Integer articleType, String type, Long id
+            , String name, Long userId, String pictureUrl, String content
+            , String summary, Integer categoryId, Long circleId, String adConent) {
+
+        Article article = null;
+        if (type.equals("edit") && id != null && id > 0) {
+            article = articleRepository.findOne(id);
+        }
+        if (article == null) article = new Article();
+
+        article.setArticleType(articleType.equals(1) ? ArticleType.Wiki : ArticleType.Normal);
+        article.setName(name);
+        article.setPublisher(userRepository.findOne(userId));
+        article.setPictureUrl(pictureUrl);
+        article.setContent(content);
+        article.setSummary(summary);
+        if (categoryId != null && categoryId > 0)
+            article.setCategory(categoryRepository.findOne(categoryId));
+        if (circleId != null && circleId > 0)
+            article.setCircle(circleRepository.findOne(circleId));
+        article.setAdConent(adConent);
+        articleRepository.save(article);
+
+    }
 }

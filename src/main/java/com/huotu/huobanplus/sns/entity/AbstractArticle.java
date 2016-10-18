@@ -92,5 +92,6 @@ public class AbstractArticle {
     /**
      * 文章标签
      */
+    @OneToMany(cascade = {CascadeType.REFRESH})
     private List<Tag> tags;
 }

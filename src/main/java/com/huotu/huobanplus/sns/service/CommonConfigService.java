@@ -34,4 +34,19 @@ public interface CommonConfigService {
      * @return
      */
     String getAuthKeySecret();
+
+    /**
+     * 静态资源域名地址
+     *
+     * @return
+     */
+    String getResourcesUri();
+
+    /**
+     * 上传资源的服务地址
+     *
+     * @return
+     */
+    String getResourcesHome();
+
 }
