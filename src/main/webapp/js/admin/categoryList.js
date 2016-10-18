@@ -62,10 +62,10 @@ page.select = function () {
     if (extend == extendType.radio) {
         var id = $('#list input[name="radio"]:checked').val();
         var name = $('#list input[name="radio"]:checked').attr("extend");
-        console.log(id);
-        console.log(name);
-
+        var category = {id: id, name: name};
+        return category;
     }
+    return null;
 }
 
 
