@@ -13,6 +13,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="persistenceUnitName" value="entityManager" />
         <property name="packagesToScan">
             <array>
                 <value>com.huotu.huobanplus.sns.entity</value>
@@ -27,10 +28,9 @@
 
         <property name="jpaPropertyMap">
             <map>
-                <entry key="javax.persistence.jdbc.url"
-                       value="jdbc:mysql://120.24.243.104:3307/mallsns?useUnicode=true&amp;characterEncoding=UTF8"/>
-                <entry key="javax.persistence.jdbc.user" value="dbuser"/>
-                <entry key="javax.persistence.jdbc.password" value="ddbbuusseerr"/>
+                <entry key="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/mallsns"/>
+                <entry key="javax.persistence.jdbc.user" value="root"/>
+                <entry key="javax.persistence.jdbc.password" value="123456" />
                 <entry key="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />
                 <entry key="javax.persistence.schema-generation.database.action" value="create"/>
                 <entry key="eclipselink.weaving" value="false"/>

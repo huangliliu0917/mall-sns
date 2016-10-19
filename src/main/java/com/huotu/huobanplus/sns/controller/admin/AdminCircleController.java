@@ -79,6 +79,9 @@ public class AdminCircleController {
         if(id!=null){
             circle=circleRepository.findOne(id);
         }
+        if(circle==null){
+            circle=new Circle();
+        }
         CircleListModel circleListModel=circleService.circleToDetailsCircleModel(circle);
         model.addAttribute("circleListModel",circleListModel);
         return "/admin/circle/modifyCircle";
@@ -98,17 +101,10 @@ public class AdminCircleController {
         if(id!=null){
             circle=circleRepository.findOne(id);
         }
-
+        if(circle==null){
+            circle=new Circle();
+        }
         CircleListModel circleListModel=circleService.circleToDetailsCircleModel(circle);
-
-
-
-//        if(circle==null){
-//            modelMap.addAttribute("status","500");
-//        }else {
-//            modelMap.addAttribute("status","200");
-//            modelMap.addAttribute("circle",circle);
-//        }
         return modelMap;
     }
 
