@@ -1,7 +1,18 @@
+/*
+ * 版权所有:杭州火图科技有限公司
+ * 地址:浙江省杭州市滨江区西兴街道阡陌路智慧E谷B幢4楼
+ *
+ * (c) Copyright Hangzhou Hot Technology Co., Ltd.
+ * Floor 4,Block B,Wisdom E Valley,Qianmo Road,Binjiang District
+ * 2013-2016. All rights reserved.
+ */
+
 package com.huotu.huobanplus.sns.service.impl;
 
 import com.huotu.huobanplus.sns.entity.Article;
 import com.huotu.huobanplus.sns.entity.Category;
+import com.huotu.huobanplus.sns.entity.Concern;
+import com.huotu.huobanplus.sns.entity.UserArticle;
 import com.huotu.huobanplus.sns.model.AppWikiListModel;
 import com.huotu.huobanplus.sns.model.AppWikiModel;
 import com.huotu.huobanplus.sns.model.admin.AdminArticleEditModel;
@@ -9,10 +20,7 @@ import com.huotu.huobanplus.sns.model.admin.AdminArticleModel;
 import com.huotu.huobanplus.sns.model.admin.AdminArticlePageModel;
 import com.huotu.huobanplus.sns.model.admin.PagingModel;
 import com.huotu.huobanplus.sns.model.common.ArticleType;
-import com.huotu.huobanplus.sns.repository.ArticleRepository;
-import com.huotu.huobanplus.sns.repository.CategoryRepository;
-import com.huotu.huobanplus.sns.repository.CircleRepository;
-import com.huotu.huobanplus.sns.repository.UserRepository;
+import com.huotu.huobanplus.sns.repository.*;
 import com.huotu.huobanplus.sns.service.ArticleService;
 import com.huotu.huobanplus.sns.service.resource.StaticResourceService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +31,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -40,6 +49,17 @@ public class ArticleServiceImpl implements ArticleService {
     @Autowired
     private ArticleRepository articleRepository;
 
+    @Autowired
+    private ConcernRepository concernRepository;
+
+    @Autowired
+    private UserArticleRepository userArticleRepository;
+    @Autowired
+    private StaticResourceService staticResourceService;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private CircleRepository circleRepository;
 
     public List<AppWikiListModel> getAppWikiList(Integer catalogId, Long lastId) {
         List<AppWikiListModel> appWikiListModels = new ArrayList<>();
@@ -146,9 +166,6 @@ public class ArticleServiceImpl implements ArticleService {
         return adminArticleModels;
     }
 
-    @Autowired
-    private StaticResourceService staticResourceService;
-
     public AdminArticleEditModel getAdminArticle(String type, Integer articleType, Long id) throws URISyntaxException {
         AdminArticleEditModel adminArticleEditModel = new AdminArticleEditModel();
 
@@ -199,12 +216,6 @@ public class ArticleServiceImpl implements ArticleService {
         return adminArticleEditModel;
     }
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private CircleRepository circleRepository;
-
     public void save(Integer articleType, Long id
             , String name, Long userId, String pictureUrl, String content
             , String summary, Integer categoryId, Long circleId, String adConent) {
@@ -235,5 +246,43 @@ public class ArticleServiceImpl implements ArticleService {
         article.setAdConent(adConent);
         articleRepository.save(article);
 
+    }
+
+    @Override
+    public void addArticleResult(Integer articleType, Long id, String name, Long userId, String pictureUrl,
+                                 String content, String summary, Long circleId) throws IOException, InterruptedException {
+
+    }
+
+    /**
+     * @param articleType
+     * @param id
+     * @param name
+     * @param userId
+     * @param pictureUrl
+     * @param content
+     * @param summary
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    private void addUserArticle(Integer articleType, Long id, String name, Long userId, String pictureUrl,
+                                String content, String summary) throws IOException, InterruptedException {
+        List<Concern> list = concernRepository.findByToUserId(userId);
+        int size = list.size();
+        Date date = new Date();
+        for (int i = 0; i < size; i++) {
+            UserArticle userArticle = new UserArticle();
+            userArticle.setArticleType(articleType.equals(1) ? ArticleType.Wiki : ArticleType.Normal);
+            userArticle.setName(name);
+            userArticle.setPublisher(userRepository.findOne(userId));
+            userArticle.setPictureUrl(pictureUrl);
+            userArticle.setContent(content);
+            userArticle.setSummary(summary);
+            userArticle.setDate(date);
+            userArticle.setOwner(list.get(i).getUser());
+            userArticleRepository.save(userArticle);
+            if (i > 0 && i % 10 == 0)
+                Thread.sleep(500);
+        }
     }
 }

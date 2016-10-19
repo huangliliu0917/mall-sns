@@ -1,3 +1,12 @@
+/*
+ * 版权所有:杭州火图科技有限公司
+ * 地址:浙江省杭州市滨江区西兴街道阡陌路智慧E谷B幢4楼
+ *
+ * (c) Copyright Hangzhou Hot Technology Co., Ltd.
+ * Floor 4,Block B,Wisdom E Valley,Qianmo Road,Binjiang District
+ * 2013-2016. All rights reserved.
+ */
+
 package com.huotu.huobanplus.sns.service;
 
 import com.huotu.huobanplus.sns.model.AppWikiListModel;
@@ -5,6 +14,7 @@ import com.huotu.huobanplus.sns.model.AppWikiModel;
 import com.huotu.huobanplus.sns.model.admin.AdminArticleEditModel;
 import com.huotu.huobanplus.sns.model.admin.AdminArticlePageModel;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
 
@@ -22,7 +32,6 @@ public interface ArticleService {
 
 
     /**
-     *
      * @param articleType
      * @param id
      * @param name
@@ -34,7 +43,24 @@ public interface ArticleService {
      * @param circleId
      * @param adConent
      */
-    void  save(Integer articleType, Long id
+    void save(Integer articleType, Long id
             , String name, Long userId, String pictureUrl, String content
             , String summary, Integer categoryId, Long circleId, String adConent);
+
+    /**
+     * 新增一篇文章后，圈子文章数量加1，用户文章数加1，每个关注了该用户的都保存一份文章
+     * 暂时保存在{@link com.huotu.huobanplus.sns.entity.UserArticle}中，后期考虑用redis
+     *
+     * @param articleType 文章类型
+     * @param id          文章id
+     * @param name        文章名字
+     * @param userId      作者
+     * @param pictureUrl  文章图片
+     * @param content     文章内容
+     * @param summary     简介
+     * @param circleId    圈子id
+     */
+    void addArticleResult(Integer articleType, Long id
+            , String name, Long userId, String pictureUrl, String content
+            , String summary, Long circleId) throws IOException, InterruptedException;
 }

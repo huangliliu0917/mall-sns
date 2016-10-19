@@ -24,5 +24,20 @@ import java.util.List;
 @Repository
 public interface ConcernRepository extends JpaRepository<Concern, Long>, JpaSpecificationExecutor<Concern> {
 
+    /**
+     * 查询user关注toUser的列表
+     *
+     * @param user   关注用户
+     * @param toUser 被关注用户
+     * @return
+     */
     List<Concern> findByUserAndToUser(@Param("user") User user, @Param("toUser") User toUser);
+
+    /**
+     * 查询关注了toUserId的用户列表信息
+     *
+     * @param toUserId 被关注用户id
+     * @return
+     */
+    List<Concern> findByToUserId(@Param("toUserId") Long toUserId);
 }
