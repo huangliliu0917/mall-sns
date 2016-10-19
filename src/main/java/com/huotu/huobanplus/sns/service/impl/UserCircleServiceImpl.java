@@ -19,6 +19,7 @@ import com.huotu.huobanplus.sns.model.AppPublicModel;
 import com.huotu.huobanplus.sns.repository.CircleRepository;
 import com.huotu.huobanplus.sns.repository.UserCircleRepository;
 import com.huotu.huobanplus.sns.service.UserCircleService;
+import com.huotu.huobanplus.sns.utils.ContractHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.BoundHashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -36,8 +37,7 @@ import java.util.Objects;
 @Service
 public class UserCircleServiceImpl implements UserCircleService {
 
-    private final static String circleFlag = "_circle_";
-    volatile Long userAmount;
+
     @Autowired
     private CircleRepository circleRepository;
     @Autowired
@@ -66,19 +66,16 @@ public class UserCircleServiceImpl implements UserCircleService {
         userCircle.setUser(user);
         userCircleRepository.save(userCircle);
         BoundHashOperations<String, String, Long> circleOperations = redisTemplate
-                .boundHashOps(circleFlag + id);
-
-        synchronized (userAmount) {
-            userAmount = circleOperations.get("userAmount");
-            if (null == userAmount) {
-                circleOperations.put("userAmount", 1L);
-            } else {
-                circleOperations.put("userAmount", userAmount + 1L);
-            }
+                .boundHashOps(ContractHelper.circleFlag + id);
+        circleOperations.putIfAbsent("userAmount", 0L);
+        synchronized (circleOperations.get("userAmount")) {
+            Long userAmount = circleOperations.get("userAmount");
+            circleOperations.put("userAmount", userAmount + 1L);
         }
 
     }
 
+    @Transactional
     @Override
     public void cancelConcern(Long id) throws ConcernException, LogException, IOException {
         User user = getUser();
@@ -90,12 +87,10 @@ public class UserCircleServiceImpl implements UserCircleService {
             userCircleRepository.delete(userCircle);
         }
         BoundHashOperations<String, String, Long> circleOperations = redisTemplate
-                .boundHashOps(circleFlag + id);
-        synchronized (userAmount) {
-            userAmount = circleOperations.get("userAmount");
-            circleOperations.put("userAmount", userAmount - userCircles.size());
+                .boundHashOps(ContractHelper.circleFlag + id);
+        synchronized (circleOperations.get("userAmount")) {
+            Long userAmount = circleOperations.get("userAmount");
+            circleOperations.put("userAmount", userAmount - 1L);
         }
-//        Long userAmount = circleOperations.get("userAmount");
-//        circleOperations.put("userAmount", userAmount - userCircles.size());
     }
 }

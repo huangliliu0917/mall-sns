@@ -16,4 +16,5 @@ public class ContractHelper {
     public static final int list_pageSize = 20;
     public static final int list_page = 1;
     public static final String userFlag = "_user_";
+    public final static String circleFlag = "_circle_";
 }
