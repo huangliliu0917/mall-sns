@@ -19,6 +19,7 @@ public class AdminArticleEditModel {
     private String userName;
     private Integer articleType;
     private String pictureUrl;
+    private String pictureFullUrl;
 
     /**
      * 文章内容

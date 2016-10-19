@@ -26,6 +26,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.List;
 
 /**
@@ -139,7 +140,7 @@ public class AdminCircleController {
     @RequestMapping("/articleEdit/{articleType}/{type}/{id}")
     public String articleEdit(@PathVariable("articleType") Integer articleType
             , @PathVariable("type") String type
-            , @PathVariable("id") Long id, Model model) {
+            , @PathVariable("id") Long id, Model model) throws URISyntaxException {
 
         model.addAttribute("data", articleService.getAdminArticle(type, articleType, id));
         return "admin/circle/articleEdit";

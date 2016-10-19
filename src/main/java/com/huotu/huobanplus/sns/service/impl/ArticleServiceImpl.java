@@ -14,6 +14,7 @@ import com.huotu.huobanplus.sns.repository.CategoryRepository;
 import com.huotu.huobanplus.sns.repository.CircleRepository;
 import com.huotu.huobanplus.sns.repository.UserRepository;
 import com.huotu.huobanplus.sns.service.ArticleService;
+import com.huotu.huobanplus.sns.service.resource.StaticResourceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,7 +23,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -143,7 +146,10 @@ public class ArticleServiceImpl implements ArticleService {
         return adminArticleModels;
     }
 
-    public AdminArticleEditModel getAdminArticle(String type, Integer articleType, Long id) {
+    @Autowired
+    private StaticResourceService staticResourceService;
+
+    public AdminArticleEditModel getAdminArticle(String type, Integer articleType, Long id) throws URISyntaxException {
         AdminArticleEditModel adminArticleEditModel = new AdminArticleEditModel();
 
         if (type != null && type.equals("edit") && id != null && id > 0) {
@@ -154,7 +160,10 @@ public class ArticleServiceImpl implements ArticleService {
                 adminArticleEditModel.setName(article.getName());
                 adminArticleEditModel.setArticleType(article.getArticleType().getValue());
                 adminArticleEditModel.setContent(article.getContent());
-                adminArticleEditModel.setPictureUrl(article.getPictureUrl());
+                if (article.getPictureUrl() != null) {
+                    adminArticleEditModel.setPictureUrl(article.getPictureUrl());
+                    adminArticleEditModel.setPictureFullUrl(staticResourceService.getResource(article.getPictureUrl()).toString());
+                }
                 adminArticleEditModel.setSummary(article.getSummary());
                 adminArticleEditModel.setAdConent(article.getAdConent());
                 if (article.getPublisher() != null) {
@@ -204,7 +213,13 @@ public class ArticleServiceImpl implements ArticleService {
         if (id != null && id > 0) {
             article = articleRepository.findOne(id);
         }
-        if (article == null) article = new Article();
+        if (article == null) {
+            article = new Article();
+            article.setClick(0L);
+            article.setView(0L);
+            article.setComments(0L);
+            article.setTop(false);
+        }
 
         article.setArticleType(articleType.equals(1) ? ArticleType.Wiki : ArticleType.Normal);
         article.setName(name);
@@ -212,6 +227,7 @@ public class ArticleServiceImpl implements ArticleService {
         article.setPictureUrl(pictureUrl);
         article.setContent(content);
         article.setSummary(summary);
+        article.setDate(new Date());
         if (categoryId != null && categoryId > 0)
             article.setCategory(categoryRepository.findOne(categoryId));
         if (circleId != null && circleId > 0)

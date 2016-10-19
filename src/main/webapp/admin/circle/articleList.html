@@ -96,13 +96,7 @@
     var articleType = /*[[${articleType}]]*/'';
 
     var requestData = {articleType: articleType, name: "", pageNo: 1, pageSize: 10};
-
-    $(function () {
-        page.init();
-    })
-
     var page = {};
-
     page.init = function () {
         page.list();
     }
@@ -119,7 +113,12 @@
                 var html = "";
                 for (var i = 0; data.list.length > i; i++) {
                     var row = data.list[i];
-                    html += '<tr><td>' + row.id + '</td><td>' + row.name + '</td><td>' + row.publisher + '</td><td>' + row.date + '</td><td>' + row.click + '</td><td>' + row.view + '</td>' +
+                    html += '<tr><td>' + row.id + '</td>' +
+                            '<td>' + row.name + '</td>' +
+                            '<td>' + row.publisher + '</td>' +
+                            '<td>' + (UtcToDateString(row.date, "yyyy-MM-dd")) + '</td>' +
+                            '<td>' + row.click + '</td>' +
+                            '<td>' + row.view + '</td>' +
                             '<td><button style="padding: 0px 5px;" data-placement="top" data-toggle="tooltip" class="btn btn-default tooltips" type="button" data-original-title="编辑" onclick="page.edit(' + row.id + ')">编辑</button></td></tr>';
                 }
 
@@ -149,6 +148,35 @@
     page.edit = function (id) {
         window.location.href = '/top/circle/articleEdit/' + articleType + '/edit/' + id;
     }
+
+    function UtcToDateString(utcTime, format) {
+        return new Date(utcTime).format(format);
+    }
+
+    Date.prototype.format = function (fmt) { // author: meizz
+        var o = {
+            "M+": this.getMonth() + 1, // 月份
+            "d+": this.getDate(), // 日
+            "h+": this.getHours(), // 小时
+            "m+": this.getMinutes(), // 分
+            "s+": this.getSeconds(), // 秒
+            "q+": Math.floor((this.getMonth() + 3) / 3), // 季度
+            "S": this.getMilliseconds()
+            // 毫秒
+        };
+        if (/(y+)/.test(fmt))
+            fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "")
+                    .substr(4 - RegExp.$1.length));
+        for (var k in o)
+            if (new RegExp("(" + k + ")").test(fmt))
+                fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k])
+                        : (("00" + o[k]).substr(("" + o[k]).length)));
+        return fmt;
+    };
+
+    $(function () {
+        page.init();
+    })
 
 </script>
 </body>

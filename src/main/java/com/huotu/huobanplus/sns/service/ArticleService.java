@@ -5,6 +5,7 @@ import com.huotu.huobanplus.sns.model.AppWikiModel;
 import com.huotu.huobanplus.sns.model.admin.AdminArticleEditModel;
 import com.huotu.huobanplus.sns.model.admin.AdminArticlePageModel;
 
+import java.net.URISyntaxException;
 import java.util.List;
 
 /**
@@ -17,7 +18,7 @@ public interface ArticleService {
 
     AdminArticlePageModel getAdminArticleList(Integer articleType, String name, Integer pageNo, Integer pageSize);
 
-    AdminArticleEditModel getAdminArticle(String type, Integer articleType, Long id);
+    AdminArticleEditModel getAdminArticle(String type, Integer articleType, Long id) throws URISyntaxException;
 
 
     /**
