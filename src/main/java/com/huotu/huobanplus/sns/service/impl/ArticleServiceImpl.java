@@ -270,16 +270,17 @@ public class ArticleServiceImpl implements ArticleService {
         List<Concern> list = concernRepository.findByToUserId(userId);
         int size = list.size();
         Date date = new Date();
+        //todo 需修改
         for (int i = 0; i < size; i++) {
             UserArticle userArticle = new UserArticle();
             userArticle.setArticleType(articleType.equals(1) ? ArticleType.Wiki : ArticleType.Normal);
             userArticle.setName(name);
-            userArticle.setPublisher(userRepository.findOne(userId));
+//            userArticle.setPublisher(userRepository.findOne(userId));
             userArticle.setPictureUrl(pictureUrl);
-            userArticle.setContent(content);
+//            userArticle.setContent(content);
             userArticle.setSummary(summary);
             userArticle.setDate(date);
-            userArticle.setOwner(list.get(i).getUser());
+//            userArticle.setOwner(list.get(i).getUser());
             userArticleRepository.save(userArticle);
             if (i > 0 && i % 10 == 0)
                 Thread.sleep(500);

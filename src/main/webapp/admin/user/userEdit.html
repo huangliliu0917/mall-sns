@@ -106,12 +106,12 @@
 
                                                     <div>
                                                         <div class="feed-activity-list">
-                                                            <button class="btn btn-success" type="button" onclick="page.addTags()" id="btnTags">添加标签</button>
-                                                            <ul id="tags">
+                                                            <button style="float:right" class="btn btn-success" type="button" onclick="page.addTags()" id="btnTags">添加标签</button>
+                                                            <div id="tags">
                                                                 <th:block th:each="item:${tags}">
-                                                                    <li th:value="*{item.id}" th:text="*{item.name}"></li>
+                                                                    <div th:onclick="'page.deleteTags('+*{item.id} +',this)'" th:text="*{item.name}"></div>
                                                                 </th:block>
-                                                            </ul>
+                                                            </div>
                                                         </div>
                                                     </div>
 
@@ -142,7 +142,7 @@
                 <iframe id="frame_tags" width="100%" height="100%" frameborder="0"></iframe>
             </div>
             <div class="modal-footer">
-                <button id="submitSelectTags" class="btn btn-success" type="button" onclick="page.submitSelectTags()">确定选择</button>
+                <button id="submitSelectTags" class="btn btn-success" type="button" onclick="page.submitSelectTags()" data-dismiss="modal">确定选择</button>
             </div>
         </div>
     </div>
@@ -166,7 +166,8 @@
 <script src="../../js/bootstrap.hot.extra-init.js"></script>
 
 
-<script type="text/javascript">
+<script type="text/javascript" th:inline="javascript">
+    var userId = /*[[${user.id}]]*/'0';
     var orderDocManager = {
         showConsignFlow: function () {
             var url = 'order_deliver.html';
@@ -182,9 +183,34 @@
     };
 
     page.submitSelectTags = function () {
-        var category = $("#frame_category")[0].contentWindow.page.select();
-        console.log(category);
-        $("#submitSelectTags").attr("data-dismiss", "modal");
+        var select = $("#frame_tags")[0].contentWindow.page.select();
+        if (select.length > 0) {
+            var selects = "";
+            for (var i = 0; select.length > i; i++) {
+                selects += select[i].id + ",";
+            }
+            selects = selects.substr(0, selects.length - 1);
+            var request = {tagsType: 0, id: userId, tagsIds: selects};
+            $.get("/top/tags/addTags", request, function (data) {
+                $("#tags").html("");
+                for (var i = 0; data.length > i; i++) {
+                    $("#tags").append('<div onclick="deleteTags(' + data[i].id + ',this)">' + data[i].name + '</div>');
+                }
+
+                $("#submitSelectTags").attr("data-dismiss", "modal");
+
+            });
+        }
+        else {
+            $("#submitSelectTags").attr("data-dismiss", "modal");
+        }
+    }
+
+    page.deleteTags = function (id, obj) {
+        var request = {tagsType: 0, id: userId, tagsId: id};
+        $.get("/top/tags/deleteTags", request, function (data) {
+            if (data) $(obj).remove();
+        });
     }
 </script>
 </body>

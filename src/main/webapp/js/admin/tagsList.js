@@ -60,14 +60,14 @@ page.getQueryString = function (name) {
 
 page.select = function () {
     if (extend == extendType.checkbox) {
-        var checks =  $('#list input[name="checkbox"]:checked');
-        for (var i=0;i<)
-        var id = $('#list input[name="checkbox"]:checked').val();
-        var name = $('#list input[name="checkbox"]:checked').attr("extend");
         var list = [];
+        var checks = $('#list input[name="checkbox"]:checked');
+        checks.each(function () {
+            var item = {id: $(this).val(), name: $(this).attr("extend")};
+            list.push(item);
+        });
 
-        var item = {id: id, name: name};
-        return category;
+        return list;
     }
     return null;
 }

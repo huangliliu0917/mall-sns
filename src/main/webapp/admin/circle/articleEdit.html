@@ -4,25 +4,9 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>分类编辑</title>
-
     <link href="http://resali.huobanplus.com/cdn/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet"/>
-    <link href="http://resali.huobanplus.com/cdn/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet"/>
-
-    <!--datetimepick-->
-    <link href="http://resali.huobanplus.com/cdn/hotui/css/plugins/datapicker/datepicker3.css" rel="stylesheet"/>
-
-    <!-- Morris -->
-    <link href="http://resali.huobanplus.com/cdn/hotui/css/plugins/morris/morris-0.4.3.min.css" rel="stylesheet"/>
     <link href="http://resali.huobanplus.com/cdn/hotui/css/animate.min.css" rel="stylesheet"/>
     <link href="http://resali.huobanplus.com/cdn/hotui/css/style.min-1.0.2.css" rel="stylesheet"/>
-
-    <!--checkbox-->
-    <link href="http://resali.huobanplus.com/cdn/hotui/css/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css"
-          rel="stylesheet"/>
-
-    <link href="http://resali.huobanplus.com/cdn/hotui/css/plugins/bootstrap-tagsinput/bootstrap-tagsinput.css"
-          rel="stylesheet"/>
-
 </head>
 
 <body class="gray-bg">
@@ -32,7 +16,7 @@
             <div class="ibox float-e-margins">
                 <div class="ibox-content p-sm no-borders">
                     <div style="text-align: right;">
-                        <button type="button" onclick="page.save()" class="btn btn-success">保存</button>
+                        <button type="button" onclick="page.save()" class="btn btn-primary">保存</button>
                     </div>
                 </div>
             </div>
@@ -67,7 +51,7 @@
                                     <label class="col-sm-2 control-label">发布用户:</label>
                                     <div class="col-sm-10">
                                         <input type="text" class="form-control input-sm" th:value="${data.userId}" id="userId" name="userId"/>
-                                        <button class="btn btn-success" type="button" onclick="page.selectUser()" id="btnUser">选择用户</button>
+                                        <button class="btn btn-primary" type="button" onclick="page.selectUser()" id="btnUser">选择用户</button>
                                     </div>
                                 </div>
 
@@ -75,11 +59,19 @@
                                 <div class="form-group ">
                                     <label class="col-sm-2 control-label">图片:</label>
                                     <div class="col-sm-10">
+                                        <div class="col-sm-3">
+                                            <img style="width: 300px;height: 200px" id="imgPictureUrl"
+                                                 th:src="${data.pictureFullUrl==null}?'http://placehold.it/300x200?text=300x200':${data.pictureFullUrl}"/>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label title="上传图片" for="fileImage" class="btn btn-primary">
+                                                上传新图片
+                                            </label>
+
+                                            <span class="help-block m-b-none">推荐图片大小:300x200</span>
+                                        </div>
                                         <input type="hidden" th:value="${data.pictureUrl}" id="pictureUrl" name="pictureUrl"/>
-                                        <input type="file" name="fileImage" id="fileImage"/>
-                                        <br/>
-                                        <img id="imgPictureUrl" th:src="${data.pictureFullUrl}" alt="" width="200px" height="auto"/>
-                                    </div>
+                                        <input type="file" name="fileImage" id="fileImage" class="hide" accept="image/*" style="display: none"/></div>
                                 </div>
 
                                 <div class="hr-line-dashed "></div>
@@ -105,7 +97,7 @@
                                     <div class="col-sm-10">
                                         <input type="hidden" class="form-control input-sm" th:value="${data.categoryId}" id="categoryId" name="categoryId"/>
                                         <span id="divCategory" th:text="${data.categoryName}">选择分类</span>
-                                        <button class="btn btn-success" type="button" onclick="page.selectCategory()" id="btnCategory">选择分类</button>
+                                        <button class="btn btn-primary" type="button" onclick="page.selectCategory()" id="btnCategory">选择分类</button>
                                     </div>
                                 </div>
 
@@ -115,7 +107,7 @@
                                     <div class="col-sm-10">
                                         <input type="hidden" class="form-control input-sm" th:value="${data.circleId}" id="circleId" name="circleId"/>
                                         <span id="divCircle" th:text="${data.circleName}"></span>
-                                        <button class="btn btn-success" type="button" onclick="page.selectCircle()" id="btnCircle">选择圈子</button>
+                                        <button class="btn btn-primary" type="button" onclick="page.selectCircle()" id="btnCircle">选择圈子</button>
                                     </div>
                                 </div>
 
@@ -145,7 +137,7 @@
                     <iframe id="frame_category" width="100%" height="100%" frameborder="0"></iframe>
                 </div>
                 <div class="modal-footer">
-                    <button id="submitSelect" class="btn btn-success" type="button" onclick="page.submitSelect(this)">确定选择</button>
+                    <button id="submitSelect" class="btn btn-primary" type="button" onclick="page.submitSelect(this)">确定选择</button>
                 </div>
             </div>
         </div>
@@ -159,29 +151,10 @@
 <script src="http://resali.huobanplus.com/cdn/jquery/2.2.4/jquery.min.js"></script>
 <script src="http://resali.huobanplus.com/cdn/bootstrap/3.3.5/bootstrap.min.js"></script>
 <script src="http://resali.huobanplus.com/cdn/hotui/js/content.min.js"></script>
-
-<!--file-->
-<script src="http://resali.huobanplus.com/cdn/hotui/js/plugins/prettyfile/bootstrap-prettyfile.js"></script>
-<!--validate-->
-<script src="http://resali.huobanplus.com/cdn/jquery-validation/1.15.0/jquery.validate.min.js"></script>
-<script src="http://resali.huobanplus.com/cdn/jquery-validation/1.15.0/additional-methods.min.js"></script>
-<script src="http://resali.huobanplus.com/cdn/jquery-validation/1.15.0/localization/messages_zh.min.js"></script>
-<script src="/js/bootstrap.hot.extra-validate.js"></script>
-
-<script src="http://resali.huobanplus.com/cdn/hotui/js/plugins/datapicker/bootstrap-datepicker.js"></script>
-
-
-<script src="http://resali.huobanplus.com/cdn/hotui/js/plugins/SearchableSelect/jquery.searchableSelect.js"></script>
-
-<!--tagsinput-->
-<script src="http://resali.huobanplus.com/cdn/hotui/js/plugins/bootstrap-tagsinput/bootstrap-tagsinput.min.js"></script>
-
-<script src="/js/bootstrap.hot.extra-utils.js"></script>
-<script src="/js/bootstrap.hot.extra-init.js"></script>
-
 <script charset="utf-8" src="/js/kindeditor/kindeditor-min.js" type="text/javascript"></script>
 <script charset="utf-8" src="/js/kindeditor/lang/zh_CN.js" type="text/javascript"></script>
 <script type="text/javascript" src="/js/ajaxfileupload.js"></script>
+<script src="/js/bootstrap.hot.extra-utils.js"></script>
 
 <script>
     KindEditor.ready(function (K) {
