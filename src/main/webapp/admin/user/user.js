@@ -295,6 +295,14 @@ page.closePowerWin = function () {
     layer.close(powerWin);
 };
 
+page.selectOne = function () {
+    var user = {};
+    var one = $('input[name="checkUser"]:checked')[0];
+    user.id = $(one).val();
+    user.name = $(one).parent().parent().next().next().text();
+    return user;
+};
+
 function format(obj) {
     var d = new Date(obj);    //根据时间戳生成的时间对象
     var date = (d.getFullYear()) + "-" +
