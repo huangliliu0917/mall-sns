@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<!--
+  ~ 版权所有:杭州火图科技有限公司
+  ~ 地址:浙江省杭州市滨江区西兴街道阡陌路智慧E谷B幢4楼
+  ~
+  ~ (c) Copyright Hangzhou Hot Technology Co., Ltd.
+  ~ Floor 4,Block B,Wisdom E Valley,Qianmo Road,Binjiang District
+  ~ 2013-2016. All rights reserved.
+  -->
+
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>推荐用户列表</title>
+
+    <link href="http://resali.huobanplus.com/cdn/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="http://resali.huobanplus.com/cdn/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet"/>
+    <!-- Morris -->
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/plugins/morris/morris-0.4.3.min.css" rel="stylesheet"/>
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/animate.min.css" rel="stylesheet"/>
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/style.min-1.0.2.css" rel="stylesheet"/>
+    <script th:inline="javascript">
+        var rootURL = /*[[${url}]]*/'www.baidu.com';
+        var pageIndex = /*[[${page}]]*/'1';
+        var totalPage = /*[[${pageSize}]]*/'20';
+    </script>
+</head>
+
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight tooltip-demo">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content p-m no-borders">
+                    <div class="form-inline">
+                        <div class="form-inline" style="text-align: right;">
+                            <button class="btn btn-success btn-sm" onclick="userHandler.selectUser()" id="btnUser">
+                                推荐关注
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--list-->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins m-b-none">
+                <div class="ibox-content p-xxs no-top-border">
+                    <div class="panel-body">
+                        <table class="table table-bordered table-hover table-center">
+                            <thead>
+                            <tr>
+                                <th>头像</th>
+                                <th>用户昵称</th>
+                                <th>经验</th>
+                                <th>注册时间</th>
+                                <th>权限</th>
+                                <th>身份</th>
+                                <th>等级</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+
+                            <tr th:each="user:${list}">
+                                <!--<td th:text="${level.id}">1</td>-->
+                                <!--<td th:text="${level.name}">等级一</td>-->
+                                <!--<td th:text="${level.experience}">1</td>-->
+                                <!--<td>-->
+                                <!--<button class="btn btn-success btn-sm" th:attr="levelId=${level.id}"-->
+                                <!--onclick="levelHandler.edit(this)">-->
+                                <!--<i class="fa fa-paste"></i>&nbsp;编辑-->
+                                <!--</button>-->
+                                <!--&nbsp;&nbsp;-->
+                                <!--<button class="btn btn-success btn-sm" th:attr="levelId=${level.id}"-->
+                                <!--onclick="levelHandler.deleteLevel(this)">-->
+                                <!--<i class="fa fa-paste"></i>&nbsp;删除-->
+                                <!--</button>-->
+                                <!--</td>-->
+                            </tr>
+                            </tbody>
+                        </table>
+                        <p style="float: left; margin: 20px 0;">共<span th:text="${total}">1</span>条记录，
+                            当前第<span th:text="${page}">1</span>/<span th:text="${pageCount}">10</span>，
+                            每页<span th:text="${pageSize}">20</span>条记录</p>
+                        <ul style="float: right;" class="pagination pagination-split">
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal_user">
+    <div class="modal-dialog" style="width: 1000px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">×</button>
+                <h4 class="modal-title">选择用户</h4>
+            </div>
+            <div class="modal-body" style="height: 600px;">
+                <iframe id="frame_user" width="100%" height="100%" frameborder="0"></iframe>
+            </div>
+            <div class="modal-footer">
+                <button id="submitSelect" class="btn btn-success" type="button" onclick="page.submitSelect(this)">确定选择
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--基础框架js-->
+<script src="http://resali.huobanplus.com/cdn/jquery/2.2.4/jquery.min.js"></script>
+<script src="http://resali.huobanplus.com/cdn/bootstrap/3.3.5/bootstrap.min.js"></script>
+<script src="http://resali.huobanplus.com/cdn/hotui/js/content.min.js"></script>
+
+<!--validate-->
+<script src="http://resali.huobanplus.com/cdn/jquery-validation/1.15.0/jquery.validate.min.js"></script>
+<script src="http://resali.huobanplus.com/cdn/jquery-validation/1.15.0/additional-methods.min.js"></script>
+<script src="http://resali.huobanplus.com/cdn/jquery-validation/1.15.0/localization/messages_zh.min.js"></script>
+<script src="../../js/bootstrap.hot.extra-validate.js"></script>
+
+<script src="../../js/bootstrap.hot.extra-utils.js"></script>
+<script src="../../js/bootstrap.hot.extra-init.js"></script>
+
+<!--suppress JSUnresolvedFunction -->
+<script type="text/javascript">
+    var win;
+
+    $(function () {
+        //初始化分页
+        var pageinate = new hot.paging(".pagination", pageIndex, totalPage, 7);
+
+        pageinate.init(function (p) {
+            window.location.href = rootURL + p;
+        });
+    });
+
+    var userHandler = {
+        selectUser: function () {
+            $("#frame_user").attr("src", "/top/user/index?selectType=single");
+            $("#btnUser").attr("data-toggle", "modal");
+            $("#btnUser").attr("data-target", "#modal_user");
+        }
+    }
+</script>
+</body>
+
+</html>

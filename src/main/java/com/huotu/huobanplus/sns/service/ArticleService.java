@@ -9,6 +9,8 @@
 
 package com.huotu.huobanplus.sns.service;
 
+import com.huotu.huobanplus.sns.entity.Article;
+import com.huotu.huobanplus.sns.entity.User;
 import com.huotu.huobanplus.sns.model.AppWikiListModel;
 import com.huotu.huobanplus.sns.model.AppWikiModel;
 import com.huotu.huobanplus.sns.model.admin.AdminArticleEditModel;
@@ -43,7 +45,7 @@ public interface ArticleService {
      * @param circleId
      * @param adConent
      */
-    void save(Integer articleType, Long id
+    Article save(Integer articleType, Long id
             , String name, Long userId, String pictureUrl, String content
             , String summary, Integer categoryId, Long circleId, String adConent);
 
@@ -54,13 +56,22 @@ public interface ArticleService {
      * @param articleType 文章类型
      * @param id          文章id
      * @param name        文章名字
-     * @param userId      作者
+     * @param user        作者
      * @param pictureUrl  文章图片
-     * @param content     文章内容
      * @param summary     简介
      * @param circleId    圈子id
      */
     void addArticleResult(Integer articleType, Long id
-            , String name, Long userId, String pictureUrl, String content
+            , String name, User user, String pictureUrl
             , String summary, Long circleId) throws IOException, InterruptedException;
+
+    /**
+     * 评论文章
+     *
+     * @param id      文章id
+     * @param content 评论内容
+     * @param user    评论者
+     * @throws IOException
+     */
+    void commentArticle(Long id, String content, User user) throws IOException;
 }

@@ -12,6 +12,7 @@ package com.huotu.huobanplus.sns.controller.impl.app;
 import com.huotu.common.api.ApiResult;
 import com.huotu.common.api.Output;
 import com.huotu.huobanplus.sns.controller.app.UserController;
+import com.huotu.huobanplus.sns.entity.Article;
 import com.huotu.huobanplus.sns.entity.User;
 import com.huotu.huobanplus.sns.exception.ConcernException;
 import com.huotu.huobanplus.sns.exception.LogException;
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.util.Objects;
 
 /**
  * Created by Administrator on 2016/9/28.
@@ -149,8 +151,21 @@ public class UserControllerImpl implements UserController {
             return apiResult;
         }
         User user = UserHelper.getUser();
-        articleService.save(ArticleType.Normal.getValue(), id, name, user.getId(), pictureUrl, content, null,
-                null, circleId, null);
+        //文章内容截取成为简介,暂定为80个字
+        String summary;
+        if (content.length() < 80) {
+            summary = content;
+        } else {
+            summary = content.substring(0, 80) + "...";
+        }
+        //保存文章
+        Article article = articleService.save(ArticleType.Normal.getValue(), id, name, user.getId(),
+                pictureUrl, content, summary, null, circleId, null);
+        if (Objects.isNull(id)) {
+            //新增文章用户关联
+            articleService.addArticleResult(ArticleType.Normal.getValue(), article.getId(),
+                    name, user, pictureUrl, summary, circleId);
+        }
         apiResult.setResultCode(200);
         apiResult.setResultDescription("发表成功");
         return apiResult;
@@ -158,7 +173,13 @@ public class UserControllerImpl implements UserController {
 
     @Override
     public ApiResult commentArticle(Long id, String content) throws Exception {
-
+        ApiResult apiResult = new ApiResult();
+        if (sensitiveService.ContainSensitiveWords(content)) {
+            apiResult.setResultCode(50001);
+            apiResult.setResultDescription("您的评论包含敏感词汇");
+            return apiResult;
+        }
+        User user = UserHelper.getUser();
         return null;
     }
 

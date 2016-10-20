@@ -24,11 +24,18 @@
     <link href="http://resali.huobanplus.com/cdn/hotui/css/style.min-1.0.2.css" rel="stylesheet"/>
     <link href="http://resali.huobanplus.com/cdn/hotui/css/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css"
           rel="stylesheet"/>
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css"
+          rel="stylesheet"/>
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/plugins/SearchableSelect/jquery.searchableSelect-1.0.0.css"
+          rel="stylesheet"/>
     <style>
         i {
             font-style: normal
         }
     </style>
+    <script th:inline="javascript">
+        var selectType = /*[[${selectType}]]*/null;
+    </script>
 </head>
 
 <body class="gray-bg">
@@ -109,6 +116,12 @@
                         <table class="table table-bordered table-hover table-center">
                             <thead>
                             <tr>
+                                <th>
+                                    <div class="checkbox checkbox-primary m-b-none m-t-none">
+                                        <input type="checkbox" id="checkAll" name="checkAll"/>
+                                        <label for="checkAll"></label>
+                                    </div>
+                                </th>
                                 <th>头像</th>
                                 <th>用户昵称</th>
                                 <th>经验</th>

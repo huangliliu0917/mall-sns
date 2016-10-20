@@ -26,6 +26,20 @@
 <body class="gray-bg">
 <div class="wrapper wrapper-content animated fadeInRight tooltip-demo" style="margin-top:30px;">
     <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content p-m no-borders">
+                    <div class="form-inline">
+                        <div class="form-inline" style="text-align: right;">
+                            <a class="btn btn-success btn-sm"
+                               th:href="@{/top/user/index(selectType=${selectType})}">返回</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
         <div class="col-sm-12">
             <div class="ibox float-e-margins">
                 <div class="tabs-container">
@@ -173,7 +187,7 @@
             var url = 'order_deliver.html';
             hot.iframeModal(url, '880px', '600px');
         }
-    }
+    };
 
     var page = {};
     page.addTags = function () {
