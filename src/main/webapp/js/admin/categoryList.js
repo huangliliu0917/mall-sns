@@ -44,19 +44,14 @@ page.paging = function (totalPage) {
 }
 
 page.add = function () {
-    window.location.href = '/top/category/categoryEdit/' + categoryType + '/add/0';
+    window.location.href = '/top/category/categoryEdit/' + categoryType + '/0?extend=' + extend;
 }
 
 page.edit = function (id) {
-    window.location.href = '/top/category/categoryEdit/' + categoryType + '/edit/' + id;
+    window.location.href = '/top/category/categoryEdit/' + categoryType + '/' + id + "?extend=" + extend;
 }
 
-page.getQueryString = function (name) {
-    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
-    var r = window.location.search.substr(1).match(reg);
-    if (r != null) return unescape(r[2]);
-    return null;
-}
+
 
 page.select = function () {
     if (extend == extendType.radio) {
@@ -68,6 +63,13 @@ page.select = function () {
     return null;
 }
 
+
+page.getQueryString = function (name) {
+    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+    var r = window.location.search.substr(1).match(reg);
+    if (r != null) return unescape(r[2]);
+    return null;
+}
 
 //页面扩展
 var extendType = {radio: "radio", checkbox: "checkbox"};

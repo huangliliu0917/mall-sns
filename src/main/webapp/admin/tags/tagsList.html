@@ -58,6 +58,7 @@
                             <table class="table table-bordered table-hover table-center">
                                 <thead>
                                 <tr>
+                                    <td style="display:none"></td>
                                     <td>Id</td>
                                     <td>名称</td>
                                     <td>操作</td>
@@ -87,64 +88,6 @@
 <script src="http://resali.huobanplus.com/cdn/jquery/2.2.4/jquery.min.js"></script>
 <script src="http://resali.huobanplus.com/cdn/bootstrap/3.3.5/bootstrap.min.js"></script>
 <script src="http://resali.huobanplus.com/cdn/hotui/js/plugins/hot/bootstrap.hot.extra-utils-1.0.1.js"></script>
-<script type="text/javascript" th:inline="javascript">
-
-
-    var requestData = {name: "", pageNo: 1, pageSize: 10};
-
-    $(function () {
-        page.init();
-    })
-
-    var page = {};
-
-    page.init = function () {
-        page.list();
-    }
-
-    page.search = function () {
-        requestData.name = $("#name").val();
-        page.list();
-    }
-
-    page.list = function () {
-        $.get("/top/tags/list", requestData, function (data) {
-            if (data) {
-//                alert(data.list.length);
-                var html = "";
-                for (var i = 0; data.list.length > i; i++) {
-                    var row = data.list[i];
-                    html += '<tr><td>' + row.id + '</td><td>' + row.name + '</td>' +
-                            '<td><button style="padding: 0px 5px;" data-placement="top" data-toggle="tooltip" class="btn btn-default tooltips" type="button" data-original-title="编辑" onclick="page.edit(' + row.id + ')">编辑</button></td></tr>';
-                }
-
-                $("#list").html(html);
-
-                $("#recordCount").text(data.page.recordCount);
-                $("#pageIndex").text(data.page.pageNo);
-                $("#pageCount").text(data.page.totalPage);
-                $("#pageSize").text(data.page.pageSize);
-                page.paging(data.page.totalPage);
-            }
-        });
-    }
-
-    page.paging = function (totalPage) {
-        var p = new hot.paging(".pagination", requestData.pageNo, totalPage, 9);
-        p.init(function (pageNo) {
-            requestData.pageNo = pageNo;
-            page.list();
-        });
-    }
-
-    page.add = function () {
-        window.location.href = '/top/tags/tagsEdit/add/0';
-    }
-
-    page.edit = function (id) {
-        window.location.href = '/top/tags/tagsEdit/edit/' + id;
-    }
-
-</script>
+<script type="text/javascript" src="/js/admin/tagsList.js"></script>
 </body>
 </html>

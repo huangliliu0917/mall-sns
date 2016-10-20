@@ -34,21 +34,21 @@ public class AdminTagsController {
     }
 
 
-    @RequestMapping("/tagsEdit/{type}/{id}")
-    public String tagsEdit(@PathVariable("type") String type
-            , @PathVariable("id") Integer id, Model model) {
-        if (type != null && type.equals("edit") && id != null && id > 0) {
+    @RequestMapping("/tagsEdit/{id}")
+    public String tagsEdit(@PathVariable("id") Integer id, String extend, Model model) {
+        if (id != null && id > 0) {
             model.addAttribute("data", tagsService.getAdminTags(id));
         } else {
             AdminTagsModel adminTagsModel = new AdminTagsModel(0, "");
             model.addAttribute("data", adminTagsModel);
         }
+        model.addAttribute("extend", extend);
         return "admin/tags/tagsEdit";
     }
 
     @RequestMapping("/tagsEdit.save")
-    public String tagsEditSave(Integer id, String name) throws Exception {
+    public String tagsEditSave(Integer id, String name, String extend) throws Exception {
         tagsService.save(id, name);
-        return "redirect:/top/tags/tagsList";
+        return "redirect:/top/tags/tagsList?extend=" + extend;
     }
 }

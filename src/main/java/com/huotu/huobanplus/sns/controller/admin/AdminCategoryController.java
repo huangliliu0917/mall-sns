@@ -35,11 +35,10 @@ public class AdminCategoryController {
         return categoryService.getAdminCategoryList(categoryType, name, pageNo, pageSize);
     }
 
-    @RequestMapping("/categoryEdit/{categoryType}/{type}/{id}")
+    @RequestMapping("/categoryEdit/{categoryType}/{id}")
     public String categoryEdit(@PathVariable("categoryType") Integer categoryType
-            , @PathVariable("type") String type
-            , @PathVariable("id") Integer id, Model model) {
-        if (type != null && type.equals("edit") && id != null && id > 0) {
+            , @PathVariable("id") Integer id, String extend, Model model) {
+        if (id != null && id > 0) {
             AdminCategoryEditModel adminCategoryEditModel = new AdminCategoryEditModel();
             adminCategoryEditModel.setData(categoryService.getAdminCategory(id));
             adminCategoryEditModel.setCategoryList(categoryService.getAdminParentCategory(categoryType));
@@ -57,16 +56,17 @@ public class AdminCategoryController {
             adminCategoryEditModel.setCategoryList(categoryService.getAdminParentCategory(categoryType));
             model.addAttribute("data", adminCategoryEditModel);
         }
+        model.addAttribute("extend", extend);
         return "admin/category/categoryEdit";
     }
 
     @RequestMapping("/categoryEdit.save")
-    public String categoryEditSave(Integer categoryType, Integer id, String name, Integer parent, Integer sort) throws Exception {
+    public String categoryEditSave(Integer categoryType, Integer id, String name, Integer parent, Integer sort, String extend) throws Exception {
         if (id != null && parent != null && id > 0 && id.equals(parent)) {
             throw new Exception("父级不能设置为自己");
         }
 
         categoryService.save(categoryType, id, name, parent, sort);
-        return "redirect:/top/category/categoryList/" + categoryType;
+        return "redirect:/top/category/categoryList/" + categoryType + "?extend=" + extend;
     }
 }

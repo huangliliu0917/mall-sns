@@ -18,10 +18,32 @@ import javax.persistence.*;
 @Setter
 public class UserArticle extends AbstractArticle {
 
-
     /**
      * 收到文章的用户
      */
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH})
-    private User owner;
+    private Long ownerId;
+
+    /**
+     * 发布用户Id
+     */
+    private Long publisherId;
+    /**
+     * 发布用户昵称
+     */
+    private String publisherNickname;
+
+    /**
+     * 发布用户头像
+     */
+    private String publisherHeaderImageUrl;
+
+    /**
+     * 发布用户等级
+     */
+    private Long publisherLevelId;
+
+    /**
+     * 发布用户身份等级
+     */
+    private Integer publisherAuthenticationId;
 }

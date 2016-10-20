@@ -53,6 +53,7 @@
                                         <input type="hidden" id="id" name="id" th:value="${data.data.id}"/>
                                         <input type="hidden" id="categoryType" name="categoryType"
                                                th:value="${data.data.categoryType}"/>
+                                        <input type="hidden" id="extend" name="extend" th:value="${extend}"/>
                                     </div>
                                 </div>
                                 <div class="hr-line-dashed "></div>
@@ -70,7 +71,7 @@
                                         <select id="parent" name="parent">
                                             <option value="0">无</option>
                                             <th:block th:each="item:${data.categoryList}">
-                                                <option  th:selected="*{item.id eq data.data.parentId}"
+                                                <option th:selected="*{item.id eq data.data.parentId}"
                                                         th:value="*{item.id}"
                                                         th:text="*{item.name}"></option>
                                             </th:block>

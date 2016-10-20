@@ -22,20 +22,9 @@ public class AbstractArticle {
     private Long id;
 
     /**
-     * 商家
-     */
-    private Long customerId;
-
-    /**
      * 文章类型
      */
     private ArticleType articleType;
-
-    /**
-     * 发布用户
-     */
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH})
-    private User publisher;
 
     /**
      * 文章标题
@@ -49,12 +38,6 @@ public class AbstractArticle {
     @Column(length = 200)
     private String pictureUrl;
 
-    /**
-     * 文章内容
-     */
-    @Lob
-    @Basic(fetch = FetchType.LAZY)
-    private String content;
 
     /**
      * 简介
@@ -68,30 +51,4 @@ public class AbstractArticle {
     @Temporal(TemporalType.TIMESTAMP)
     private Date date;
 
-
-    /**
-     * 点赞量
-     */
-    private Long click;
-
-    /**
-     * 浏览量
-     */
-    private Long view;
-
-    /***
-     * 回复评论量
-     */
-    private Long comments;
-
-    /**
-     * 是否置顶
-     */
-    private Boolean top;
-
-    /**
-     * 文章标签
-     */
-    @OneToMany(cascade = {CascadeType.REFRESH})
-    private List<Tag> tags;
 }

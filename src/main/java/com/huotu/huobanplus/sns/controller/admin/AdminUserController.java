@@ -14,6 +14,7 @@ import com.huotu.huobanplus.sns.entity.Tag;
 import com.huotu.huobanplus.sns.entity.User;
 import com.huotu.huobanplus.sns.entity.support.AuthenticationType;
 import com.huotu.huobanplus.sns.model.AuthenticationTypeModel;
+import com.huotu.huobanplus.sns.model.admin.AdminTagsModel;
 import com.huotu.huobanplus.sns.repository.LevelRepository;
 import com.huotu.huobanplus.sns.repository.UserRepository;
 import com.huotu.huobanplus.sns.service.UserService;
@@ -35,6 +36,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -169,15 +171,11 @@ public class AdminUserController {
         Long fansAmount = userOperations.get("fansAmount");
         Long articleAmount = userOperations.get("articleAmount");
         Set<Tag> set = user.getTags();
-        StringBuffer buffer = new StringBuffer();
+        List<AdminTagsModel> adminTagsModels = new ArrayList<>();
         for (Tag tag : set) {
-            if (buffer.length() == 0) {
-                buffer.append(tag.getName());
-            } else {
-                buffer.append(",").append(tag.getName());
-            }
+            adminTagsModels.add(new AdminTagsModel(tag.getId(), tag.getName()));
         }
-        model.addAttribute("tags", buffer.toString());
+        model.addAttribute("tags", adminTagsModels);
         model.addAttribute("authenticationType", AuthenticationType.getDescription(user.getAuthenticationType()));
         model.addAttribute("imgURL", user.getImgURL() == null ? "../../img/user.png" : user.getImgURL());
         model.addAttribute("userAmount", userAmount == null ? 0 : userAmount);
