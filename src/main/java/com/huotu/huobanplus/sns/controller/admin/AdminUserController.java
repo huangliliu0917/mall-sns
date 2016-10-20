@@ -12,11 +12,14 @@ package com.huotu.huobanplus.sns.controller.admin;
 import com.huotu.huobanplus.sns.entity.Level;
 import com.huotu.huobanplus.sns.entity.Tag;
 import com.huotu.huobanplus.sns.entity.User;
+import com.huotu.huobanplus.sns.entity.UserSuggested;
 import com.huotu.huobanplus.sns.entity.support.AuthenticationType;
 import com.huotu.huobanplus.sns.model.AuthenticationTypeModel;
 import com.huotu.huobanplus.sns.model.admin.AdminTagsModel;
 import com.huotu.huobanplus.sns.repository.LevelRepository;
 import com.huotu.huobanplus.sns.repository.UserRepository;
+import com.huotu.huobanplus.sns.repository.UserSuggestedRepository;
+import com.huotu.huobanplus.sns.service.CommonConfigService;
 import com.huotu.huobanplus.sns.service.UserService;
 import com.huotu.huobanplus.sns.utils.ContractHelper;
 import com.huotu.huobanplus.sns.utils.ResultUtil;
@@ -36,10 +39,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Created by Administrator on 2016/10/11.
@@ -57,6 +60,10 @@ public class AdminUserController {
     private UserRepository userRepository;
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
+    @Autowired
+    private CommonConfigService commonConfigService;
+    @Autowired
+    private UserSuggestedRepository userSuggestedRepository;
 
 //    private final static String lessThan = "<";
 
@@ -68,12 +75,13 @@ public class AdminUserController {
      * @throws IOException
      */
     @RequestMapping(value = "/index", method = RequestMethod.GET)
-    public String index(Model model) throws IOException {
+    public String index(@RequestParam(required = false) String selectType, Model model) throws IOException {
 //        model.addAttribute("lessThan",lessThan);
         List<Level> levels = levelRepository.findAll(new Sort(Sort.Direction.ASC, "experience"));
         model.addAttribute("levels", levels);
         List<AuthenticationTypeModel> types = AuthenticationType.allTypes();
         model.addAttribute("types", types);
+        model.addAttribute("selectType", selectType);
         return "/admin/user/userList";
     }
 
@@ -162,7 +170,7 @@ public class AdminUserController {
      * @throws IOException
      */
     @RequestMapping(value = "/edit", method = RequestMethod.GET)
-    public String edit(Long userId, Model model) throws IOException {
+    public String edit(Long userId, String selectType, Model model) throws IOException {
         User user = userRepository.getOne(userId);
         model.addAttribute("user", user);
         BoundHashOperations<String, String, Long> userOperations = redisTemplate
@@ -171,16 +179,15 @@ public class AdminUserController {
         Long fansAmount = userOperations.get("fansAmount");
         Long articleAmount = userOperations.get("articleAmount");
         Set<Tag> set = user.getTags();
-        List<AdminTagsModel> adminTagsModels = new ArrayList<>();
-        for (Tag tag : set) {
-            adminTagsModels.add(new AdminTagsModel(tag.getId(), tag.getName()));
-        }
+        List<AdminTagsModel> adminTagsModels = set.stream()
+                .map(tag -> new AdminTagsModel(tag.getId(), tag.getName())).collect(Collectors.toList());
         model.addAttribute("tags", adminTagsModels);
         model.addAttribute("authenticationType", AuthenticationType.getDescription(user.getAuthenticationType()));
         model.addAttribute("imgURL", user.getImgURL() == null ? "../../img/user.png" : user.getImgURL());
         model.addAttribute("userAmount", userAmount == null ? 0 : userAmount);
         model.addAttribute("fansAmount", fansAmount == null ? 0 : fansAmount);
         model.addAttribute("articleAmount", articleAmount == null ? 0 : articleAmount);
+        model.addAttribute("selectType", selectType);
         return "/admin/user/userEdit";
     }
 
@@ -199,5 +206,24 @@ public class AdminUserController {
         user.setPower(power);
         userRepository.save(user);
         return ResultUtil.success();
+    }
+
+    @RequestMapping(value = "/suggestedFollow", method = RequestMethod.GET)
+    public String suggestedFollow(@RequestParam(required = false) Integer page,
+                                  @RequestParam(required = false) Integer pageSize, Model model) throws IOException {
+        if (Objects.isNull(page)) page = ContractHelper.list_page;
+        if (Objects.isNull(pageSize)) pageSize = ContractHelper.list_pageSize;
+        Sort sort = new Sort(Sort.Direction.DESC, "id");
+        Pageable pageable = new PageRequest(page - 1, pageSize, sort);
+        Page<UserSuggested> pages = userSuggestedRepository.findAll(pageable);
+        Long count = pages.getTotalElements();
+        int pageCount = Integer.parseInt(count.toString()) / pageSize + 1;
+        model.addAttribute("total", pages.getTotalElements());
+        model.addAttribute("pageSize", pageSize);
+        model.addAttribute("page", page);
+        model.addAttribute("pageCount", pageCount);
+        model.addAttribute("list", pages.getContent());
+        model.addAttribute("url", commonConfigService.getWebUrl() + "/top/user/suggestedFollow?page=");
+        return "/admin/user/suggestedFollow";
     }
 }

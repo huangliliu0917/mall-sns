@@ -31,8 +31,25 @@ $(function () {
 
     $("#savePower").click(function () {
         page.updatePower();
-    })
+    });
 
+    if (selectType == 'single') {
+        $("#checkAll").click(function () {
+            if ($(this).is(":checked")) {
+                layer.msg("只支持单选");
+                $(this).prop("checked", false);
+            }
+        });
+
+    } else {
+        $("#checkAll").change(function () {
+            if ($("#checkAll").is(":checked")) {
+                $("input[name='checkUser']").prop("checked", true);
+            } else {
+                $("input[name='checkUser']").prop("checked", false);
+            }
+        });
+    }
 });
 
 var page = {};
@@ -59,6 +76,11 @@ page.list = function () {
             for (var i = 0; i < list.length; i++) {
                 var row = data.list[i];
                 html += '<tr><td>';
+                html += '<div class="checkbox checkbox-primary m-b-none m-t-none">' +
+                    '<input type="checkbox" name="checkUser" value="' + row.id + '"' +
+                    'id="check' + row.id + '"/>' +
+                    '<label for="check' + row.id + '"></label>' +
+                    '</div></td><td>';
                 if (row.imgURL == "" || null == row.imgURL) {
                     html += '<img src="../../img/user.png" style="width: 30px;height: 30px;"/>';
                 } else {
@@ -111,6 +133,14 @@ page.list = function () {
             $("#pageCount").text(data.pageCount);
             $("#pageSize").text(data.pageSize);
             page.paging(data.pageSize);
+            if (selectType == 'single') {
+                $("input[name='checkUser']").click(function () {
+                    if ($(this).is(":checked")) {
+                        $("input[name='checkUser']").prop("checked", false);
+                        $(this).prop("checked", true);
+                    }
+                });
+            }
         }
     });
 };
@@ -124,7 +154,7 @@ page.paging = function (totalPage) {
 };
 
 page.edit = function (id) {
-    window.location.href = 'edit?userId=' + id;
+    window.location.href = 'edit?userId=' + id + "&selectType=" + selectType;
 };
 var levelWin;
 var authenticationWin;

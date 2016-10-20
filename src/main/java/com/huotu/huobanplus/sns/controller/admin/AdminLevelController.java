@@ -50,8 +50,8 @@ public class AdminLevelController {
     /**
      * 等级列表页
      *
-     * @param page     页码
-     * @param pageSize 每页条数
+     * @param page       页码
+     * @param pageSize   每页条数
      * @param model
      * @return
      * @throws IOException
