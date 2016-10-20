@@ -173,7 +173,13 @@ public class UserControllerImpl implements UserController {
 
     @Override
     public ApiResult commentArticle(Long id, String content) throws Exception {
-
+        ApiResult apiResult = new ApiResult();
+        if (sensitiveService.ContainSensitiveWords(content)) {
+            apiResult.setResultCode(50001);
+            apiResult.setResultDescription("您的评论包含敏感词汇");
+            return apiResult;
+        }
+        User user = UserHelper.getUser();
         return null;
     }
 

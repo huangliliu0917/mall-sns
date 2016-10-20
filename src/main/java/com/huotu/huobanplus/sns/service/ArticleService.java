@@ -64,4 +64,14 @@ public interface ArticleService {
     void addArticleResult(Integer articleType, Long id
             , String name, User user, String pictureUrl
             , String summary, Long circleId) throws IOException, InterruptedException;
+
+    /**
+     * 评论文章
+     *
+     * @param id      文章id
+     * @param content 评论内容
+     * @param user    评论者
+     * @throws IOException
+     */
+    void commentArticle(Long id, String content, User user) throws IOException;
 }

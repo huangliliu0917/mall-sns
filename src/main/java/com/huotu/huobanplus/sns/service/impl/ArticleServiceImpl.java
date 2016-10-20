@@ -17,6 +17,7 @@ import com.huotu.huobanplus.sns.model.admin.AdminArticleModel;
 import com.huotu.huobanplus.sns.model.admin.AdminArticlePageModel;
 import com.huotu.huobanplus.sns.model.admin.PagingModel;
 import com.huotu.huobanplus.sns.model.common.ArticleType;
+import com.huotu.huobanplus.sns.model.common.CommentStatus;
 import com.huotu.huobanplus.sns.repository.*;
 import com.huotu.huobanplus.sns.service.ArticleService;
 import com.huotu.huobanplus.sns.service.resource.StaticResourceService;
@@ -36,6 +37,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by Administrator on 2016/10/12.
@@ -60,6 +62,8 @@ public class ArticleServiceImpl implements ArticleService {
     private UserRepository userRepository;
     @Autowired
     private CircleRepository circleRepository;
+    @Autowired
+    private ArticleCommentRepository articleCommentRepository;
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
 
@@ -270,6 +274,29 @@ public class ArticleServiceImpl implements ArticleService {
         synchronized (circleOperations.get("articleAmount")) {
             Long articleAmount = circleOperations.get("articleAmount");
             circleOperations.put("articleAmount", articleAmount + 1L);
+        }
+    }
+
+    @Override
+    public void commentArticle(Long id, String content, User user) throws IOException {
+        Article article = articleRepository.getOne(id);
+        ArticleComment articleComment = new ArticleComment();
+        articleComment.setUser(user);
+        articleComment.setContent(content);
+        articleComment.setDate(new Date());
+        articleComment.setCommentStatus(CommentStatus.Normal);
+        articleComment.setArticle(article);
+        Optional<Long> maxFloor = articleCommentRepository.getMaxFloorByArticleId(id);
+        synchronized (maxFloor) {
+            articleComment.setFloor(maxFloor.orElse(1L));
+            articleCommentRepository.save(articleComment);
+        }
+        BoundHashOperations<String, String, Long> articleOperations = redisTemplate
+                .boundHashOps(ContractHelper.articleFlag + id);
+        articleOperations.putIfAbsent("comments", 0L);
+        synchronized (articleOperations.get("comments")) {
+            Long comments = articleOperations.get("comments");
+            articleOperations.put("comments", comments + 1L);
         }
     }
 
