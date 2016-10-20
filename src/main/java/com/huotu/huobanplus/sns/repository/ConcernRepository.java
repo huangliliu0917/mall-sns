@@ -40,4 +40,12 @@ public interface ConcernRepository extends JpaRepository<Concern, Long>, JpaSpec
      * @return
      */
     List<Concern> findByToUserId(@Param("toUserId") Long toUserId);
+
+    /**
+     * 查询关注了toUser的用户列表信息
+     *
+     * @param toUser 被关注用户
+     * @return
+     */
+    List<Concern> findByToUser(@Param("toUser") User toUser);
 }

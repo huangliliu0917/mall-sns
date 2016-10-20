@@ -9,10 +9,7 @@
 
 package com.huotu.huobanplus.sns.service.impl;
 
-import com.huotu.huobanplus.sns.entity.Article;
-import com.huotu.huobanplus.sns.entity.Category;
-import com.huotu.huobanplus.sns.entity.Concern;
-import com.huotu.huobanplus.sns.entity.UserArticle;
+import com.huotu.huobanplus.sns.entity.*;
 import com.huotu.huobanplus.sns.model.AppWikiListModel;
 import com.huotu.huobanplus.sns.model.AppWikiModel;
 import com.huotu.huobanplus.sns.model.admin.AdminArticleEditModel;
@@ -23,11 +20,14 @@ import com.huotu.huobanplus.sns.model.common.ArticleType;
 import com.huotu.huobanplus.sns.repository.*;
 import com.huotu.huobanplus.sns.service.ArticleService;
 import com.huotu.huobanplus.sns.service.resource.StaticResourceService;
+import com.huotu.huobanplus.sns.utils.ContractHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.redis.core.BoundHashOperations;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -60,6 +60,8 @@ public class ArticleServiceImpl implements ArticleService {
     private UserRepository userRepository;
     @Autowired
     private CircleRepository circleRepository;
+    @Autowired
+    private RedisTemplate<String, String> redisTemplate;
 
     public List<AppWikiListModel> getAppWikiList(Integer catalogId, Long lastId) {
         List<AppWikiListModel> appWikiListModels = new ArrayList<>();
@@ -216,7 +218,7 @@ public class ArticleServiceImpl implements ArticleService {
         return adminArticleEditModel;
     }
 
-    public void save(Integer articleType, Long id
+    public Article save(Integer articleType, Long id
             , String name, Long userId, String pictureUrl, String content
             , String summary, Integer categoryId, Long circleId, String adConent) {
 
@@ -244,42 +246,64 @@ public class ArticleServiceImpl implements ArticleService {
         if (circleId != null && circleId > 0)
             article.setCircle(circleRepository.findOne(circleId));
         article.setAdConent(adConent);
-        articleRepository.save(article);
+        article = articleRepository.save(article);
+        return article;
 
     }
 
     @Override
-    public void addArticleResult(Integer articleType, Long id, String name, Long userId, String pictureUrl,
-                                 String content, String summary, Long circleId) throws IOException, InterruptedException {
-
+    public void addArticleResult(Integer articleType, Long id, String name, User user, String pictureUrl,
+                                 String summary, Long circleId) throws IOException, InterruptedException {
+        addUserArticle(articleType, id, name, user, pictureUrl, summary);
+        //用户的文章数增加
+        BoundHashOperations<String, String, Long> userOperations = redisTemplate
+                .boundHashOps(ContractHelper.userFlag + user.getId());
+        userOperations.putIfAbsent("articleAmount", 0L);
+        synchronized (userOperations.get("articleAmount")) {
+            Long articleAmount = userOperations.get("articleAmount");
+            userOperations.put("articleAmount", articleAmount + 1L);
+        }
+        //圈子的文章数增加
+        BoundHashOperations<String, String, Long> circleOperations = redisTemplate
+                .boundHashOps(ContractHelper.circleFlag + id);
+        circleOperations.putIfAbsent("articleAmount", 0L);
+        synchronized (circleOperations.get("articleAmount")) {
+            Long articleAmount = circleOperations.get("articleAmount");
+            circleOperations.put("articleAmount", articleAmount + 1L);
+        }
     }
 
     /**
+     * 保存用户和文章的关联表
+     *
      * @param articleType
      * @param id
      * @param name
-     * @param userId
+     * @param user
      * @param pictureUrl
-     * @param content
      * @param summary
      * @throws IOException
      * @throws InterruptedException
      */
-    private void addUserArticle(Integer articleType, Long id, String name, Long userId, String pictureUrl,
-                                String content, String summary) throws IOException, InterruptedException {
-        List<Concern> list = concernRepository.findByToUserId(userId);
+    private void addUserArticle(Integer articleType, Long id, String name, User user, String pictureUrl,
+                                String summary) throws IOException, InterruptedException {
+        List<Concern> list = concernRepository.findByToUser(user);
         int size = list.size();
         Date date = new Date();
         for (int i = 0; i < size; i++) {
             UserArticle userArticle = new UserArticle();
             userArticle.setArticleType(articleType.equals(1) ? ArticleType.Wiki : ArticleType.Normal);
             userArticle.setName(name);
-            userArticle.setPublisher(userRepository.findOne(userId));
             userArticle.setPictureUrl(pictureUrl);
-            userArticle.setContent(content);
+            userArticle.setPublisherId(user.getId());
+            userArticle.setPublisherNickname(user.getNickName());
+            userArticle.setPublisherHeaderImageUrl(user.getImgURL());
+            userArticle.setPublisherLevelId(user.getLevel().getId());
+            userArticle.setPublisherAuthenticationId(user.getAuthenticationType());
             userArticle.setSummary(summary);
             userArticle.setDate(date);
-            userArticle.setOwner(list.get(i).getUser());
+            userArticle.setOwnerId(list.get(i).getUser().getId());
+            userArticle.setArticleId(id);
             userArticleRepository.save(userArticle);
             if (i > 0 && i % 10 == 0)
                 Thread.sleep(500);
