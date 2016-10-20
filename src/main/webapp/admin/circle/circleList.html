@@ -79,7 +79,12 @@
                 <div class="ibox float-e-margins">
                     <div class="ibox-content">
                         <div class="row">
-                            <div class="col-md-12"><a style="float: right" href="/top/circle/editCircle"><button type="button" class="btn btn-success">新建</button></a></div>
+                            <div class="col-md-12">
+                                <a style="float: right" href="/top/circle/editCircle">
+                                    <button type="button" class="btn btn-success">新建</button>
+                                </a>
+                                <button onclick="circleList.externalCall()" type="button" class="btn btn-success">测试</button>
+                            </div>
                         </div>
                         <table id="circleList" class="table table-striped table-bordered table-hover  dataTable" aria-describedby="editable_info">
                             <thead>
@@ -90,6 +95,7 @@
                                         <label for="chkAll"></label>
                                     </div>
                                 </th>
+                                <th>圈子ID</th>
                                 <th>圈子名称</th>
                                 <th>圈子图片</th>
                                 <th>圈子分类</th>
@@ -109,6 +115,7 @@
                                         <label for="chk1"></label>
                                     </div>
                                 </td>
+                                <td>1</td>
                                 <td>母婴营养</td>
                                 <td><img style="width: 135px; height: 84px;" src=""/></td>
 
@@ -220,10 +227,6 @@
         });
     };
 
-    circleList.buildCirclePage=function(pageSize,total,pageNo){
-
-    };
-
     circleList.buildCircleList=function(list){
         var tbody=$("#circleList tbody");
         $(tbody).children("tr").remove();
@@ -233,15 +236,16 @@
             var html=$(model).children("td").eq(0).html();
             html=html.replace(/chk1/g, "chk" + i);
             $(model).children("td").eq(0).html(html);
-            $(model).children("td").eq(1).text(val.circleName);
-            $(model).children("td").eq(2).children("img").attr("src",val.pictureUrl);
-            $(model).children("td").eq(3).text(val.categoryName);
-            $(model).children("td").eq(4).text(val.leaderName);
-            $(model).children("td").eq(5).text(val.createDate);
-            $(model).children("td").eq(6).text(val.suggested?'热门':'普通');
-            $(model).children("td").eq(7).text(val.userAmount);
-            $(model).children("td").eq(8).text(val.articleAmount);
-            $(model).children("td").eq(9).children("a").eq(0).attr("href","/top/circle/editCircle?id="+val.circleId);
+            $(model).children("td").eq(1).text(val.circleId);
+            $(model).children("td").eq(2).text(val.circleName);
+            $(model).children("td").eq(3).children("img").attr("src",val.pictureUrl);
+            $(model).children("td").eq(4).text(val.categoryName);
+            $(model).children("td").eq(5).text(val.leaderName);
+            $(model).children("td").eq(6).text(val.createDate);
+            $(model).children("td").eq(7).text(val.suggested?'热门':'普通');
+            $(model).children("td").eq(8).text(val.userAmount);
+            $(model).children("td").eq(9).text(val.articleAmount);
+            $(model).children("td").eq(10).children("a").eq(0).attr("href","/top/circle/editCircle?id="+val.circleId);
             $(tbody).append(model);
         }
     };
@@ -331,6 +335,21 @@
 
     circleList.editCircle=function(){
 
+
+    };
+
+    //外部调用的js,用来获取圈子的id和名称
+    circleList.externalCall=function(){
+        var data=[];
+        $("#circleList tbody tr").each(function(index,val){
+            if($("input[type='checkbox']",val).is(':checked')){
+                var id=parseInt($(this).children("td").eq(1).text());
+                var name=$(this).children("td").eq(2).text();
+                data.push({id:id,name:name});
+            }
+        });
+        return data;
+//        console.log(JSON.stringify(data));
 
     };
 
