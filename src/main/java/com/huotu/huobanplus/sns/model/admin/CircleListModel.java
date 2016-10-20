@@ -64,6 +64,11 @@ public class CircleListModel {
     private boolean suggested;
 
     /**
+     * 是否启用
+     */
+    private boolean enabled;
+
+    /**
      * 文章数
      */
     private long articleAmount;

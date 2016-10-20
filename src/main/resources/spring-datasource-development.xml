@@ -13,6 +13,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="persistenceUnitName" value="entityManager" />
         <property name="packagesToScan">
             <array>
                 <value>com.huotu.huobanplus.sns.entity</value>

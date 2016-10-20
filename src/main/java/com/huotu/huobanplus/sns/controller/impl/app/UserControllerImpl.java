@@ -158,6 +158,7 @@ public class UserControllerImpl implements UserController {
 
     @Override
     public ApiResult commentArticle(Long id, String content) throws Exception {
+
         return null;
     }
 

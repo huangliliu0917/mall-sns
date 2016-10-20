@@ -37,6 +37,11 @@ public interface StaticResourceService {
      */
     String article = "/article";
 
+    /**
+     * 圈子
+     */
+    String circle="/circle";
+
 
     /**
      * 上传资源

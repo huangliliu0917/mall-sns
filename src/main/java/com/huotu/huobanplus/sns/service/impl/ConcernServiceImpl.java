@@ -16,8 +16,10 @@ import com.huotu.huobanplus.sns.exception.LogException;
 import com.huotu.huobanplus.sns.repository.ConcernRepository;
 import com.huotu.huobanplus.sns.repository.UserRepository;
 import com.huotu.huobanplus.sns.service.ConcernService;
+import com.huotu.huobanplus.sns.utils.ContractHelper;
 import com.huotu.huobanplus.sns.utils.UserHelper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.BoundHashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -52,7 +54,24 @@ public class ConcernServiceImpl implements ConcernService {
         concern.setDate(new Date());
         concern.setUser(user);
         concernRepository.save(concern);
-//        redisTemplate
+        //关注用户的关注人数增加
+        BoundHashOperations<String, String, Long> userOperations = redisTemplate
+                .boundHashOps(ContractHelper.userFlag + user.getId());
+        userOperations.putIfAbsent("userAmount", 0L);
+        synchronized (userOperations.get("userAmount")) {
+            Long userAmount = userOperations.get("userAmount");
+            userOperations.put("userAmount", userAmount + 1L);
+        }
+
+        //被关注用户的粉丝人数增加
+        BoundHashOperations<String, String, Long> toUserOperations = redisTemplate
+                .boundHashOps(ContractHelper.userFlag + toUser.getId());
+        toUserOperations.putIfAbsent("fansAmount", 0L);
+        synchronized (toUserOperations.get("fansAmount")) {
+            Long userAmount = toUserOperations.get("fansAmount");
+            toUserOperations.put("fansAmount", userAmount + 1L);
+        }
+
     }
 
     @Override
@@ -64,6 +83,23 @@ public class ConcernServiceImpl implements ConcernService {
             throw new ConcernException("您已经取消关注该用户");
         for (Concern concern : concerns) {
             concernRepository.delete(concern);
+        }
+
+        //关注用户的关注人数减少
+        BoundHashOperations<String, String, Long> userOperations = redisTemplate
+                .boundHashOps(ContractHelper.userFlag + user.getId());
+        synchronized (userOperations.get("userAmount")) {
+            Long userAmount = userOperations.get("userAmount");
+            userOperations.put("userAmount", userAmount - concerns.size());
+        }
+
+        //被关注用户的粉丝人数减少
+        BoundHashOperations<String, String, Long> toUserOperations = redisTemplate
+                .boundHashOps(ContractHelper.userFlag + toUser.getId());
+        toUserOperations.putIfAbsent("fansAmount", 0L);
+        synchronized (toUserOperations.get("fansAmount")) {
+            Long fansAmount = toUserOperations.get("fansAmount");
+            toUserOperations.put("fansAmount", fansAmount - concerns.size());
         }
     }
 }

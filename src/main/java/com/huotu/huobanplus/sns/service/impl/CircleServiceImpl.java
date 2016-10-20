@@ -73,6 +73,7 @@ public class CircleServiceImpl implements CircleService {
         }
         model.setCircleId(circle.getId());
         model.setCircleName(circle.getName());
+        model.setEnabled(circle.isEnabled());
         model.setPictureUrl(circle.getPictureUrl());
         model.setCategoryName(circle.getCategory() == null ? "" : circle.getCategory().getName());
         model.setLeaderName(circle.getLeader() == null ? "" : circle.getLeader().getNickName());
@@ -93,6 +94,7 @@ public class CircleServiceImpl implements CircleService {
         }
         model.setCircleId(circle.getId());
         model.setSummary(circle.getSummary());
+        model.setEnabled(circle.isEnabled());
         model.setCircleName(circle.getName());
         model.setPictureUrl(circle.getPictureUrl());
         model.setCategoryId(circle.getCategory()==null?-1:circle.getCategory().getId());
@@ -132,15 +134,17 @@ public class CircleServiceImpl implements CircleService {
 
     @Override
     public void addCircle(CircleListModel circleListModel) throws IOException {
-        Category category= categoryRepository.findOne(circleListModel.getCategoryId());
-        User leader=userRepository.findOne(circleListModel.getLeaderId());
+        Category category=circleListModel.getCategoryId()==null?null: categoryRepository.findOne(circleListModel.getCategoryId());
+        User leader=circleListModel.getLeaderId()==null?null:userRepository.findOne(circleListModel.getLeaderId());
         Circle circle=new Circle();
         circle.setCategory(category);
+        circle.setEnabled(circleListModel.isEnabled());
         circle.setLeader(leader);
         circle.setName(circleListModel.getCircleName());
         circle.setPictureUrl(circleListModel.getPictureUrl());
         circle.setSummary(circleListModel.getSummary());
         circle.setDate(new Date());
+        circle.setSuggested(circleListModel.isSuggested());
         circle.setTags(circleListModel.getTags());
         circleRepository.save(circle);
     }
@@ -151,6 +155,7 @@ public class CircleServiceImpl implements CircleService {
         Category category= categoryRepository.findOne(circleListModel.getCategoryId());
         Circle circle=circleRepository.findOne(circleListModel.getCircleId());
         circle.setName(circleListModel.getCircleName());
+        circle.setEnabled(circleListModel.isEnabled());
         circle.setSummary(circleListModel.getSummary());
         circle.setSuggested(circleListModel.isSuggested());
         circle.setLeader(leader);

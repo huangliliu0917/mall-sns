@@ -119,15 +119,9 @@
                                 <td>487556</td>
                                 <td>785468</td>
                                 <td>
-                                    <a onclick="goodListHandler.deleteGood(1)" class="cursor-point">
+                                    <a href="#" class="cursor-point">
                                         <i class="fa fa-pencil tooltips" data-placement="top" data-toggle="tooltip"
                                            data-original-title="编辑">
-                                        </i>
-                                    </a>
-                                    &nbsp;
-                                    <a onclick="goodListHandler.deleteGood(1)" class="cursor-point">
-                                        <i class="fa fa-trash tooltips"
-                                           data-placement="top" data-toggle="tooltip" data-original-title="删除">
                                         </i>
                                     </a>
                                 </td>
@@ -240,13 +234,14 @@
             html=html.replace(/chk1/g, "chk" + i);
             $(model).children("td").eq(0).html(html);
             $(model).children("td").eq(1).text(val.circleName);
-            $(model).children("td").eq(2).text(val.pictureUrl);
+            $(model).children("td").eq(2).children("img").attr("src",val.pictureUrl);
             $(model).children("td").eq(3).text(val.categoryName);
             $(model).children("td").eq(4).text(val.leaderName);
             $(model).children("td").eq(5).text(val.createDate);
-            $(model).children("td").eq(6).text(val.suggested);
+            $(model).children("td").eq(6).text(val.suggested?'热门':'普通');
             $(model).children("td").eq(7).text(val.userAmount);
             $(model).children("td").eq(8).text(val.articleAmount);
+            $(model).children("td").eq(9).children("a").eq(0).attr("href","/top/circle/editCircle?id="+val.circleId);
             $(tbody).append(model);
         }
     };
@@ -295,6 +290,7 @@
         circleList.searchModel.pageNo--;
         if(circleList.searchModel.pageNo<0){
             circleList.searchModel.pageNo=0;
+            return;
         }
         circleList.search();
     };
@@ -302,6 +298,8 @@
     circleList.goToDown=function(){
         if(circleList.searchModel.pageNo+1<circleList.totalPage){
             circleList.searchModel.pageNo++;
+        }else {
+            return;
         }
         circleList.search();
     };

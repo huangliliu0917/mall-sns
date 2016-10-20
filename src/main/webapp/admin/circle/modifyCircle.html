@@ -62,12 +62,13 @@
                                 <div class="col-sm-10">
                                     <div class="radio i-checks">
                                         <label>
-                                            <input th:checked="*{suggested}" type="radio" value="true" name="suggested"/> <i></i> 热门</label>
+                                            <input th:checked="*{suggested}" type="radio" value="true" name="suggested"/> <i></i>热门</label>
                                     </div>
                                     <div class="radio i-checks">
                                         <label>
-                                            <input th:checked="!*{suggested}" type="radio" checked="" value="false" name="suggested"/> <i></i>普通</label>
+                                            <input th:checked="!*{suggested}" type="radio" value="false" name="suggested"/> <i></i>普通</label>
                                     </div>
+
 
                                 </div>
                             </div>
@@ -79,7 +80,7 @@
                                     <button onclick="circleConfig.showUserList()" class="btn btn-primary" type="button">选择组长</button>
 
                                 </div>
-                                <div class="">
+                                <div class="col-sm-1">
                                     <label class="" th:text="*{leaderName}==null?'未选择组长':'当前组长:'+*{leaderName}">当前组长:小编</label>
                                     <input type="hidden" name="leaderId" th:value="*{leaderId}"/>
                                 </div>
@@ -95,7 +96,7 @@
                                     <button onclick="circleConfig.showCategoryList()" class="btn btn-primary" type="button">选择分类</button>
                                 </div>
 
-                                <div class="">
+                                <div class="col-sm-1">
                                     <label class="" th:text="*{categoryName}==null?'未选择分类':'当前分类:'+*{categoryName}">当前组长:小编</label>
                                     <input type="hidden" name="categoryId" th:value="*{categoryId}"/>
                                 </div>
@@ -110,15 +111,13 @@
                                     <button onclick="circleConfig.showTagList()" class="btn btn-primary" type="button">选择标签</button>
                                 </div>
 
-                                <div id="tags" class="">
+                                <div id="tags" class="col-sm-1">
                                     <label th:each="t:*{tags}" class="">
                                         <span th:text="${t.name}"></span>
                                         <input type="hidden" th:value="${t.id}"/>
                                     </label>
                                 </div>
                             </div>
-
-
 
                             <div class="hr-line-dashed"></div>
                             <div class="form-group">
@@ -127,39 +126,44 @@
                                 <div class="col-sm-10">
                                     <div class="col-md-3">
                                         <div class="image-crop">
-                                            <img th:src="*{pictureUrl}==null?'http://placehold.it/300x200?text=300x200':*{pictureUrl}" src="http://placehold.it/300x200?text=300x200"/>
+                                            <img style="width: 300px;height: 200px"  th:src="*{pictureUrl}==null?'http://placehold.it/300x200?text=300x200':*{pictureUrl}" src="http://placehold.it/300x200?text=300x200"/>
                                         </div>
                                     </div>
 
-                                    <!--<div id="uploadpicCover" style="width: 450px; height: 280px; border: 1px solid #ccc; float: left; background: #efefef; line-height: 80px; text-align: center; color: #ccc;">-->
-                                        <!--<span th:style="'display:none'">450×280</span>-->
-                                        <!--<img th:src="*{SharePic}==''?'':@{*{SharePic}}" id="share_img"  width="80px" height="80px"/>-->
-                                    <!--</div>-->
-
-                                    <div class="btn-group">
-                                        <label title="上传图片" for="inputImage" class="btn btn-primary">
-                                            <input onchange=" circleConfig.uploadImage()" type="file" accept="image/*"  id="inputImage" class="hide"/> 上传新图片
+                                    <div class="col-md-3">
+                                        <label title="上传图片" for="fileImage" class="btn btn-primary">
+                                            <input onchange=" circleConfig.uploadImage()" type="file" accept="image/*"  id="fileImage" name="fileImage" class="hide"/> 上传新图片
                                         </label>
+                                        <span class="help-block m-b-none">推荐图片大小:300x200</span>
                                     </div>
-                                    <span class="help-block m-b-none">推荐图片大小:300x200</span>
 
-                                    <!--<div style="margin-left: 10px; float: left; line-height: 300px;padding-top: 30px;">-->
-                                        <!--<a id="uploadpic">-->
-                                            <!--<button class="btn btn-primary">上传</button>-->
-                                            <!--<input type="file" onchange="uploadImage()"  name="imgFile" id="imgFile"-->
-                                                   <!--style="position: absolute; right: 0px; top: 0px; margin: 0px; opacity: 0; padding: 0px;-->
-                                                   <!--font-family: Arial; font-size: 118px; vertical-align: baseline; cursor: pointer;"/>-->
-                                        <!--</a>-->
-                                    <!--</div>-->
-                                    <!--<input name="txtReplyUrl1" type="hidden" id="txtReplyUrl1" value="/resource/images/wechat/mall_cat_def.png"/>-->
+
                                 </div>
                             </div>
+
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">是否禁用
+                                </label>
+                                <div class="col-sm-10">
+                                    <div class="radio i-checks">
+                                        <label>
+                                            <input th:checked="*{enabled}" type="radio" value="true" name="enabled"/> <i></i>启用</label>
+                                    </div>
+                                    <div class="radio i-checks">
+                                        <label>
+                                            <input th:checked="!*{enabled}" type="radio" value="false" name="enabled"/> <i></i>禁用</label>
+                                    </div>
+
+
+                                </div>
+                            </div>
+
                             <div class="hr-line-dashed"></div>
                             <div class="form-group">
                                 <div class="col-sm-4 col-sm-offset-2">
                                     <button class="btn btn-primary" type="button" onclick="circleConfig.submitForm()">保存圈子</button>
-                                    <button onclick="" class="btn btn-white" type="button">取消</button>
-                                    <button onclick="circleConfig.check()" class="btn btn-white" type="button">敏感词检查</button>
+                                    <a class="btn-white" href="/admin/circle/circleList.html"><button class="btn btn-white" type="button">取消</button></a>
                                 </div>
                             </div>
                         </form>
@@ -236,35 +240,7 @@
     <script type="text/javascript" src="http://tajs.qq.com/stats?sId=9051096" charset="UTF-8"></script>
     <script type="text/javascript" th:inline="javascript">
         /*<![CDATA[*/
-
-
         var circleConfig={};
-
-
-
-        circleConfig.check=function(){
-            var summary=$("input[name='summary']").val();
-            $.ajax({
-                type: "GET", //请求方式
-                url: "http://www.hoapi.com/index.php/Home/Api/check",
-                data: {str: summary,token:"1bfc6c8a90c45c29ff4b8a3ec0d411ee"}, //数据
-                dataType : "jsonp",
-                success: function(data) {
-                    layer.msg(data);
-//                    layer.msg(data);
-//                    if (data.data == 0) {
-//                        layer.msg("，未发现敏感词");
-//                    } else {
-//                        layer.msg("，发现以下敏感词：" + data.data);
-//                    }
-                },
-                error: function(e) {
-//                    alert("获取错误"+ JSON.stringify(e));
-                }
-
-            });
-
-        };
         circleConfig.searchModel={};
         circleConfig.currentSearchType=0;
 //        circleConfig.sharePicPath=/*[[${sharePicPath}]]*/ '';
@@ -273,28 +249,30 @@
 
         circleConfig.uploadImage=function(){
             var loadPic=layer.load(0, {shade: false});
-//            $.ajaxFileUpload({
-//                url: 'UploadImg',
-//                secureuri: false,
-//                fileElementId: 'imgFile',
-//                dataType: 'json',
-//                data: null,
-//                success: function(resultModel) {
-//                    if(resultModel.code==1){
-//                        layer.close(loadPic);
-//                        layer.msg("上传成功");
-//                        $("#share_img").attr("src",resultModel.url);
-//                        $("#share_img").show();
-//                        $("#uploadpicCover").children("span").hide();
-////                    $("input[name='SharePic']").val(resultModel.message);
-//                        sharePicPath=resultModel.message;
-//                    }
-//                },
-//                error: function(data, status, e) {
-//                    layer.close(loadPic);
-//                    layer.msg("上传失败，请检查网络后重试"+e);
-//                }
-//            });
+            $.ajaxFileUpload({
+                url: '/top/file/uploadAticleImage',
+                secureuri: false,
+                fileElementId: 'fileImage',
+                dataType: 'json',
+                data: null,
+                success: function(resultModel) {
+                    if(resultModel.code==1){
+                        layer.close(loadPic);
+                        layer.msg("上传成功");
+                        $(".image-crop img").attr("src",resultModel.url);
+                    }
+                },
+                error: function(data, status, e) {
+                    layer.close(loadPic);
+                    layer.msg("上传失败，请检查网络后重试"+e);
+                }
+            });
+        };
+
+        circleConfig.geturlPath=function(url){
+            var arrObj=url.split("//");
+            var start=arrObj[1].indexOf("/");
+            return arrObj[1].substring(start);
         };
 
         //提交圈子
@@ -306,8 +284,9 @@
             circleModel.circleName=$("input[name='circleName']").val();
             circleModel.summary=$("input[name='summary']").val();
             circleModel.categoryId=$("input[name='categoryId']").val();
-            circleModel.pictureUrl=$("input[name='pictureUrl']").val();
-            circleModel.suggested=$("input[name='suggested']").val();
+            circleModel.pictureUrl=circleConfig.geturlPath($(".image-crop img").attr("src"));
+            circleModel.suggested=$("input[name='suggested']:checked").val();
+            circleModel.enabled=$("input[name='enabled']:checked").val();
             circleModel.leaderId=$("input[name='leaderId']").val();
             var tags=[];
             $("#tags label").each(function(index,val){
