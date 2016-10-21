@@ -64,12 +64,10 @@ public class AdminLevelController {
         Sort sort = new Sort(Sort.Direction.ASC, "experience");
         Pageable pageable = new PageRequest(page - 1, pageSize, sort);
         Page<Level> pages = levelRepository.findAll(pageable);
-        Long count = pages.getTotalElements();
-        int pageCount = Integer.parseInt(count.toString()) / pageSize + 1;
         model.addAttribute("total", pages.getTotalElements());
         model.addAttribute("pageSize", pageSize);
         model.addAttribute("page", page);
-        model.addAttribute("pageCount", pageCount);
+        model.addAttribute("pageCount", pages.getTotalPages());
         model.addAttribute("list", pages.getContent());
         model.addAttribute("url", commonConfigService.getWebUrl() + "/top/level/index?page=");
         return "/admin/user/levelList";

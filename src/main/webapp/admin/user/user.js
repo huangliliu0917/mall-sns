@@ -303,6 +303,15 @@ page.selectOne = function () {
     return user;
 };
 
+//返回id数组
+page.selectMany = function () {
+    var userIdArray = [];
+    $('input[name="checkUser"]:checked').each(function () {
+        userIdArray.push($(this).val());
+    });
+    return userIdArray;
+};
+
 function format(obj) {
     var d = new Date(obj);    //根据时间戳生成的时间对象
     var date = (d.getFullYear()) + "-" +

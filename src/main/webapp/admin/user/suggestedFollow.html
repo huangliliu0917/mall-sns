@@ -26,6 +26,7 @@
         var rootURL = /*[[${url}]]*/'www.baidu.com';
         var pageIndex = /*[[${page}]]*/'1';
         var totalPage = /*[[${pageSize}]]*/'20';
+        var idList = /*[[${idList}]]*/null;
     </script>
 </head>
 
@@ -59,29 +60,29 @@
                                 <th>用户昵称</th>
                                 <th>经验</th>
                                 <th>注册时间</th>
-                                <th>权限</th>
-                                <th>身份</th>
                                 <th>等级</th>
                                 <th>操作</th>
                             </tr>
                             </thead>
                             <tbody>
 
-                            <tr th:each="user:${list}">
-                                <!--<td th:text="${level.id}">1</td>-->
-                                <!--<td th:text="${level.name}">等级一</td>-->
-                                <!--<td th:text="${level.experience}">1</td>-->
-                                <!--<td>-->
-                                <!--<button class="btn btn-success btn-sm" th:attr="levelId=${level.id}"-->
-                                <!--onclick="levelHandler.edit(this)">-->
-                                <!--<i class="fa fa-paste"></i>&nbsp;编辑-->
-                                <!--</button>-->
-                                <!--&nbsp;&nbsp;-->
-                                <!--<button class="btn btn-success btn-sm" th:attr="levelId=${level.id}"-->
-                                <!--onclick="levelHandler.deleteLevel(this)">-->
-                                <!--<i class="fa fa-paste"></i>&nbsp;删除-->
-                                <!--</button>-->
-                                <!--</td>-->
+                            <tr th:each="suggested:${list}">
+                                <td>
+                                    <img src="../../img/user.png" th:if="${suggested.user.imgURL == null}"/>
+                                    <img th:if="${suggested.user.imgURL !=null}" th:src="${suggested.user.imgURL}"/>
+                                </td>
+                                <td th:text="${suggested.user.nickName}">小阮</td>
+                                <td th:text="${suggested.user.experience}">100</td>
+                                <td th:text="${#calendars.format(suggested.user.experience,'yyyy-MM-dd HH:mm:ss')}">
+                                    100
+                                </td>
+                                <td th:text="${suggested.user.level.name}">1</td>
+                                <td>
+                                    <button class="btn btn-success btn-sm" th:attr="userId=${suggested.user.id}"
+                                            onclick="userHandler.deleteSuggested(this)">
+                                        <i class="fa fa-paste"></i>&nbsp;删除
+                                    </button>
+                                </td>
                             </tr>
                             </tbody>
                         </table>
@@ -108,7 +109,8 @@
                 <iframe id="frame_user" width="100%" height="100%" frameborder="0"></iframe>
             </div>
             <div class="modal-footer">
-                <button id="submitSelect" class="btn btn-success" type="button" onclick="page.submitSelect(this)">确定选择
+                <button id="submitSelect" class="btn btn-success" type="button"
+                        onclick="userHandler.submitSelect(this)">确定选择
                 </button>
             </div>
         </div>
@@ -128,28 +130,7 @@
 
 <script src="../../js/bootstrap.hot.extra-utils.js"></script>
 <script src="../../js/bootstrap.hot.extra-init.js"></script>
-
-<!--suppress JSUnresolvedFunction -->
-<script type="text/javascript">
-    var win;
-
-    $(function () {
-        //初始化分页
-        var pageinate = new hot.paging(".pagination", pageIndex, totalPage, 7);
-
-        pageinate.init(function (p) {
-            window.location.href = rootURL + p;
-        });
-    });
-
-    var userHandler = {
-        selectUser: function () {
-            $("#frame_user").attr("src", "/top/user/index?selectType=single");
-            $("#btnUser").attr("data-toggle", "modal");
-            $("#btnUser").attr("data-target", "#modal_user");
-        }
-    }
-</script>
+<script src="../../admin/user/suggestFollow.js"></script>
 </body>
 
 </html>

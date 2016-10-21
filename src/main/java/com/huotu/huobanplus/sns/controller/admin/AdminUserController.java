@@ -41,6 +41,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -114,14 +115,12 @@ public class AdminUserController {
         Pageable pageable = new PageRequest(page - 1, pageSize, sort);
         Page<User> pages = userService.findByNickNameAndAuthenticationIdAndLevelId(nickName, authenticationId,
                 levelId, pageable);
-        Long count = pages.getTotalElements();
-        int pageCount = Integer.parseInt(count.toString()) / pageSize + 1;
         ModelMap map = new ModelMap();
         map.addAttribute("list", pages.getContent());
         map.addAttribute("total", pages.getTotalElements());
         map.addAttribute("pageSize", pageSize);
         map.addAttribute("page", page);
-        map.addAttribute("pageCount", pageCount);
+        map.addAttribute("pageCount", pages.getTotalPages());
         return map;
     }
 
@@ -208,6 +207,15 @@ public class AdminUserController {
         return ResultUtil.success();
     }
 
+    /**
+     * 推荐关注
+     *
+     * @param page
+     * @param pageSize
+     * @param model
+     * @return
+     * @throws IOException
+     */
     @RequestMapping(value = "/suggestedFollow", method = RequestMethod.GET)
     public String suggestedFollow(@RequestParam(required = false) Integer page,
                                   @RequestParam(required = false) Integer pageSize, Model model) throws IOException {
@@ -217,13 +225,48 @@ public class AdminUserController {
         Pageable pageable = new PageRequest(page - 1, pageSize, sort);
         Page<UserSuggested> pages = userSuggestedRepository.findAll(pageable);
         Long count = pages.getTotalElements();
-        int pageCount = Integer.parseInt(count.toString()) / pageSize + 1;
+        List<Long> idList = pages.getContent().stream().map(userSuggested ->
+                userSuggested.getUser().getId()).collect(Collectors.toList());
+//        List<UserSuggested> list = pages.getContent();
+//        for(UserSuggested suggested:list){
+//            if(StringUtils.isEmpty(suggested.getUser().getImgURL())){
+//                suggested.getUser().setImgURL("../../img");
+//            }
+//        }
         model.addAttribute("total", pages.getTotalElements());
         model.addAttribute("pageSize", pageSize);
         model.addAttribute("page", page);
-        model.addAttribute("pageCount", pageCount);
+        model.addAttribute("pageCount", pages.getTotalPages());
         model.addAttribute("list", pages.getContent());
+        model.addAttribute("idList", idList);
         model.addAttribute("url", commonConfigService.getWebUrl() + "/top/user/suggestedFollow?page=");
         return "/admin/user/suggestedFollow";
+    }
+
+    @RequestMapping(value = "/suggested", method = RequestMethod.POST)
+    @ResponseBody
+    public ModelMap suggested(Long[] ids) throws Exception {
+        for (Long id : ids) {
+            User user = userRepository.getOne(id);
+            UserSuggested userSuggested = new UserSuggested();
+            userSuggested.setUser(user);
+            userSuggestedRepository.save(userSuggested);
+        }
+        return ResultUtil.success();
+    }
+
+    /**
+     * 删除推荐
+     *
+     * @param id 用户id
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/deleteSuggested", method = RequestMethod.POST)
+    @ResponseBody
+    public ModelMap deleteSuggested(@RequestParam Long id) throws Exception {
+        Optional<UserSuggested> optional = userSuggestedRepository.findByUserId(id);
+        userSuggestedRepository.delete(optional.orElse(null));
+        return ResultUtil.success();
     }
 }
