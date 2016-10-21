@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<!--
+  ~ 版权所有:杭州火图科技有限公司
+  ~ 地址:浙江省杭州市滨江区西兴街道阡陌路智慧E谷B幢4楼
+  ~
+  ~ (c) Copyright Hangzhou Hot Technology Co., Ltd.
+  ~ Floor 4,Block B,Wisdom E Valley,Qianmo Road,Binjiang District
+  ~ 2013-2016. All rights reserved.
+  -->
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+
+    <title>banner文章</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+
+    <link rel="shortcut icon" href="favicon.ico">
+    <link href="http://resali.huobanplus.com/cdn/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="http://resali.huobanplus.com/cdn/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet"/>
+
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/animate.min.css" rel="stylesheet"/>
+    <link href="../../css/style.min.css" rel="stylesheet"/><base target="_blank">
+
+</head>
+
+<body class="gray-bg">
+    <div class="wrapper wrapper-content">
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>编辑banner文章</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <!--/*@thymesVar id="circle" type="com.huotu.huobanplus.sns.entity.Circle"*/-->
+                            <ul th:each="s:${sidelModels}" class="sortable-list connectList agile-list ui-sortable">
+                                <li th:class="${type}==''" class="info-element" style="">
+                                    <span>支持财会人员的继续培训工作。</span>
+                                    <div class="agile-detail">
+                                        <a href="#" class="pull-right btn btn-xs btn-white">删除</a>
+                                        <i class="label">科普</i>
+                                    </div>
+                                </li>
+
+
+                                <li class="success-element">
+                                    <span>支持财会人员的继续培训工作。</span>
+                                    <div class="agile-detail">
+                                        <a href="#" class="pull-right btn btn-xs btn-white">删除</a>
+                                        <i class="label">帖子</i>
+                                    </div>
+                                </li>
+                            </ul>
+
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <div class="text-center">
+                                    <!--<button onclick="circleConfig.showTagList()" class="btn btn-white" type="button">圈子文章</button>-->
+                                    <button onclick="circleConfig.showTagList()" class="btn btn-white" type="button">添加</button>
+                                </div>
+
+                            </div>
+
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <div class="text-center">
+                                    <button class="btn btn-primary" type="button" onclick="circleConfig.submitForm()">保存</button>
+                                </div>
+                            </div>
+                    </div>
+                </div>
+            </div>
+            <!--效果查看-->
+            <div class="col-sm-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>查看效果</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content ">
+                        <div class="carousel slide" id="carousel2">
+                            <ol class="carousel-indicators">
+                                <li data-slide-to="0" data-target="#carousel2" class="active"></li>
+                                <li data-slide-to="1" data-target="#carousel2"></li>
+                                <li data-slide-to="2" data-target="#carousel2" class=""></li>
+                            </ol>
+                            <div class="carousel-inner">
+                                <div class="item active">
+                                    <img alt="image" class="img-responsive" src="../../img/p_big1.jpg">
+                                    <div class="carousel-caption">
+                                        <p>This is simple caption 1</p>
+                                    </div>
+                                </div>
+                                <div class="item ">
+                                    <img alt="image" class="img-responsive" src="../../img/p_big3.jpg">
+                                    <div class="carousel-caption">
+                                        <p>This is simple caption 2</p>
+                                    </div>
+                                </div>
+                                <div class="item">
+                                    <img alt="image" class="img-responsive" src="../../img/p_big2.jpg">
+                                    <div class="carousel-caption">
+                                        <p>This is simple caption 3</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <a data-slide="prev" href="carousel.html#carousel2" class="left carousel-control">
+                                <span class="icon-prev"></span>
+                            </a>
+                            <a data-slide="next" href="carousel.html#carousel2" class="right carousel-control">
+                                <span class="icon-next"></span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+        </div>
+    </div>
+    <script src="http://resali.huobanplus.com/cdn/jquery/2.2.4/jquery.min.js"></script>
+    <script src="http://resali.huobanplus.com/cdn/bootstrap/3.3.5/bootstrap.min.js"></script>
+    <script src="http://resali.huobanplus.com/cdn/hotui/js/content.min.js"></script>
+    <script type="text/javascript" src="http://tajs.qq.com/stats?sId=9051096" charset="UTF-8"></script>
+</body>
+
+</html>

@@ -8,10 +8,10 @@ import java.util.Arrays;
 import java.util.Collection;
 
 /**
- * Created by luffy on 2015/6/10.
+ * Created by slt on 2015/6/10.
  * 系统管理员
  *
- * @author luffy luffy.ja at gmail.com
+ * @author
  */
 @Entity
 public class Manager extends AbstractLogin{

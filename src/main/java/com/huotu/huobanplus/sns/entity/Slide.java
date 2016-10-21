@@ -6,7 +6,7 @@ import lombok.Setter;
 import javax.persistence.*;
 
 /**
- * 幻灯片
+ * 圈子头部的banner图
  * Created by Administrator on 2016/9/29.
  */
 @Entity
