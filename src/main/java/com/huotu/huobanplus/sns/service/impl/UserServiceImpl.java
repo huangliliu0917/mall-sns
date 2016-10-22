@@ -11,9 +11,12 @@ package com.huotu.huobanplus.sns.service.impl;
 
 import com.huotu.common.base.RSAHelper;
 import com.huotu.huobanplus.sns.entity.User;
+import com.huotu.huobanplus.sns.entity.UserArticle;
+import com.huotu.huobanplus.sns.model.AppCircleArticleModel;
 import com.huotu.huobanplus.sns.model.AppUserModel;
 import com.huotu.huobanplus.sns.repository.UserRepository;
 import com.huotu.huobanplus.sns.service.UserService;
+import com.huotu.huobanplus.sns.utils.ContractHelper;
 import com.huotu.huobanplus.sns.utils.CookieHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -21,6 +24,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.BoundHashOperations;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -28,6 +33,7 @@ import javax.persistence.criteria.Predicate;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -46,6 +52,8 @@ public class UserServiceImpl implements UserService {
     private Environment env;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private RedisTemplate<String, String> redisTemplate;
 
     @Override
     public Long getUserId(HttpServletRequest request) {
@@ -105,5 +113,32 @@ public class UserServiceImpl implements UserService {
             return appUserModel;
         }
         return null;
+    }
+
+    private AppCircleArticleModel changeModel(UserArticle article) throws IOException {
+        AppCircleArticleModel model = new AppCircleArticleModel();
+        model.setPid(article.getArticleId());
+        model.setName(article.getName());
+        model.setPictureUrl(article.getPictureUrl());
+//        model.setUrl("");
+        model.setUserName(article.getPublisherNickname());
+        model.setUserHeadUrl(article.getPublisherHeaderImageUrl());
+        model.setUserLevel(article.getPublisherLevelId().intValue());
+        model.setTime(article.getDate().getTime());
+        BoundHashOperations<String, String, Long> articleOperations = redisTemplate
+                .boundHashOps(ContractHelper.articleFlag + article.getArticleId());
+        articleOperations.putIfAbsent("comments", 0L);
+        model.setCommentsAmount(articleOperations.get("comments"));
+        //浏览量不知道怎么统计
+        return model;
+    }
+
+    @Override
+    public AppCircleArticleModel[] changeModelArray(List<UserArticle> articles) throws IOException {
+        AppCircleArticleModel[] models = new AppCircleArticleModel[articles.size()];
+        for (int i = 0; i < articles.size(); i++) {
+            models[i] = changeModel(articles.get(i));
+        }
+        return models;
     }
 }

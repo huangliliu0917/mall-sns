@@ -13,6 +13,7 @@ import com.huotu.huobanplus.sns.entity.Concern;
 import com.huotu.huobanplus.sns.entity.User;
 import com.huotu.huobanplus.sns.exception.ConcernException;
 import com.huotu.huobanplus.sns.exception.LogException;
+import com.huotu.huobanplus.sns.model.AppUserConcermListModel;
 import com.huotu.huobanplus.sns.repository.ConcernRepository;
 import com.huotu.huobanplus.sns.repository.UserRepository;
 import com.huotu.huobanplus.sns.service.ConcernService;
@@ -101,5 +102,32 @@ public class ConcernServiceImpl implements ConcernService {
             Long fansAmount = toUserOperations.get("fansAmount");
             toUserOperations.put("fansAmount", fansAmount - concerns.size());
         }
+    }
+
+    @Override
+    public AppUserConcermListModel changeModel(Concern concern) throws IOException {
+        AppUserConcermListModel model = new AppUserConcermListModel();
+        User toUser = concern.getToUser();
+        model.setPid(toUser.getId());
+        model.setUserName(toUser.getNickName());
+        model.setUserHeadUrl(toUser.getImgURL());
+        model.setUserLevelName(toUser.getLevel().getName());
+        BoundHashOperations<String, String, Long> toUserOperations = redisTemplate
+                .boundHashOps(ContractHelper.userFlag + toUser.getId());
+        toUserOperations.putIfAbsent("fansAmount", 0L);
+        toUserOperations.putIfAbsent("articleAmount", 0L);
+        model.setArticleAmount(toUserOperations.get("articleAmount"));
+        model.setFansAmount(toUserOperations.get("fansAmount"));
+
+        return model;
+    }
+
+    @Override
+    public AppUserConcermListModel[] changeModelList(List<Concern> list) throws IOException {
+        AppUserConcermListModel[] models = new AppUserConcermListModel[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            models[i] = changeModel(list.get(i));
+        }
+        return models;
     }
 }

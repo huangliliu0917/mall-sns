@@ -9,10 +9,13 @@
 
 package com.huotu.huobanplus.sns.service;
 
+import com.huotu.huobanplus.sns.entity.Concern;
 import com.huotu.huobanplus.sns.exception.ConcernException;
 import com.huotu.huobanplus.sns.exception.LogException;
+import com.huotu.huobanplus.sns.model.AppUserConcermListModel;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Created by jin on 2016/10/10.
@@ -38,4 +41,14 @@ public interface ConcernService {
      * @throws IOException      读写异常
      */
     void leaveUser(Long id) throws ConcernException, LogException, IOException;
+
+    /**
+     * 转化类型
+     *
+     * @param concern
+     * @return
+     */
+    AppUserConcermListModel changeModel(Concern concern) throws IOException;
+
+    AppUserConcermListModel[] changeModelList(List<Concern> list) throws IOException;
 }

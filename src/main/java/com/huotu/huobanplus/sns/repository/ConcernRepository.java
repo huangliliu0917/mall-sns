@@ -48,4 +48,37 @@ public interface ConcernRepository extends JpaRepository<Concern, Long>, JpaSpec
      * @return
      */
     List<Concern> findByToUser(@Param("toUser") User toUser);
+
+    /**
+     * 查询粉丝列表,前10位
+     *
+     * @param toUser
+     * @return
+     */
+    List<Concern> findTop10ByToUserOrderByIdDesc(@Param("toUser") User toUser);
+
+    /**
+     * 查询主键小于id的粉丝列表,前10位
+     *
+     * @param toUser
+     * @return
+     */
+    List<Concern> findTop10ByToUserAndIdLessThanOrderByIdDesc(@Param("toUser") User toUser, @Param("id") Long id);
+
+    /**
+     * 查询关注列表,前10位
+     *
+     * @param user
+     * @return
+     */
+    List<Concern> findTop10ByUserOrderByIdDesc(@Param("user") User user);
+
+    /**
+     * 查询主键小于id的关注列表,前10位
+     *
+     * @param user
+     * @param id
+     * @return
+     */
+    List<Concern> findTop10ByUserAndIdLessThanOrderByIdDesc(@Param("user") User user, @Param("id") Long id);
 }

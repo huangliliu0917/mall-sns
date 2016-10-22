@@ -10,6 +10,8 @@
 package com.huotu.huobanplus.sns.service;
 
 import com.huotu.huobanplus.sns.entity.User;
+import com.huotu.huobanplus.sns.entity.UserArticle;
+import com.huotu.huobanplus.sns.model.AppCircleArticleModel;
 import com.huotu.huobanplus.sns.model.AppUserModel;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Created by Administrator on 2016/10/9.
@@ -59,4 +62,6 @@ public interface UserService {
      * @return
      */
     AppUserModel getAppUser(Long userId);
+
+    AppCircleArticleModel[] changeModelArray(List<UserArticle> articles) throws IOException;
 }

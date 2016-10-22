@@ -13,13 +13,17 @@ import com.huotu.common.api.ApiResult;
 import com.huotu.common.api.Output;
 import com.huotu.huobanplus.sns.controller.app.UserController;
 import com.huotu.huobanplus.sns.entity.Article;
+import com.huotu.huobanplus.sns.entity.Concern;
 import com.huotu.huobanplus.sns.entity.User;
+import com.huotu.huobanplus.sns.entity.UserArticle;
 import com.huotu.huobanplus.sns.exception.ConcernException;
 import com.huotu.huobanplus.sns.exception.LogException;
 import com.huotu.huobanplus.sns.model.AppCircleArticleModel;
 import com.huotu.huobanplus.sns.model.AppUserConcermListModel;
 import com.huotu.huobanplus.sns.model.common.ArticleType;
 import com.huotu.huobanplus.sns.model.common.ReportTargetType;
+import com.huotu.huobanplus.sns.repository.ConcernRepository;
+import com.huotu.huobanplus.sns.repository.UserArticleRepository;
 import com.huotu.huobanplus.sns.service.*;
 import com.huotu.huobanplus.sns.utils.UserHelper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +31,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -40,7 +45,8 @@ public class UserControllerImpl implements UserController {
 
     @Autowired
     private ConcernService concernService;
-
+    @Autowired
+    private UserService userService;
     @Autowired
     private ReportService reportService;
 
@@ -48,6 +54,10 @@ public class UserControllerImpl implements UserController {
     private SensitiveService sensitiveService;
     @Autowired
     private ArticleService articleService;
+    @Autowired
+    private ConcernRepository concernRepository;
+    @Autowired
+    private UserArticleRepository userArticleRepository;
 
     @Override
     public ApiResult concern(Long id) {
@@ -180,6 +190,15 @@ public class UserControllerImpl implements UserController {
             return apiResult;
         }
         User user = UserHelper.getUser();
+        try {
+            articleService.commentArticle(id, content, user);
+        } catch (IOException e) {
+            apiResult.setResultCode(50002);
+            apiResult.setResultDescription("评论异常");
+            return apiResult;
+        }
+        apiResult.setResultCode(200);
+        apiResult.setResultDescription("评论成功");
         return null;
     }
 
@@ -204,16 +223,53 @@ public class UserControllerImpl implements UserController {
 
     @Override
     public ApiResult myConcern(Output<AppUserConcermListModel[]> list, Long lastId) throws Exception {
-        return null;
+        User user = UserHelper.getUser();
+        List<Concern> concerns;
+        if (Objects.isNull(lastId)) {
+            concerns = concernRepository.findTop10ByUserOrderByIdDesc(user);
+        } else {
+            concerns = concernRepository.findTop10ByUserAndIdLessThanOrderByIdDesc(user, lastId);
+        }
+        AppUserConcermListModel[] models = concernService.changeModelList(concerns);
+        list.outputData(models);
+        ApiResult apiResult = new ApiResult();
+        apiResult.setResultCode(200);
+        return apiResult;
     }
 
     @Override
     public ApiResult myConcerned(Output<AppUserConcermListModel[]> list, Long lastId) throws Exception {
-        return null;
+        User user = UserHelper.getUser();
+        List<Concern> concerns;
+        if (Objects.isNull(lastId)) {
+            concerns = concernRepository.findTop10ByToUserOrderByIdDesc(user);
+        } else {
+            concerns = concernRepository.findTop10ByToUserAndIdLessThanOrderByIdDesc(user, lastId);
+        }
+        AppUserConcermListModel[] models = concernService.changeModelList(concerns);
+        list.outputData(models);
+        ApiResult apiResult = new ApiResult();
+        apiResult.setResultCode(200);
+        return apiResult;
     }
 
     @Override
     public ApiResult concernIndex(Output<AppCircleArticleModel[]> articleList, Long lastId) throws Exception {
-        return null;
+        ApiResult apiResult = new ApiResult();
+        User user = UserHelper.getUser();
+        List<UserArticle> articles;
+        if (Objects.isNull(lastId)) {
+            articles = userArticleRepository.findTop10ByOwnerIdOrderByIdDesc(user.getId());
+        } else {
+            articles = userArticleRepository.findTop10ByOwnerIdAndIdLessThanOrderByIdDesc(user.getId(), lastId);
+        }
+        if (Objects.nonNull(articles) && articles.size() > 0) {
+            AppCircleArticleModel[] models = userService.changeModelArray(articles);
+            articleList.outputData(models);
+        } else {
+            //从哪里找些文章，填满关注首页
+        }
+        apiResult.setResultCode(200);
+        return apiResult;
     }
 }
