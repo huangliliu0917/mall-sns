@@ -166,7 +166,7 @@
                             <div class="hr-line-dashed"></div>
                             <div class="form-group">
                                 <div class="col-sm-4 col-sm-offset-2">
-                                    <button class="btn btn-primary" type="button" onclick="circleConfig.submitForm()">保存圈子</button>
+                                    <button class="btn btn-primary" type="button" onclick="circleConfig.submitForm(this)">保存圈子</button>
                                     <a class="btn-white" href="/admin/circle/circleList.html"><button class="btn btn-white" type="button">取消</button></a>
                                 </div>
                             </div>
@@ -230,9 +230,12 @@
         };
 
         //提交圈子
-        circleConfig.submitForm=function() {
-
-
+        circleConfig.submitForm=function(obj) {
+            if($(obj).attr("class")=="btn btn-primary disabled"){
+                return;
+            }
+            var ld=layer.load(5, {shade: false});
+            $(obj).attr("class","btn btn-primary disabled");
             var circleModel={};
             circleModel.circleId=$("input[name='circleId']").val();
             circleModel.circleName=$("input[name='circleName']").val();
@@ -257,11 +260,15 @@
                 contentType:"application/json",
                 data: JSON.stringify(circleModel),
                 success:function(result){
+                    layer.close(ld);
                     layer.msg("保存成功！");
+//                    $(obj).attr("class","btn btn-primary");
                     window.setTimeout("window.location='/admin/circle/circleList.html'",1000);
 
                 },
                 error:function(e){
+                    layer.close(ld);
+//                    $(obj).attr("class","btn btn-primary");
                     layer.msg("保存圈子失败！");
                 }
             });

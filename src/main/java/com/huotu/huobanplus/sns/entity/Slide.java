@@ -23,9 +23,10 @@ public class Slide {
      */
     private Long customerId;
 
-
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH})
-    private Circle circle;
+    /**
+     * 标题
+     */
+    private String title;
 
     /**
      * 图片地址
