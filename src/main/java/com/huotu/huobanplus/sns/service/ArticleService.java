@@ -11,6 +11,7 @@ package com.huotu.huobanplus.sns.service;
 
 import com.huotu.huobanplus.sns.entity.Article;
 import com.huotu.huobanplus.sns.entity.User;
+import com.huotu.huobanplus.sns.model.AppCircleArticleModel;
 import com.huotu.huobanplus.sns.model.AppWikiListModel;
 import com.huotu.huobanplus.sns.model.AppWikiModel;
 import com.huotu.huobanplus.sns.model.admin.AdminArticleEditModel;
@@ -47,7 +48,7 @@ public interface ArticleService {
      */
     Article save(Integer articleType, Long id
             , String name, Long userId, String pictureUrl, String content
-            , String summary, Integer categoryId, Long circleId, String adConent);
+            , String summary, Integer categoryId, Long circleId, String adConent,String tags);
 
     /**
      * 新增一篇文章后，圈子文章数量加1，用户文章数加1，每个关注了该用户的都保存一份文章
@@ -74,4 +75,12 @@ public interface ArticleService {
      * @throws IOException
      */
     void commentArticle(Long id, String content, User user) throws IOException;
+
+    /**
+     * 获得用户文章列表
+     * @param userId
+     * @param lastId
+     * @return
+     */
+    List<AppCircleArticleModel> getUserArticleList(Long userId, Long lastId);
 }

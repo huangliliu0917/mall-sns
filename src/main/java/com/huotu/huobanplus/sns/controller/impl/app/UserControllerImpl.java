@@ -160,7 +160,7 @@ public class UserControllerImpl implements UserController {
         }
         //保存文章
         Article article = articleService.save(ArticleType.Normal.getValue(), id, name, user.getId(),
-                pictureUrl, content, summary, null, circleId, null);
+                pictureUrl, content, summary, null, circleId, null, null);
         if (Objects.isNull(id)) {
             //新增文章用户关联
             articleService.addArticleResult(ArticleType.Normal.getValue(), article.getId(),

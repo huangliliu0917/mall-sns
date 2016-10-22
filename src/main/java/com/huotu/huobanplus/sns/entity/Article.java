@@ -6,6 +6,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 文章
@@ -73,6 +74,6 @@ public class Article extends AbstractArticle {
      * 文章标签
      */
     @OneToMany(cascade = {CascadeType.REFRESH})
-    private List<Tag> tags;
+    private Set<Tag> tags;
 
 }

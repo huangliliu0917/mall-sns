@@ -36,7 +36,7 @@ public class AppCircleArticleModel {
     /**
      * 用户等级
      */
-    private Integer userLevel;
+    private Long userLevel;
     /**
      * 文章发表时间
      */

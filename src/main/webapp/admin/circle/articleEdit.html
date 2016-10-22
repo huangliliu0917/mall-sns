@@ -50,7 +50,8 @@
                                 <div class="form-group ">
                                     <label class="col-sm-2 control-label">发布用户:</label>
                                     <div class="col-sm-10">
-                                        <input type="text" class="form-control input-sm" th:value="${data.userId}" id="userId" name="userId"/>
+                                        <input type="hidden" th:value="${data.userId}" id="userId" name="userId"/>
+                                        <span id="divUser" th:text="${data.userName}"></span>
                                         <button class="btn btn-primary" type="button" onclick="page.selectUser()" id="btnUser">选择用户</button>
                                     </div>
                                 </div>
@@ -118,6 +119,26 @@
                                         <textarea id="adConent" name="adConent" class="input-normal" th:text="${data.adConent}"></textarea>
                                     </div>
                                 </div>
+
+                                <div class="hr-line-dashed "></div>
+                                <div class="form-group ">
+                                    <label class="col-sm-2 control-label">标签:</label>
+                                    <div class="col-sm-10">
+                                        <button  class="btn btn-primary" type="button" onclick="page.addTags()" id="btnTags">添加标签</button>
+                                        <div class="feed-activity-list">
+
+                                            <div id="divTags">
+                                                <th:block th:each="item:${data.tags}">
+                                                    <div class="label" th:value="*{item.id}" th:onclick="'page.deleteTags(this)'" th:text="*{item.name}"></div>
+                                                </th:block>
+                                            </div>
+                                            <input type="hidden" id="tags" name="tags"/>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+
                             </div>
                         </div>
                     </div>
@@ -137,7 +158,41 @@
                     <iframe id="frame_category" width="100%" height="100%" frameborder="0"></iframe>
                 </div>
                 <div class="modal-footer">
-                    <button id="submitSelect" class="btn btn-primary" type="button" onclick="page.submitSelect(this)">确定选择</button>
+                    <button id="submitSelectCategory" class="btn btn-primary" type="button" onclick="page.submitSelectCategory(this)">确定选择</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modal_user">
+        <div class="modal-dialog" style="width: 1000px;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">×</button>
+                    <h4 class="modal-title">选择用户</h4>
+                </div>
+                <div class="modal-body" style="height: 600px;">
+                    <iframe id="frame_user" width="100%" height="100%" frameborder="0"></iframe>
+                </div>
+                <div class="modal-footer">
+                    <button id="submitSelectUser" class="btn btn-primary" type="button" onclick="page.submitSelectUser(this)">确定选择</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modal_tags">
+        <div class="modal-dialog" style="width: 1000px;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">×</button>
+                    <h4 class="modal-title">选择标签</h4>
+                </div>
+                <div class="modal-body" style="height: 600px;">
+                    <iframe id="frame_tags" width="100%" height="100%" frameborder="0"></iframe>
+                </div>
+                <div class="modal-footer">
+                    <button id="submitSelectTags" class="btn btn-success" type="button" onclick="page.submitSelectTags()" data-dismiss="modal">确定选择</button>
                 </div>
             </div>
         </div>
@@ -200,15 +255,6 @@
         $("#edit_form").submit();
     };
 
-    page.submitSelect = function () {
-        var category = $("#frame_category")[0].contentWindow.page.select();
-//        console.log(category.id);
-//        console.log(category.name);
-        $("#categoryId").val(category.id);
-        $("#divCategory").html(category.name);
-
-        $("#submitSelect").attr("data-dismiss", "modal");
-    }
 
     page.selectCategory = function () {
         $("#frame_category").attr("src", "/top/category/categoryList/1?extend=radio");
@@ -216,6 +262,71 @@
         $("#btnCategory").attr("data-target", "#modal_category");
     }
 
+    page.submitSelectCategory = function () {
+        var category = $("#frame_category")[0].contentWindow.page.select();
+        $("#categoryId").val(category.id);
+        $("#divCategory").html(category.name);
+
+        $("#submitSelectCategory").attr("data-dismiss", "modal");
+    }
+
+
+    page.selectUser = function () {
+        $("#frame_user").attr("src", "/top/user/index?selectType=single");
+        $("#btnUser").attr("data-toggle", "modal");
+        $("#btnUser").attr("data-target", "#modal_user");
+
+    }
+
+    page.submitSelectUser = function () {
+        var user = $("#frame_user")[0].contentWindow.page.selectOne();
+        $("#userId").val(user.id);
+        $("#divUser").html(user.name);
+
+        $("#submitSelectUser").attr("data-dismiss", "modal");
+    }
+
+
+    page.addTags = function () {
+        $("#frame_tags").attr("src", "/top/tags/tagsList?extend=checkbox");
+        $("#btnTags").attr("data-toggle", "modal");
+        $("#btnTags").attr("data-target", "#modal_tags");
+    };
+
+    page.submitSelectTags = function () {
+        var select = $("#frame_tags")[0].contentWindow.page.select();
+        if (select.length > 0) {
+            for (var i = 0; select.length > i; i++) {
+                if (!page.existTags(select[i].id)) {
+                    $("#divTags").append('<div class="label" style="margin: 3px;"  value="' + select[i].id + '" onclick="page.deleteTags(this)">' + select[i].name + '</div>');
+                }
+            }
+        }
+        page.resetTags();
+        $("#submitSelectTags").attr("data-dismiss", "modal");
+    }
+
+    page.existTags = function (id) {
+        var result = false;
+        $("#divTags div").each(function () {
+            if ($(this).attr("value") == id) result = true;
+        })
+        return result;
+    }
+
+    page.deleteTags = function (obj) {
+        $(obj).remove();
+        page.resetTags();
+    }
+
+    page.resetTags = function () {
+        var result = "";
+        $("#divTags div").each(function () {
+            result += $(this).attr("value") + ',';
+        })
+        if (result.length > 0) result = result.substr(0, result.length - 1);
+        $("#tags").val(result);
+    }
 
     $(function () {
         $("#fileImage").bind("change", function () {

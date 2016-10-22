@@ -11,6 +11,7 @@ package com.huotu.huobanplus.sns.service.impl;
 
 import com.huotu.common.base.RSAHelper;
 import com.huotu.huobanplus.sns.entity.User;
+import com.huotu.huobanplus.sns.model.AppUserModel;
 import com.huotu.huobanplus.sns.repository.UserRepository;
 import com.huotu.huobanplus.sns.service.UserService;
 import com.huotu.huobanplus.sns.utils.CookieHelper;
@@ -89,5 +90,20 @@ public class UserServiceImpl implements UserService {
             }
             return predicate;
         }, pageable);
+    }
+
+
+    public AppUserModel getAppUser(Long userId) {
+        User user = userRepository.findOne(userId);
+        if (user != null) {
+            AppUserModel appUserModel = new AppUserModel();
+            appUserModel.setFansAmount(user.getFansAmount());
+            appUserModel.setRank(user.getRank());
+            appUserModel.setUserAmount(user.getUserAmount());
+            appUserModel.setUserName(user.getNickName());
+            appUserModel.setUserHeadUrl(user.getImgURL());
+            return appUserModel;
+        }
+        return null;
     }
 }

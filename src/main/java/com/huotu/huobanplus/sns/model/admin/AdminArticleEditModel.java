@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -54,4 +55,6 @@ public class AdminArticleEditModel {
     private String circleName;
 
     private String adConent;
+
+    private List<AdminTagsModel> tags;
 }

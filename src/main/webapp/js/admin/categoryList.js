@@ -52,7 +52,6 @@ page.edit = function (id) {
 }
 
 
-
 page.select = function () {
     if (extend == extendType.radio) {
         var id = $('#list input[name="radio"]:checked').val();

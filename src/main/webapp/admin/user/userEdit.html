@@ -119,11 +119,11 @@
                                                 <div class="ibox-content">
 
                                                     <div>
-                                                        <div class="feed-activity-list">
+                                                        <div class="feed-activity-list" style="overflow:auto">
                                                             <button style="float:right" class="btn btn-success" type="button" onclick="page.addTags()" id="btnTags">添加标签</button>
                                                             <div id="tags">
                                                                 <th:block th:each="item:${tags}">
-                                                                    <div th:onclick="'page.deleteTags('+*{item.id} +',this)'" th:text="*{item.name}"></div>
+                                                                    <div class="label" th:onclick="'page.deleteTags('+*{item.id} +',this)'" th:text="*{item.name}"></div>
                                                                 </th:block>
                                                             </div>
                                                         </div>
@@ -208,7 +208,7 @@
             $.get("/top/tags/addTags", request, function (data) {
                 $("#tags").html("");
                 for (var i = 0; data.length > i; i++) {
-                    $("#tags").append('<div onclick="deleteTags(' + data[i].id + ',this)">' + data[i].name + '</div>');
+                    $("#tags").append('<div style="margin: 3px;" class="label"  onclick="page.deleteTags(' + data[i].id + ',this)">' + data[i].name + '</div>');
                 }
 
                 $("#submitSelectTags").attr("data-dismiss", "modal");

@@ -4,6 +4,7 @@ import com.huotu.common.api.ApiResult;
 import com.huotu.common.api.Output;
 import com.huotu.huobanplus.sns.model.*;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * 网站
@@ -33,7 +34,7 @@ public interface WebController {
      * @throws Exception
      */
     @RequestMapping("/userArticleList")
-    ApiResult userArticleList(Output<AppCircleArticleModel[]> articleList, Long id, Long lastId) throws Exception;
+    ApiResult userArticleList(Output<AppCircleArticleModel[]> articleList, @RequestParam(value = "id", required = true) Long id, Long lastId) throws Exception;
 
 
     /**

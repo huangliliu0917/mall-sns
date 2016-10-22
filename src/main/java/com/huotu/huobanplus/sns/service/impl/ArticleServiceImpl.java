@@ -10,12 +10,10 @@
 package com.huotu.huobanplus.sns.service.impl;
 
 import com.huotu.huobanplus.sns.entity.*;
+import com.huotu.huobanplus.sns.model.AppCircleArticleModel;
 import com.huotu.huobanplus.sns.model.AppWikiListModel;
 import com.huotu.huobanplus.sns.model.AppWikiModel;
-import com.huotu.huobanplus.sns.model.admin.AdminArticleEditModel;
-import com.huotu.huobanplus.sns.model.admin.AdminArticleModel;
-import com.huotu.huobanplus.sns.model.admin.AdminArticlePageModel;
-import com.huotu.huobanplus.sns.model.admin.PagingModel;
+import com.huotu.huobanplus.sns.model.admin.*;
 import com.huotu.huobanplus.sns.model.common.ArticleType;
 import com.huotu.huobanplus.sns.model.common.CommentStatus;
 import com.huotu.huobanplus.sns.repository.*;
@@ -32,12 +30,12 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by Administrator on 2016/10/12.
@@ -142,7 +140,7 @@ public class ArticleServiceImpl implements ArticleService {
     public AdminArticlePageModel getAdminArticleList(Integer articleType, String name, Integer pageNo, Integer pageSize) {
         AdminArticlePageModel adminArticlePageModel = new AdminArticlePageModel();
 
-        Pageable pageable = new PageRequest(pageNo - 1, pageSize, new Sort(Sort.Direction.ASC, "id"));
+        Pageable pageable = new PageRequest(pageNo - 1, pageSize, new Sort(Sort.Direction.DESC, "id"));
         Page<Article> articles = null;
         if (!StringUtils.isEmpty(name)) {
             articles = articleRepository.findByArticleTypeAndNameLike(articleType.equals(1) ? ArticleType.Wiki : ArticleType.Normal, name, pageable);
@@ -202,6 +200,12 @@ public class ArticleServiceImpl implements ArticleService {
                     adminArticleEditModel.setCircleId(article.getCircle().getId());
                     adminArticleEditModel.setCircleName(article.getCircle().getName());
                 }
+
+                Set<Tag> set = article.getTags();
+                List<AdminTagsModel> adminTagsModels = set.stream()
+                        .map(tag -> new AdminTagsModel(tag.getId(), tag.getName())).collect(Collectors.toList());
+
+                adminArticleEditModel.setTags(adminTagsModels);
                 return adminArticleEditModel;
             }
         }
@@ -222,9 +226,12 @@ public class ArticleServiceImpl implements ArticleService {
         return adminArticleEditModel;
     }
 
+    @Autowired
+    private TagRespository tagRespository;
+
     public Article save(Integer articleType, Long id
             , String name, Long userId, String pictureUrl, String content
-            , String summary, Integer categoryId, Long circleId, String adConent) {
+            , String summary, Integer categoryId, Long circleId, String adConent, String tags) {
 
         Article article = null;
         if (id != null && id > 0) {
@@ -250,6 +257,13 @@ public class ArticleServiceImpl implements ArticleService {
         if (circleId != null && circleId > 0)
             article.setCircle(circleRepository.findOne(circleId));
         article.setAdConent(adConent);
+        if (!StringUtils.isEmpty(tags)) {
+            Set<Tag> tags1 = new HashSet<>();
+            for (String item : tags.split(",")) {
+                tags1.add(tagRespository.findOne(Integer.parseInt(item)));
+            }
+            article.setTags(tags1);
+        }
         article = articleRepository.save(article);
         return article;
 
@@ -335,5 +349,45 @@ public class ArticleServiceImpl implements ArticleService {
             if (i > 0 && i % 10 == 0)
                 Thread.sleep(500);
         }
+    }
+
+    @Autowired
+    private EntityManager entityManager;
+
+    public List<AppCircleArticleModel> getUserArticleList(Long userId, Long lastId) {
+        List<AppCircleArticleModel> appCircleArticleModels = new ArrayList<>();
+
+        StringBuilder hql = new StringBuilder();
+        hql.append("select article from Aritcle article where article.publisher.id=:userId");
+        if (lastId != null && lastId > 0) {
+            hql.append(" and article.id<:lastId");
+        }
+
+        Query query = entityManager.createQuery(hql.toString());
+        query.setParameter("userId", userId);
+        if (lastId != null && lastId > 0) {
+            query.setParameter("lastId", lastId);
+        }
+        query.setMaxResults(10);
+        List list = query.getResultList();
+        list.forEach(object -> {
+            Object[] objects = (Object[]) object;
+            Article article = (Article) objects[0];
+            AppCircleArticleModel appCircleArticleModel = new AppCircleArticleModel();
+            appCircleArticleModel.setName(article.getName());
+            appCircleArticleModel.setTime(article.getDate().getTime());
+            appCircleArticleModel.setCommentsAmount(article.getComments());
+            appCircleArticleModel.setViewAmount(article.getView());
+            appCircleArticleModel.setPid(article.getId());
+            appCircleArticleModel.setPictureUrl(article.getPictureUrl());
+//            appCircleArticleModel.setUrl();
+            if (article.getPublisher() != null) {
+                appCircleArticleModel.setUserHeadUrl(article.getPublisher().getImgURL());
+                appCircleArticleModel.setUserName(article.getPublisher().getNickName());
+                appCircleArticleModel.setUserLevel(article.getPublisher().getLevel().getId());
+            }
+            appCircleArticleModels.add(appCircleArticleModel);
+        });
+        return appCircleArticleModels;
     }
 }

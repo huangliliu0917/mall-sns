@@ -10,6 +10,7 @@
 package com.huotu.huobanplus.sns.service;
 
 import com.huotu.huobanplus.sns.entity.User;
+import com.huotu.huobanplus.sns.model.AppUserModel;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -51,4 +52,11 @@ public interface UserService {
     Page<User> findByNickNameAndAuthenticationIdAndLevelId(String nickName,
                                                            Integer authenticationId,
                                                            Long levelId, Pageable pageable) throws IOException;
+
+    /**
+     * 浏览App用户
+     * @param userId
+     * @return
+     */
+    AppUserModel getAppUser(Long userId);
 }

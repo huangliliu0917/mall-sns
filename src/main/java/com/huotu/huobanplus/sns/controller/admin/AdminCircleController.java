@@ -179,9 +179,9 @@ public class AdminCircleController {
     @RequestMapping("/articleEdit.save")
     public String articleEditSave(Integer articleType, Long id
             , String name, Long userId, String pictureUrl, String content
-            , String summary, Integer categoryId, Long circleId, String adConent) throws Exception {
+            , String summary, Integer categoryId, Long circleId, String adConent,String tags) throws Exception {
 
-        articleService.save(articleType, id, name, userId, pictureUrl, content, summary, categoryId, circleId, adConent);
+        articleService.save(articleType, id, name, userId, pictureUrl, content, summary, categoryId, circleId, adConent, tags);
         return "redirect:/top/circle/articleList/" + articleType;
     }
 }
