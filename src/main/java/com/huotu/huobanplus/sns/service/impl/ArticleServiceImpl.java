@@ -127,9 +127,10 @@ public class ArticleServiceImpl implements ArticleService {
             appWikiListModel.setViewAmount(x.getView());
             if (x.getPublisher() != null) {
                 appWikiListModel.setUserHeadUrl(x.getPublisher().getImgURL());
-                appWikiListModel.setUserLevel(x.getPublisher().getLevel().getId());
+                if (x.getPublisher().getLevel() != null)
+                    appWikiListModel.setUserLevel(x.getPublisher().getLevel().getId());
                 appWikiListModel.setUserName(x.getPublisher().getNickName());
-//            appWikiListModel.setUrl();
+                appWikiListModel.setUserId(x.getPublisher().getId());
             }
             appWikiListModels.add(appWikiListModel);
         });

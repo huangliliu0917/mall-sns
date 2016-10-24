@@ -70,7 +70,7 @@ public class User {
     /**
      * 身份
      *
-     * @see {@link com.huotu.huobanplus.sns.entity.support.AuthenticationType}
+//     * @see {@link com.huotu.huobanplus.sns.entity.support.AuthenticationType}
      */
     private int authenticationType;
 

@@ -24,9 +24,18 @@ public interface CircleController {
     ApiResult circleIndexTop(Output<AppCircleIndexSlideModel[]> slideList, Output<AppCircleIndexSuggestModel[]> suggestList) throws Exception;
 
     /**
+     * 圈子推荐列表
+     *
+     * @param suggestList
+     * @return
+     * @throws Exception
+     */
+    ApiResult circleIndexSuggestList(Output<AppCircleIndexSuggestModel[]> suggestList) throws Exception;
+
+    /**
      * 圈子首页 关注的圈子列表
      * 按id进行倒序排列
-     *
+     * <p>
      * 圈子的文章根据浏览量+时间取前2条
      *
      * @param circlelist 圈子列表

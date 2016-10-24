@@ -57,7 +57,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Long getUserId(HttpServletRequest request) {
-        if (env.acceptsProfiles("development")) {
+        if (env.acceptsProfiles("development") || env.acceptsProfiles("staging")) {
             return 97278L;//146 4471商户 王明
 //            return 96116L;
         } else {
@@ -123,7 +123,7 @@ public class UserServiceImpl implements UserService {
 //        model.setUrl("");
         model.setUserName(article.getPublisherNickname());
         model.setUserHeadUrl(article.getPublisherHeaderImageUrl());
-        model.setUserLevel(article.getPublisherLevelId().intValue());
+        model.setUserLevel(article.getPublisherLevelId());
         model.setTime(article.getDate().getTime());
         BoundHashOperations<String, String, Long> articleOperations = redisTemplate
                 .boundHashOps(ContractHelper.articleFlag + article.getArticleId());

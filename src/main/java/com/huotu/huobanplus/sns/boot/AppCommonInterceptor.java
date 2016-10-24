@@ -46,7 +46,7 @@ public class AppCommonInterceptor implements HandlerInterceptor {
         //todo 登录方式暂定
         Long userId = userService.getUserId(request);
         String paramUserId = request.getParameter("mainUserId");
-        if (!env.acceptsProfiles("development")) {
+        if (env.acceptsProfiles("production")) {
 //            String customerIdStr = request.getParameter("customerId");
 //            if (customerIdStr == null) {
 //                customerIdStr = request.getParameter("customerid");

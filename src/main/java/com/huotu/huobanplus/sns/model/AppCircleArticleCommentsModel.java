@@ -36,6 +36,8 @@ public class AppCircleArticleCommentsModel {
 
     /**
      * 扩展信息 (评论的评论)
+     * 评论的评论内容无限循环冗余 以json格式存储
+     * {fromId:,id:,content:,date:,userName:,userPictureUrl:,data:[{fromId:,id:,content:,date:,userName:,userPictureUrl:}]}
      */
     private String extend;
 

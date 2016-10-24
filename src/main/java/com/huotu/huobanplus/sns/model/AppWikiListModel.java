@@ -28,10 +28,8 @@ public class AppWikiListModel {
      * 简介
      */
     private String summary;
-    /**
-     * 跳转地址
-     */
-    private String url;
+
+    private Long userId;
     /**
      * 用户名称
      */

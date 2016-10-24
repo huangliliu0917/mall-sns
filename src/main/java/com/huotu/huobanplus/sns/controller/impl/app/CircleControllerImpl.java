@@ -34,6 +34,11 @@ public class CircleControllerImpl implements CircleController {
     }
 
     @Override
+    public ApiResult circleIndexSuggestList(Output<AppCircleIndexSuggestModel[]> suggestList) throws Exception {
+        return null;
+    }
+
+    @Override
     public ApiResult circleIndexList(Output<AppCircleIndexListModel[]> circlelist, Long lastId) throws Exception {
         String pictureUrl = "http://h.hiphotos.baidu.com/baike/w%3D730/sign=c5dfb6dd0124ab18e016e33405fbe69a/8b82b9014a90f603e434cfbc3112b31bb151ed41.jpg";
 

@@ -9,6 +9,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@Deprecated
 public class AppExpertsModel {
     /**
      * 用户名称
