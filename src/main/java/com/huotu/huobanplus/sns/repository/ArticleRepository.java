@@ -45,6 +45,6 @@ public interface ArticleRepository extends JpaRepository<Article, Long>, JpaSpec
 
     Page<Article> findByArticleTypeAndNameLike(ArticleType articleType, String name, Pageable pageable);
 
-    @Query("update Article a set a.comments=a.comments+1 where u.id=?1")
+    @Query("update Article a set a.comments=a.comments+1 where a.id=?1")
     void addComments(@Param("articleId") Long articleId);
 }

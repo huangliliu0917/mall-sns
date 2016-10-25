@@ -43,7 +43,6 @@ public class Report {
     @Column(length = 200)
     private String content;
 
-
     /**
      * 日期
      */

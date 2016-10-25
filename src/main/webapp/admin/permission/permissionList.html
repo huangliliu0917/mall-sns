@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<!--
+  ~ 版权所有:杭州火图科技有限公司
+  ~ 地址:浙江省杭州市滨江区西兴街道阡陌路智慧E谷B幢4楼
+  ~
+  ~ (c) Copyright Hangzhou Hot Technology Co., Ltd.
+  ~ Floor 4,Block B,Wisdom E Valley,Qianmo Road,Binjiang District
+  ~ 2013-2016. All rights reserved.
+  -->
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+
+    <title>后台管理员列表</title>
+
+    <link href="http://resali.huobanplus.com/cdn/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="http://resali.huobanplus.com/cdn/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet"/>
+    <!-- Morris -->
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/plugins/morris/morris-0.4.3.min.css" rel="stylesheet"/>
+
+
+    <link href="../../css/layer.css" rel="stylesheet"/>
+
+    <!--checkbox-->
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" rel="stylesheet"/>
+
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/plugins/dataTables/dataTables.bootstrap.css" rel="stylesheet"/>
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/animate.min.css" rel="stylesheet"/>
+    <link href="../../css/style.min.css?v=4.0.0" rel="stylesheet"/>
+
+</head>
+
+<body onload="permissionList.load()" class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight tooltip-demo">
+    <!--search-->
+    <form role="form" class="search-panel" id="searchPermission">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-content p-m no-borders">
+                        <div class="form-inline">
+                            <div class="form-group m-r-sm">
+                                <label class="control-label" for="permissionName">管理员名称：</label>
+                                <input type="text" class="form-control input-sm mb10" id="permissionName" name="permissionName" placeholder="管理员名称"/>
+                            </div>
+
+                        </div>
+                        <p style="height: 8px;"></p>
+
+                        <div class="form-inline" style="max-width: 926px; text-align: right;">
+                            <button type="button" onclick="permissionList.searchCondition()" class="btn btn-success">筛选</button>
+                            <button type="button" onclick="permissionList.searchAll()" class="btn btn-success">显示全部</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <!--search-->
+
+    <!--list-->
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins m-b-none">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-content">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <a style="float: right" href="/top/permission/editPermission">
+                                    <button type="button" class="btn btn-success">新建</button>
+                                </a>
+                            </div>
+                        </div>
+                        <table id="permissionList" class="table table-striped table-bordered table-hover  dataTable" aria-describedby="editable_info">
+                            <thead>
+                            <tr>
+                                <th>
+                                    <div class="checkbox checkbox-primary m-b-none m-t-none">
+                                        <input onclick="permissionList.checkBoxClick(this)" type="checkbox" id="chkAll" name="chkAll"/>
+                                        <label for="chkAll"></label>
+                                    </div>
+                                </th>
+                                <th>管理员用户名</th>
+                                <th>管理员密码</th>
+                                <th>管理员权限</th>
+                                <th>是否可用</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr style="display: none">
+                                <td>
+                                    <div class="checkbox checkbox-primary m-b-none m-t-none">
+                                        <input onclick="permissionList.checkBoxClick(this)"  type="checkbox" id="chk1" name="chkGood"/>
+                                        <label for="chk1"></label>
+                                    </div>
+                                </td>
+                                <td>热门</td>
+                                <td>487556</td>
+                                <td>785468</td>
+                                <td>可用</td>
+                                <td>
+                                    <a href="#" class="cursor-point">
+                                        <i class="fa fa-pencil tooltips" data-placement="top" data-toggle="tooltip"
+                                           data-original-title="编辑">
+                                        </i>
+                                    </a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="dataTables_info" id="DataTables_Table_0_info"
+                                     role="alert" aria-live="polite" aria-relevant="all">显示 1 到 10 项，共 57 项</div>
+                            </div>
+                            <div class="col-sm-6">
+                                    <div class="dataTables_info" id="DataTables_Table_0_paginate">
+                                        <ul style="float: right;" class="pagination">
+                                            <li class="paginate_button">
+                                                <a href="#" onclick="permissionList.goToFirst()">首页</a></li>
+                                            <li class="paginate_button">
+                                                <a href="#" onclick="permissionList.goToUp()" >上一页</a></li>
+                                            <li class="paginate_button "><a href="#" onclick="permissionList.goTo(this.text-1)">1</a></li>
+                                            <li class="paginate_button "><a href="#" onclick="permissionList.goTo(this.text-1)">2</a></li>
+                                            <li class="paginate_button "><a href="#" onclick="permissionList.goTo(this.text-1)">3</a></li>
+                                            <li class="paginate_button "><a href="#" onclick="permissionList.goTo(this.text-1)">4</a></li>
+                                            <li class="paginate_button "><a href="#" onclick="permissionList.goTo(this.text-1)">5</a></li>
+                                            <li class="paginate_button "><a href="#" onclick="permissionList.goTo(this.text-1)">6</a></li>
+                                            <li class="paginate_button "><a href="#" onclick="permissionList.goTo(this.text-1)">7</a></li>
+                                            <li class="paginate_button "><a href="#" onclick="permissionList.goTo(this.text-1)">8</a></li>
+                                            <li class="paginate_button">
+                                                <a href="#" onclick="permissionList.goToDown()">下一页</a>
+                                            </li>
+                                            <li class="paginate_button">
+                                                <a href="#" onclick="permissionList.goToLast()">尾页</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--基础框架js-->
+<script src="http://resali.huobanplus.com/cdn/jquery/2.2.4/jquery.min.js"></script>
+<script src="http://resali.huobanplus.com/cdn/bootstrap/3.3.5/bootstrap.min.js"></script>
+<script src="http://resali.huobanplus.com/cdn/hotui/js/content.min.js"></script>
+<script src="http://resali.huobanplus.com/cdn/layer/2.4/layer.js"></script>
+
+
+<script type="text/javascript" th:inline="javascript">
+    /*<![CDATA[*/
+    var permissionList={};
+    permissionList.searchModel={};
+
+    permissionList.load=function(){
+        permissionList.permissionModel=$("#permissionList tr").eq(1).clone();
+        permissionList.permissionModel.show();
+        permissionList.searchModel.pageNo=0;
+        permissionList.searchModel.ascOrdesc=0;
+        permissionList.searchModel.pageSize=10;
+        permissionList.searchModel.sortField="";
+        permissionList.searchAll();
+    };
+    //搜索
+    permissionList.search=function(){
+        permissionList.searchModel.name=$("#permissionName").val();
+        permissionList.searchAjax(permissionList.searchModel);
+    };
+
+    permissionList.searchAjax=function(searchModel){
+        var ld=layer.load(5, {shade: false});
+        $.ajax({
+            type:'POST',
+            url: '/top/permission/getPermissionList',
+            dataType: 'json',
+            contentType:"application/json",
+            data: JSON.stringify(searchModel),
+            success:function(result){
+                layer.close(ld);
+                permissionList.total=result.total;
+                permissionList.totalPage=result.totalPage;
+
+
+                permissionList.buildPermissionList(result.data);
+
+                permissionList.setPageNoAndSize(permissionList.searchModel.pageNo,
+                        permissionList.searchModel.pageSize,permissionList.total,permissionList.totalPage);
+
+
+            },
+            error:function(e){
+                layer.close(ld);
+                layer.msg("获取管理员信息出错！");
+            }
+        });
+    };
+
+    permissionList.buildPermissionList=function(list){
+        var tbody=$("#permissionList tbody");
+        $(tbody).children("tr").remove();
+        for(var i=0;i<list.length;i++){
+            var model=permissionList.permissionModel.clone();
+            var val=list[i];
+            var html=$(model).children("td").eq(0).html();
+            html=html.replace(/chk1/g, "chk" + i);
+            $(model).children("td").eq(0).html(html);
+            $(model).children("td").eq(1).text(val.loginName);
+            $(model).children("td").eq(2).text(val.password);
+
+            $(model).children("td").eq(3).text(val.authors);
+            $(model).children("td").eq(4).text(val.enabled);
+            $(model).children("td").eq(5).children("a").eq(0).attr("href","/top/permission/editPermission?id="+val.id);
+            $(tbody).append(model);
+        }
+    };
+
+
+
+    permissionList.setPageNoAndSize=function(pageNo,pageSize,total,totalPage){
+        $("#DataTables_Table_0_info").text("显示 "+(pageNo*pageSize+1)+" 到 "+(pageNo+1)*pageSize+" 项，共 "+total+" 项");
+
+        var showPageNo=permissionList.searchModel.pageNo-2;
+        if(showPageNo<1){
+            showPageNo=1;
+        }
+        var lis=$(".pagination li");
+        lis.show();
+        lis.attr("class","paginate_button");
+        $(lis).each(function(index,val){
+            if(index>1&&index<=9){
+                $(val).children("a").text(showPageNo);
+                if(permissionList.searchModel.pageNo==showPageNo-1){
+                    $(val).attr("class","paginate_button active");
+                }
+                if(showPageNo>totalPage){
+                    $(val).hide();
+                }
+                showPageNo++;
+            }
+        });
+
+    };
+    //默认搜索
+    permissionList.searchAll=function(){
+        $("#permissionName").val("");
+        permissionList.goTo(0);
+    };
+
+    permissionList.searchCondition=function(){
+        permissionList.goTo(0);
+    };
+
+    permissionList.goTo=function(pageNo){
+        permissionList.searchModel.pageNo=pageNo;
+        permissionList.search();
+    };
+
+    permissionList.goToUp=function(){
+        permissionList.searchModel.pageNo--;
+        if(permissionList.searchModel.pageNo<0){
+            permissionList.searchModel.pageNo=0;
+            return;
+        }
+        permissionList.search();
+    };
+
+    permissionList.goToDown=function(){
+        if(permissionList.searchModel.pageNo+1<permissionList.totalPage){
+            permissionList.searchModel.pageNo++;
+        }else {
+            return;
+        }
+        permissionList.search();
+    };
+
+    permissionList.goToFirst=function(){
+        permissionList.searchModel.pageNo=0;
+        permissionList.search();
+    };
+
+    permissionList.goToLast=function(){
+        permissionList.searchModel.pageNo=permissionList.totalPage==0?0:permissionList.totalPage-1;
+        permissionList.search();
+    };
+
+
+    permissionList.checkBoxClick=function(obj){
+        //获取是否单选还是多选
+        var parameter=permissionList.getUrlParam("extend");
+        if(parameter=="radio"){//单选
+            if($(obj).prop("checked")){
+                $("input[type='checkbox'][name='chkGood']","#permissionList").removeAttr('checked');
+                $(obj).prop('checked',true);
+            }
+        }else {//多选
+            var name=$(obj).attr("name");
+            if(name=="chkAll"){
+                var isCheck=$(obj).prop("checked");
+                $("input[type='checkbox'][name='chkGood']","#permissionList").prop("checked", isCheck);
+            }
+        }
+
+    };
+
+    permissionList.getUrlParam=function(name){
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+        var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+        if (r != null) return unescape(r[2]); return null; //返回参数值
+    };
+
+
+
+    /*]]>*/
+</script>
+</body>
+
+</html>

@@ -30,7 +30,8 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication().withUser("admin").password("123456").roles("USER");
+        auth.inMemoryAuthentication().withUser("admin").password("123456")
+                .roles("USER","CIRCLE","CATEGORY","WIKI","TAG","MESSAGE","RECOMMEND","REPORT","PERMISSION");
     }
 
     @Autowired
@@ -49,8 +50,16 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http
                 .headers().frameOptions().sameOrigin().and()
-                .authorizeRequests().antMatchers(
-                "/admin/login.html").permitAll()
+                .authorizeRequests()
+                .antMatchers("/admin/login.html").permitAll()
+                .antMatchers("**/circle/**","/top/slide/**").hasRole("CIRCLE")
+                .antMatchers("**/category/**").hasRole("CATEGORY")
+                .antMatchers("**/wiki/**").hasRole("WIKI")
+                .antMatchers("**/tags/**").hasRole("TAG")
+                .antMatchers("**/user/**").hasRole("USER")
+                .antMatchers("**/message/**").hasRole("MESSAGE")
+                .antMatchers("**/permission/**").hasRole("PERMISSION")
+                .antMatchers("**/report/**").hasRole("REPORT")
                 .anyRequest().authenticated()//任何请求都需要验证
                 .and()
                 .csrf().disable()//关闭csrf功能
