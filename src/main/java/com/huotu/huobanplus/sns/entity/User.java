@@ -43,19 +43,19 @@ public class User {
     /**
      * 关注人数
      */
-    private Long userAmount;
+    private long userAmount;
     /**
      * 粉丝数
      */
-    private Long fansAmount;
+    private long fansAmount;
     /**
      * 发布文章数
      */
-    private Long articleAmount;
+    private long articleAmount;
     /**
      * 经验
      */
-    private Long experience;
+    private long experience;
     /**
      * 注册时间
      */

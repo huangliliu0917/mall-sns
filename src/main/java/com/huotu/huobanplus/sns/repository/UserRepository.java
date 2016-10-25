@@ -12,14 +12,31 @@ package com.huotu.huobanplus.sns.repository;
 import com.huotu.huobanplus.sns.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 /**
  * Created by jin on 2016/10/9.
  */
+@SuppressWarnings("JpaQlInspection")
 @Repository
 public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificationExecutor<User> {
 
     Long countByLevelId(@Param("levelId") Long levelId);
+
+    @Query("update User u set u.articleAmount=u.articleAmount+1 where u.id=?1")
+    void addArticleAmount(@Param("userId") Long userId);
+
+    @Query("update User u set u.userAmount=u.userAmount+1 where u.id=?1")
+    void addUserAmount(@Param("userId") Long userId);
+
+    @Query("update User u set u.fansAmount=u.fansAmount+1 where u.id=?1")
+    void addFansAmount(@Param("userId") Long userId);
+
+    @Query("update User u set u.userAmount=u.userAmount-1 where u.id=?1")
+    void reduceUserAmount(@Param("userId") Long userId);
+
+    @Query("update User u set u.fansAmount=u.fansAmount-1 where u.id=?1")
+    void reduceFansAmount(@Param("userId") Long userId);
 }

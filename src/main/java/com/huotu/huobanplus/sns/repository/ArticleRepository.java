@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -24,6 +25,7 @@ import java.util.List;
 /**
  * Created by slt on 2016/10/9.
  */
+@SuppressWarnings("JpaQlInspection")
 @Repository
 public interface ArticleRepository extends JpaRepository<Article, Long>, JpaSpecificationExecutor<Article> {
 
@@ -42,4 +44,7 @@ public interface ArticleRepository extends JpaRepository<Article, Long>, JpaSpec
     List<Article> findByArticleTypeAndCategory(ArticleType articleType, Category category, Long lastId);
 
     Page<Article> findByArticleTypeAndNameLike(ArticleType articleType, String name, Pageable pageable);
+
+    @Query("update Article a set a.comments=a.comments+1 where u.id=?1")
+    void addComments(@Param("articleId") Long articleId);
 }

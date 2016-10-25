@@ -28,7 +28,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.redis.core.BoundHashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -172,20 +171,20 @@ public class AdminUserController {
     public String edit(Long userId, String selectType, Model model) throws IOException {
         User user = userRepository.getOne(userId);
         model.addAttribute("user", user);
-        BoundHashOperations<String, String, Long> userOperations = redisTemplate
-                .boundHashOps(ContractHelper.userFlag + userId);
-        Long userAmount = userOperations.get("userAmount");
-        Long fansAmount = userOperations.get("fansAmount");
-        Long articleAmount = userOperations.get("articleAmount");
+//        BoundHashOperations<String, String, Long> userOperations = redisTemplate
+//                .boundHashOps(ContractHelper.userFlag + userId);
+//        Long userAmount = userOperations.get("userAmount");
+//        Long fansAmount = userOperations.get("fansAmount");
+//        Long articleAmount = userOperations.get("articleAmount");
         Set<Tag> set = user.getTags();
         List<AdminTagsModel> adminTagsModels = set.stream()
                 .map(tag -> new AdminTagsModel(tag.getId(), tag.getName())).collect(Collectors.toList());
         model.addAttribute("tags", adminTagsModels);
         model.addAttribute("authenticationType", AuthenticationType.getDescription(user.getAuthenticationType()));
         model.addAttribute("imgURL", user.getImgURL() == null ? "../../img/user.png" : user.getImgURL());
-        model.addAttribute("userAmount", userAmount == null ? 0 : userAmount);
-        model.addAttribute("fansAmount", fansAmount == null ? 0 : fansAmount);
-        model.addAttribute("articleAmount", articleAmount == null ? 0 : articleAmount);
+        model.addAttribute("userAmount", user.getUserAmount());
+        model.addAttribute("fansAmount", user.getFansAmount());
+        model.addAttribute("articleAmount", user.getArticleAmount());
         model.addAttribute("selectType", selectType);
         return "/admin/user/userEdit";
     }

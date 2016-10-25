@@ -26,6 +26,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.BoundHashOperations;
+import org.springframework.data.redis.core.BoundListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -64,6 +65,12 @@ public class ArticleServiceImpl implements ArticleService {
     private ArticleCommentRepository articleCommentRepository;
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
+    @Autowired
+    private RedisTemplate<String, ArticleComment> articleCommentRedisTemplate;
+    @Autowired
+    private TagRespository tagRespository;
+    @Autowired
+    private EntityManager entityManager;
 
     public List<AppWikiListModel> getAppWikiList(Integer catalogId, Long lastId) {
         List<AppWikiListModel> appWikiListModels = new ArrayList<>();
@@ -227,9 +234,6 @@ public class ArticleServiceImpl implements ArticleService {
         return adminArticleEditModel;
     }
 
-    @Autowired
-    private TagRespository tagRespository;
-
     public Article save(Integer articleType, Long id
             , String name, Long userId, String pictureUrl, String content
             , String summary, Integer categoryId, Long circleId, String adConent, String tags) {
@@ -275,21 +279,23 @@ public class ArticleServiceImpl implements ArticleService {
                                  String summary, Long circleId) throws IOException, InterruptedException {
         addUserArticle(articleType, id, name, user, pictureUrl, summary);
         //用户的文章数增加
-        BoundHashOperations<String, String, Long> userOperations = redisTemplate
-                .boundHashOps(ContractHelper.userFlag + user.getId());
-        userOperations.putIfAbsent("articleAmount", 0L);
-        synchronized (userOperations.get("articleAmount")) {
-            Long articleAmount = userOperations.get("articleAmount");
-            userOperations.put("articleAmount", articleAmount + 1L);
-        }
+        userRepository.addArticleAmount(user.getId());
+//        BoundHashOperations<String, String, Long> userOperations = redisTemplate
+//                .boundHashOps(ContractHelper.userFlag + user.getId());
+//        userOperations.putIfAbsent("articleAmount", 0L);
+//        synchronized (userOperations.get("articleAmount")) {
+//            Long articleAmount = userOperations.get("articleAmount");
+//            userOperations.put("articleAmount", articleAmount + 1L);
+//        }
         //圈子的文章数增加
-        BoundHashOperations<String, String, Long> circleOperations = redisTemplate
-                .boundHashOps(ContractHelper.circleFlag + id);
-        circleOperations.putIfAbsent("articleAmount", 0L);
-        synchronized (circleOperations.get("articleAmount")) {
-            Long articleAmount = circleOperations.get("articleAmount");
-            circleOperations.put("articleAmount", articleAmount + 1L);
-        }
+        circleRepository.addArticleAmount(id);
+//        BoundHashOperations<String, String, Long> circleOperations = redisTemplate
+//                .boundHashOps(ContractHelper.circleFlag + id);
+//        circleOperations.putIfAbsent("articleAmount", 0L);
+//        synchronized (circleOperations.get("articleAmount")) {
+//            Long articleAmount = circleOperations.get("articleAmount");
+//            circleOperations.put("articleAmount", articleAmount + 1L);
+//        }
     }
 
     @Override
@@ -303,9 +309,10 @@ public class ArticleServiceImpl implements ArticleService {
         articleComment.setArticle(article);
         Optional<Long> maxFloor = articleCommentRepository.getMaxFloorByArticleId(id);
         synchronized (maxFloor) {
-            articleComment.setFloor(maxFloor.orElse(1L));
-            articleCommentRepository.save(articleComment);
+            articleComment.setFloor(maxFloor.orElse(0L) + 1L);
+            articleComment = articleCommentRepository.save(articleComment);
         }
+//        articleRepository.addComments(id);
         BoundHashOperations<String, String, Long> articleOperations = redisTemplate
                 .boundHashOps(ContractHelper.articleFlag + id);
         articleOperations.putIfAbsent("comments", 0L);
@@ -313,6 +320,10 @@ public class ArticleServiceImpl implements ArticleService {
             Long comments = articleOperations.get("comments");
             articleOperations.put("comments", comments + 1L);
         }
+
+        BoundListOperations<String, ArticleComment> articleCommentBoundListOperations =
+                articleCommentRedisTemplate.boundListOps(ContractHelper.articleCommentFlag + articleComment.getId());
+        articleCommentBoundListOperations.set(0L, articleComment);
     }
 
     /**
@@ -351,9 +362,6 @@ public class ArticleServiceImpl implements ArticleService {
                 Thread.sleep(500);
         }
     }
-
-    @Autowired
-    private EntityManager entityManager;
 
     public List<AppCircleArticleModel> getUserArticleList(Long userId, Long lastId) {
         List<AppCircleArticleModel> appCircleArticleModels = new ArrayList<>();

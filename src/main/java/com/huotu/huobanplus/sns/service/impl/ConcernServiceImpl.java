@@ -17,10 +17,8 @@ import com.huotu.huobanplus.sns.model.AppUserConcermListModel;
 import com.huotu.huobanplus.sns.repository.ConcernRepository;
 import com.huotu.huobanplus.sns.repository.UserRepository;
 import com.huotu.huobanplus.sns.service.ConcernService;
-import com.huotu.huobanplus.sns.utils.ContractHelper;
 import com.huotu.huobanplus.sns.utils.UserHelper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.BoundHashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -35,7 +33,6 @@ import java.util.Objects;
 @Service
 public class ConcernServiceImpl implements ConcernService {
 
-    private final static String userFlag = "_user_";
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -44,7 +41,7 @@ public class ConcernServiceImpl implements ConcernService {
     private RedisTemplate<String, String> redisTemplate;
 
     @Override
-    public synchronized void concernUser(Long id) throws ConcernException, LogException, IOException {
+    public void concernUser(Long id) throws ConcernException, LogException, IOException {
         User user = UserHelper.getUser();
         User toUser = userRepository.getOne(id);
         List<Concern> concerns = concernRepository.findByUserAndToUser(user, toUser);
@@ -56,22 +53,25 @@ public class ConcernServiceImpl implements ConcernService {
         concern.setUser(user);
         concernRepository.save(concern);
         //关注用户的关注人数增加
-        BoundHashOperations<String, String, Long> userOperations = redisTemplate
-                .boundHashOps(ContractHelper.userFlag + user.getId());
-        userOperations.putIfAbsent("userAmount", 0L);
-        synchronized (userOperations.get("userAmount")) {
-            Long userAmount = userOperations.get("userAmount");
-            userOperations.put("userAmount", userAmount + 1L);
-        }
+//        BoundHashOperations<String, String, Long> userOperations = redisTemplate
+//                .boundHashOps(ContractHelper.userFlag + user.getId());
+//        userOperations.putIfAbsent("userAmount", 0L);
+//        synchronized (userOperations.get("userAmount")) {
+//            Long userAmount = userOperations.get("userAmount");
+//            userOperations.put("userAmount", userAmount + 1L);
+//        }
+        userRepository.addUserAmount(user.getId());
 
         //被关注用户的粉丝人数增加
-        BoundHashOperations<String, String, Long> toUserOperations = redisTemplate
-                .boundHashOps(ContractHelper.userFlag + toUser.getId());
-        toUserOperations.putIfAbsent("fansAmount", 0L);
-        synchronized (toUserOperations.get("fansAmount")) {
-            Long userAmount = toUserOperations.get("fansAmount");
-            toUserOperations.put("fansAmount", userAmount + 1L);
-        }
+//        BoundHashOperations<String, String, Long> toUserOperations = redisTemplate
+//                .boundHashOps(ContractHelper.userFlag + toUser.getId());
+//        toUserOperations.putIfAbsent("fansAmount", 0L);
+//        synchronized (toUserOperations.get("fansAmount")) {
+//            Long userAmount = toUserOperations.get("fansAmount");
+//            toUserOperations.put("fansAmount", userAmount + 1L);
+//        }
+
+        userRepository.addFansAmount(toUser.getId());
 
     }
 
@@ -87,21 +87,22 @@ public class ConcernServiceImpl implements ConcernService {
         }
 
         //关注用户的关注人数减少
-        BoundHashOperations<String, String, Long> userOperations = redisTemplate
-                .boundHashOps(ContractHelper.userFlag + user.getId());
-        synchronized (userOperations.get("userAmount")) {
-            Long userAmount = userOperations.get("userAmount");
-            userOperations.put("userAmount", userAmount - concerns.size());
-        }
-
+//        BoundHashOperations<String, String, Long> userOperations = redisTemplate
+//                .boundHashOps(ContractHelper.userFlag + user.getId());
+//        synchronized (userOperations.get("userAmount")) {
+//            Long userAmount = userOperations.get("userAmount");
+//            userOperations.put("userAmount", userAmount - concerns.size());
+//        }
+        userRepository.reduceUserAmount(user.getId());
         //被关注用户的粉丝人数减少
-        BoundHashOperations<String, String, Long> toUserOperations = redisTemplate
-                .boundHashOps(ContractHelper.userFlag + toUser.getId());
-        toUserOperations.putIfAbsent("fansAmount", 0L);
-        synchronized (toUserOperations.get("fansAmount")) {
-            Long fansAmount = toUserOperations.get("fansAmount");
-            toUserOperations.put("fansAmount", fansAmount - concerns.size());
-        }
+//        BoundHashOperations<String, String, Long> toUserOperations = redisTemplate
+//                .boundHashOps(ContractHelper.userFlag + toUser.getId());
+//        toUserOperations.putIfAbsent("fansAmount", 0L);
+//        synchronized (toUserOperations.get("fansAmount")) {
+//            Long fansAmount = toUserOperations.get("fansAmount");
+//            toUserOperations.put("fansAmount", fansAmount - concerns.size());
+//        }
+        userRepository.reduceFansAmount(toUser.getId());
     }
 
     @Override
@@ -112,12 +113,14 @@ public class ConcernServiceImpl implements ConcernService {
         model.setUserName(toUser.getNickName());
         model.setUserHeadUrl(toUser.getImgURL());
         model.setUserLevelName(toUser.getLevel().getName());
-        BoundHashOperations<String, String, Long> toUserOperations = redisTemplate
-                .boundHashOps(ContractHelper.userFlag + toUser.getId());
-        toUserOperations.putIfAbsent("fansAmount", 0L);
-        toUserOperations.putIfAbsent("articleAmount", 0L);
-        model.setArticleAmount(toUserOperations.get("articleAmount"));
-        model.setFansAmount(toUserOperations.get("fansAmount"));
+        model.setFansAmount(toUser.getFansAmount());
+        model.setArticleAmount(toUser.getArticleAmount());
+//        BoundHashOperations<String, String, Long> toUserOperations = redisTemplate
+//                .boundHashOps(ContractHelper.userFlag + toUser.getId());
+//        toUserOperations.putIfAbsent("fansAmount", 0L);
+//        toUserOperations.putIfAbsent("articleAmount", 0L);
+//        model.setArticleAmount(toUserOperations.get("articleAmount"));
+//        model.setFansAmount(toUserOperations.get("fansAmount"));
 
         return model;
     }

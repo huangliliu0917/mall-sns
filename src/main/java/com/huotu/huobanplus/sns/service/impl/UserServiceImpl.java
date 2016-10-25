@@ -125,6 +125,7 @@ public class UserServiceImpl implements UserService {
         model.setUserHeadUrl(article.getPublisherHeaderImageUrl());
         model.setUserLevel(article.getPublisherLevelId());
         model.setTime(article.getDate().getTime());
+//        model.setCommentsAmount(article.geta);
         BoundHashOperations<String, String, Long> articleOperations = redisTemplate
                 .boundHashOps(ContractHelper.articleFlag + article.getArticleId());
         articleOperations.putIfAbsent("comments", 0L);
