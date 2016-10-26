@@ -49,8 +49,8 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
     }
 
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(appCommonInterceptor).addPathPatterns("/app/*")
-                .excludePathPatterns("/app/web/*");
+        registry.addInterceptor(appCommonInterceptor).addPathPatterns("/app/**")
+                .excludePathPatterns("/app/web/**");
     }
 
     @Override
