@@ -9,7 +9,7 @@
 
 package com.huotu.huobanplus.sns.repository;
 
-import com.huotu.huobanplus.sns.entity.AbstractLogin;
+import com.huotu.huobanplus.sns.entity.Login;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
@@ -18,8 +18,8 @@ import org.springframework.stereotype.Repository;
  * Created by slt on 2016/10/9.
  */
 @Repository
-public interface AbstractLoginRepository extends JpaRepository<AbstractLogin, Long>,
-        JpaSpecificationExecutor<AbstractLogin> {
+public interface LoginRepository extends JpaRepository<Login, Long>,
+        JpaSpecificationExecutor<Login> {
 
-    AbstractLogin findByLoginName(String loginName);
+    Login findByLoginName(String loginName);
 }

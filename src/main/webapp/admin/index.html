@@ -8,7 +8,7 @@
   ~ 2013-2016. All rights reserved.
   -->
 
-<html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <meta charset="utf-8">
@@ -42,7 +42,7 @@
                         商户编号：100889887
                         <a data-toggle="dropdown" class="dropdown-toggle" href="#">
                                 <span class="clear">
-                                    <span class="block m-t-xs"><strong class="font-bold">超级管理员</strong><b
+                                    <span class="block m-t-xs"><strong class="font-bold" th:text="${#authentication.name}">超级管理员</strong><b
                                             class="caret"></b></span>
                                 </span>
                         </a>
@@ -50,7 +50,7 @@
                             <li><a class="J_menuItem" href="/top/modifyPassword">修改密码</a>
                             </li>
                             <li class="divider"></li>
-                            <li><a href="loginOut">安全退出</a>
+                            <li><a href="/loginOut">安全退出</a>
                             </li>
                         </ul>
                     </div>
@@ -129,11 +129,7 @@
                     <a href="#"><i class="fa fa-edit"></i><span class="nav-label">权限管理</span><span
                             class="fa arrow"></span></a>
                     <ul class="nav nav-second-level">
-                        <li><a class="J_menuItem" href="/top/manager/roleList">角色管理</a>
-                        </li>
-                        <li><a class="J_menuItem" href="/top/manager/roleList">角色管理</a>
-                        </li>
-                        <li><a class="J_menuItem" href="/top/manager/roleList">角色管理</a>
+                        <li><a class="J_menuItem" href="/admin/permission/permissionList.html">角色管理</a>
                         </li>
 
                     </ul>

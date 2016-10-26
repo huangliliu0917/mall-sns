@@ -2,10 +2,15 @@ package com.huotu.huobanplus.sns.entity;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 后台登录用户
@@ -14,7 +19,8 @@ import java.util.Date;
 @Entity
 @Getter
 @Setter
-public abstract class AbstractLogin implements UserDetails {
+@Cacheable(false)
+public class Login implements UserDetails {
     private static final long serialVersionUID = -349012453592429794L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,6 +48,21 @@ public abstract class AbstractLogin implements UserDetails {
      * 上次登录IP
      */
     private String lastLoginIP;
+
+    /**
+     * 权限字符串列表(格式："aaa|bbb|ccc")
+     */
+    private String authors="";
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        String[] authorsAll=authors.split("\\|");
+        List<SimpleGrantedAuthority> simpleGrantedAuthorityList=new ArrayList<>();
+        for(String s:authorsAll){
+            simpleGrantedAuthorityList.add(new SimpleGrantedAuthority(s));
+        }
+        return simpleGrantedAuthorityList;
+    }
 
     @Override
     public String getUsername() {

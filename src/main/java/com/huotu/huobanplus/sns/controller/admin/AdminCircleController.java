@@ -89,27 +89,6 @@ public class AdminCircleController {
     }
 
     /**
-     * 获取一个圈子实体
-     * @param id
-     * @return
-     * @throws Exception
-     */
-    @RequestMapping(value = "getCircle",method = RequestMethod.GET)
-    @ResponseBody
-    public ModelMap getCircle(Long id) throws Exception{
-        ModelMap modelMap=new ModelMap();
-        Circle circle=null;
-        if(id!=null){
-            circle=circleRepository.findOne(id);
-        }
-        if(circle==null){
-            circle=new Circle();
-        }
-        CircleListModel circleListModel=circleService.circleToDetailsCircleModel(circle);
-        return modelMap;
-    }
-
-    /**
      * 保存圈子
      * @param circleListModel
      * @return

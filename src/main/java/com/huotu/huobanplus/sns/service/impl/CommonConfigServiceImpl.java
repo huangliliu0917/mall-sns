@@ -28,7 +28,7 @@ public class CommonConfigServiceImpl implements CommonConfigService {
 
     @Override
     public String getWebUrl() {
-        return env.getProperty("mallsns.weburl", "http://localhost:8986");
+        return env.getProperty("mallsns.weburl", "http://localhost:8080");
     }
 
     @Override
@@ -45,7 +45,7 @@ public class CommonConfigServiceImpl implements CommonConfigService {
 
     @Override
     public String getResourcesUri() {
-        return env.getProperty("huotu.resourcesUri", "http://localhost:8986");
+        return env.getProperty("huotu.resourcesUri", "http://localhost:8080");
     }
 
     @Override

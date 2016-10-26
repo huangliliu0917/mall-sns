@@ -24,45 +24,15 @@
     <link href="http://resali.huobanplus.com/cdn/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet"/>
     <link href="http://resali.huobanplus.com/cdn/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet"/>
 
-    <link href="http://resali.huobanplus.com/cdn/hotui/css/animate.min.css" rel="stylesheet"/>
-    <link href="../../css/style.min.css" rel="stylesheet"/><base target="_blank"/>
     <link href="../../css/layer.css" rel="stylesheet"/>
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/animate.min.css" rel="stylesheet"/>
+    <link href="../../css/style.min.css?v=4.0.0" rel="stylesheet"/>
 
 </head>
 
-<body onclick="bannerConfig.loadFirst()" class="gray-bg">
+<body onload="bannerConfig.loadFirst()" class="gray-bg">
     <div class="wrapper wrapper-content">
         <div class="row">
-            <div class="col-sm-6">
-                <div class="ibox float-e-margins">
-                    <div class="ibox-title">
-                        <h5>banner文章列表</h5>
-                    </div>
-                    <div id="slideList" class="ibox-content">
-                        <!--/*@thymesVar id="circle" type="com.huotu.huobanplus.sns.entity.Circle"*/-->
-                            <ul  class="sortable-list connectList agile-list ui-sortable">
-                                <li th:each="s:${slides}" class="info-element" style="">
-                                    <span th:text="${s.title}">支持财会人员的继续培训工作。</span>
-                                    <input name="pictureUrl" type="hidden" th:value="${s.pictureUrl}"/>
-                                    <input name="id" type="hidden" th:value="${s.id}"/>
-                                    <div class="agile-detail">
-                                        <a th:onclick="'bannerConfig.deleteSlide('+${s.id}+',this,event)'" class="pull-right btn btn-xs btn-white">删除</a>
-                                        <i th:text="${s.url}">http://www.baidu.com</i>
-                                    </div>
-                                </li>
-                            </ul>
-
-                            <div class="hr-line-dashed"></div>
-                            <div class="form-group">
-                                <div class="text-center">
-                                    <button onclick="circleConfig.showTagList()" class="btn btn-white" type="button">添加</button>
-                                </div>
-
-                            </div>
-
-                    </div>
-                </div>
-            </div>
             <!--编辑-->
             <div class="col-sm-6">
                 <div class="ibox float-e-margins">
@@ -131,6 +101,38 @@
                     </div>
                 </div>
             </div>
+            <div class="col-sm-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>banner文章列表</h5>
+                    </div>
+                    <div id="slideList" class="ibox-content">
+                        <!--/*@thymesVar id="circle" type="com.huotu.huobanplus.sns.entity.Circle"*/-->
+                            <ul  class="sortable-list connectList agile-list ui-sortable">
+                                <li th:each="s:${slides}" class="info-element" style="">
+                                    <span th:text="${s.title}">支持财会人员的继续培训工作。</span>
+                                    <input name="pictureUrl" type="hidden" th:value="${s.pictureUrl}"/>
+                                    <input name="id" type="hidden" th:value="${s.id}"/>
+                                    <div class="agile-detail">
+                                        <a th:onclick="'bannerConfig.deleteSlide('+${s.id}+',this,event)'" class="pull-right btn btn-xs btn-white">删除</a>
+                                        <i th:text="${s.url}">http://www.baidu.com</i>
+                                    </div>
+                                </li>
+                            </ul>
+
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <div class="text-center">
+                                    <button onclick="circleConfig.showTagList()" class="btn btn-white" type="button">添加圈子文章</button>
+                                </div>
+
+                            </div>
+
+                    </div>
+                </div>
+            </div>
+
+
 
 
 

@@ -27,12 +27,13 @@
                                        placeholder="名称" style="width: 156px;"/>
                             </div>
                         </div>
+                        <div class="form-inline" style="max-width: 926px; text-align: right;">
+                            <button type="button" onclick="page.search()" class="btn btn-primary">搜索</button>
+                            <button type="button" onclick="page.add()" class="btn btn-primary" id="add" name="add">添加
+                            </button>
+                        </div>
                     </div>
-                    <div class="form-inline" style="max-width: 926px; text-align: right;">
-                        <button type="button" onclick="page.search()" class="btn btn-primary">搜索</button>
-                        <button type="button" onclick="page.add()" class="btn btn-primary" id="add" name="add">添加
-                        </button>
-                    </div>
+
                 </div>
             </div>
         </div>
@@ -109,7 +110,11 @@
                             '<td>' + (UtcToDateString(row.date, "yyyy-MM-dd")) + '</td>' +
                             '<td>' + row.click + '</td>' +
                             '<td>' + row.view + '</td>' +
-                            '<td><button style="padding: 0px 5px;" data-placement="top" data-toggle="tooltip" class="btn btn-primary tooltips" type="button" data-original-title="编辑" onclick="page.edit(' + row.id + ')">编辑</button></td></tr>';
+                            '<td>' +
+                            '<button style="padding: 0px 5px;margin-left: 5px;" data-placement="top" data-toggle="tooltip" class="btn btn-primary tooltips" type="button" data-original-title="编辑" onclick="page.edit(' + row.id + ')">编辑</button>' +
+                            '<button style="padding: 0px 5px;margin-left: 5px;" class="btn btn-primary tooltips" type="button" onclick="page.edit(' + row.id + ')">置顶</button>' +
+                            '<button style="padding: 0px 5px;margin-left: 5px;" class="btn btn-primary tooltips" type="button" onclick="page.edit(' + row.id + ')">删除</button>' +
+                            '</td></tr>';
                 }
 
                 $("#list").html(html);
@@ -136,6 +141,14 @@
     }
 
     page.edit = function (id) {
+        window.location.href = '/top/circle/articleEdit/' + articleType + '/edit/' + id;
+    }
+
+    page.editTop = function (id) {
+        window.location.href = '/top/circle/articleEdit/' + articleType + '/edit/' + id;
+    }
+
+    page.editDel = function (id) {
         window.location.href = '/top/circle/articleEdit/' + articleType + '/edit/' + id;
     }
 
