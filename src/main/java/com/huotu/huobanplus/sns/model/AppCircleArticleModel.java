@@ -22,7 +22,9 @@ public class AppCircleArticleModel {
      */
     private String pictureUrl;
 
-
+    /**
+     * 用户Id
+     */
 
     private Long userId;
     /**
@@ -42,6 +44,8 @@ public class AppCircleArticleModel {
      * 用户等级
      */
     private Long userLevel;
+    
+
     /**
      * 文章发表时间
      */

@@ -15,6 +15,8 @@ import com.huotu.huobanplus.sns.model.AppCircleArticleModel;
 import com.huotu.huobanplus.sns.model.AppUserConcermListModel;
 import com.huotu.huobanplus.sns.model.common.ReportTargetType;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * 用户模块
@@ -30,8 +32,8 @@ public interface UserController {
      * @return
      * @throws Exception
      */
-    @RequestMapping("/concern")
-    ApiResult concern(Long id) throws Exception;
+    @RequestMapping(value = "/concern", method = RequestMethod.GET)
+    ApiResult concern(@RequestParam(value = "id") Long id) throws Exception;
 
     /**
      * 取消关注圈子
@@ -40,8 +42,8 @@ public interface UserController {
      * @return
      * @throws Exception
      */
-    @RequestMapping("/cancelConcern")
-    ApiResult cancelConcern(Long id) throws Exception;
+    @RequestMapping(value = "/cancelConcern", method = RequestMethod.GET)
+    ApiResult cancelConcern(@RequestParam(value = "id") Long id) throws Exception;
 
     /**
      * 关注用户
@@ -50,8 +52,8 @@ public interface UserController {
      * @return
      * @throws Exception
      */
-    @RequestMapping("/concernUser")
-    ApiResult concernUser(Long id) throws Exception;
+    @RequestMapping(value = "/concernUser", method = RequestMethod.GET)
+    ApiResult concernUser(@RequestParam(value = "id") Long id) throws Exception;
 
     /**
      * 取消关注用户
@@ -60,8 +62,8 @@ public interface UserController {
      * @return
      * @throws Exception
      */
-    @RequestMapping("/cancelUser")
-    ApiResult cancelUser(Long id) throws Exception;
+    @RequestMapping(value = "/cancelUser", method = RequestMethod.GET)
+    ApiResult cancelUser(@RequestParam(value = "id") Long id) throws Exception;
 
     /**
      * 发布一篇文章
@@ -75,8 +77,12 @@ public interface UserController {
      * @return
      * @throws Exception
      */
-    @RequestMapping("/publishArticle")
-    ApiResult publishArticle(Long id, String name, String content, String pictureUrl, Long circleId) throws Exception;
+    @RequestMapping(value = "/publishArticle", method = RequestMethod.GET)
+    ApiResult publishArticle(@RequestParam(value = "id") Long id
+            , @RequestParam(value = "name") String name
+            , @RequestParam(value = "content") String content
+            , @RequestParam(value = "pictureUrl",required = false) String pictureUrl
+            , @RequestParam(value = "circleId") Long circleId) throws Exception;
 
 
     /**
@@ -87,8 +93,9 @@ public interface UserController {
      * @param content 评论内容
      * @return
      */
-    @RequestMapping("/commentArticle")
-    ApiResult commentArticle(Long id, String content) throws Exception;
+    @RequestMapping(value = "/commentArticle", method = RequestMethod.GET)
+    ApiResult commentArticle(@RequestParam(value = "id") Long id
+            , @RequestParam(value = "content") String content) throws Exception;
 
 
     /**
@@ -100,8 +107,10 @@ public interface UserController {
      * @return
      * @throws Exception
      */
-    @RequestMapping("/report")
-    ApiResult report(ReportTargetType type, Long id, String note) throws Exception;
+    @RequestMapping(value = "/report", method = RequestMethod.GET)
+    ApiResult report(@RequestParam(value = "type") ReportTargetType type
+            , @RequestParam(value = "id") Long id
+            , @RequestParam(value = "note") String note) throws Exception;
 
     /**
      * 我的关注
@@ -111,8 +120,9 @@ public interface UserController {
      * @return
      * @throws Exception
      */
-    @RequestMapping("/myConcern")
-    ApiResult myConcern(Output<AppUserConcermListModel[]> list, Long lastId) throws Exception;
+    @RequestMapping(value = "/myConcern", method = RequestMethod.GET)
+    ApiResult myConcern(Output<AppUserConcermListModel[]> list
+            , @RequestParam(value = "lastId",required = false) Long lastId) throws Exception;
 
     /**
      * 我的粉丝
@@ -122,8 +132,9 @@ public interface UserController {
      * @return
      * @throws Exception
      */
-    @RequestMapping("/myConcerned")
-    ApiResult myConcerned(Output<AppUserConcermListModel[]> list, Long lastId) throws Exception;
+    @RequestMapping(value = "/myConcerned", method = RequestMethod.GET)
+    ApiResult myConcerned(Output<AppUserConcermListModel[]> list
+            , @RequestParam(value = "lastId",required = false) Long lastId) throws Exception;
 
 
     /**
@@ -134,6 +145,7 @@ public interface UserController {
      * @return
      * @throws Exception
      */
-    @RequestMapping("concernIndex")
-    ApiResult concernIndex(Output<AppCircleArticleModel[]> articleList, Long lastId) throws Exception;
+    @RequestMapping(value = "concernIndex", method = RequestMethod.GET)
+    ApiResult concernIndex(Output<AppCircleArticleModel[]> articleList
+            , @RequestParam(value = "lastId",required = false) Long lastId) throws Exception;
 }

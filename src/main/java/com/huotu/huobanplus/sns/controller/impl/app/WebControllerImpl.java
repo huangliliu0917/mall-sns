@@ -12,6 +12,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -30,6 +31,9 @@ public class WebControllerImpl implements WebController {
     @Autowired
     private ArticleService articleService;
 
+    @Autowired
+    private AppSecurityService appSecurityService;
+
     @Override
     public ApiResult user(Output<AppUserModel> data, Long id) throws Exception {
         data.outputData(userService.getAppUser(id));
@@ -44,30 +48,49 @@ public class WebControllerImpl implements WebController {
     }
 
     @Override
-    public ApiResult search(Output<AppUserConcermListModel[]> userList, Output<AppCircleIndexListModel[]> circleList, Output<AppCircleIndexArticleListModel[]> articleList, Integer type, String key, Long lastId) throws Exception {
-
-
+    public ApiResult search(Output<AppCircleIndexArticleListModel[]> articleList, @RequestParam("key") String key, @RequestParam(value = "lastId", required = false) Long lastId) throws Exception {
         return null;
     }
 
 
-    @Autowired
-    private AppSecurityService appSecurityService;
-
+    //todo
     @Override
-    public ApiResult userLogin(Output<String> data, String userName, String password) {
-        data.outputData(appSecurityService.createJWT("websns", userName, 100000));
-        return ApiResult.resultWith(AppCode.SUCCESS);
+    public ApiResult sendCheckCode(String mobile) {
+        //调用发短信接口
+        return null;
     }
 
+    //todo
     @Override
-    public ApiResult checkToken(HttpServletRequest request) {
-        String jwt = request.getHeader("authentication");
-        String userName = appSecurityService.parseJWT(jwt);
+    public ApiResult userLogin(Output<String> data, String mobile, String code) {
+        //判断验证码是否有效
 
-        log.info(userName);
-        return ApiResult.resultWith(AppCode.SUCCESS);
+        //商城中判断用户是否存在
+        if (1 != 0) {
+            //创建商城用户和本地用户
+        } else {
+            //判断本地用户是否存在，不存在则创建本地用户
+        }
+
+        //返回token
+        return null;
     }
+
+
+//    @Override
+//    public ApiResult userLogin(Output<String> data, String userName, String password) {
+//        data.outputData(appSecurityService.createJWT("websns", userName, 100000));
+//        return ApiResult.resultWith(AppCode.SUCCESS);
+//    }
+//
+//    @Override
+//    public ApiResult checkToken(HttpServletRequest request) {
+//        String jwt = request.getHeader("authentication");
+//        String userName = appSecurityService.parseJWT(jwt);
+//
+//        log.info(userName);
+//        return ApiResult.resultWith(AppCode.SUCCESS);
+//    }
 
 
 }

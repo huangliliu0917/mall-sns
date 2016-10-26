@@ -6,6 +6,8 @@ import com.huotu.huobanplus.sns.model.AppCategoryModel;
 import com.huotu.huobanplus.sns.model.AppWikiListModel;
 import com.huotu.huobanplus.sns.model.AppWikiModel;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * 科普，百科
@@ -22,8 +24,9 @@ public interface WikiController {
      * @param id          父分类Id，可以为空
      * @return
      */
-    @RequestMapping("/getCatalogList")
-    ApiResult getCatalogList(Output<AppCategoryModel[]> catalogList, Integer id);
+    @RequestMapping(value = "/getCatalogList", method = RequestMethod.GET)
+    ApiResult getCatalogList(Output<AppCategoryModel[]> catalogList
+            , @RequestParam("id") Integer id);
 
     /**
      * 百科列表
@@ -34,8 +37,10 @@ public interface WikiController {
      * @return
      * @throws Exception
      */
-    @RequestMapping("/wikiList")
-    ApiResult wikiList(Output<AppWikiListModel[]> wikilist, Integer catalogId, Long lastId) throws Exception;
+    @RequestMapping(value = "/wikiList", method = RequestMethod.GET)
+    ApiResult wikiList(Output<AppWikiListModel[]> wikilist
+            , @RequestParam(value = "catalogId", required = false) Integer catalogId
+            , @RequestParam(value = "lastId", required = false) Long lastId) throws Exception;
 
 
     /**
@@ -46,6 +51,7 @@ public interface WikiController {
      * @return
      * @throws Exception
      */
-    @RequestMapping("/wiki")
-    ApiResult wiki(Output<AppWikiModel> data, Long id) throws Exception;
+    @RequestMapping(value = "/wiki", method = RequestMethod.GET)
+    ApiResult wiki(Output<AppWikiModel> data
+            , @RequestParam("id") Long id) throws Exception;
 }

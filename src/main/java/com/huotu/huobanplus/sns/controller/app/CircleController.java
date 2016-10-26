@@ -4,6 +4,8 @@ import com.huotu.common.api.ApiResult;
 import com.huotu.common.api.Output;
 import com.huotu.huobanplus.sns.model.*;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * 圈子
@@ -20,8 +22,9 @@ public interface CircleController {
      * @return
      * @throws Exception
      */
-    @RequestMapping("/indexTop")
-    ApiResult circleIndexTop(Output<AppCircleIndexSlideModel[]> slideList, Output<AppCircleIndexSuggestModel[]> suggestList) throws Exception;
+    @RequestMapping(value = "/indexTop", method = RequestMethod.GET)
+    ApiResult circleIndexTop(Output<AppCircleIndexSlideModel[]> slideList
+            , Output<AppCircleIndexSuggestModel[]> suggestList) throws Exception;
 
     /**
      * 圈子推荐列表
@@ -30,7 +33,7 @@ public interface CircleController {
      * @return
      * @throws Exception
      */
-    @RequestMapping("/circleIndexSuggestList")
+    @RequestMapping(value = "/circleIndexSuggestList", method = RequestMethod.GET)
     ApiResult circleIndexSuggestList(Output<AppCircleIndexSuggestModel[]> suggestList) throws Exception;
 
     /**
@@ -44,8 +47,9 @@ public interface CircleController {
      * @return
      * @throws Exception
      */
-    @RequestMapping("/indexList")
-    ApiResult circleIndexList(Output<AppCircleIndexListModel[]> circlelist, Long lastId) throws Exception;
+    @RequestMapping(value = "/indexList", method = RequestMethod.GET)
+    ApiResult circleIndexList(Output<AppCircleIndexListModel[]> circlelist
+            , @RequestParam(value = "lastId",required = false) Long lastId) throws Exception;
 
     /**
      * 圈子介绍
@@ -56,7 +60,8 @@ public interface CircleController {
      * @throws Exception
      */
     @RequestMapping("/introduce")
-    ApiResult introduce(Output<AppCircleIntroduceModel> data, Long id) throws Exception;
+    ApiResult introduce(Output<AppCircleIntroduceModel> data
+            , @RequestParam("id") Long id) throws Exception;
 
     /**
      * 圈子公告及置顶
@@ -68,8 +73,11 @@ public interface CircleController {
      * @return
      * @throws Exception
      */
-    @RequestMapping("/top")
-    ApiResult top(Output<AppCircleModel> data, Output<AppCircleNoticeModel[]> noticeList, Output<AppCircleArticleModel> top, Long id) throws Exception;
+    @RequestMapping(value = "/top", method = RequestMethod.GET)
+    ApiResult top(Output<AppCircleModel> data
+            , Output<AppCircleNoticeModel[]> noticeList
+            , Output<AppCircleArticleModel> top
+            , @RequestParam("id") Long id) throws Exception;
 
 
     /**
@@ -82,8 +90,11 @@ public interface CircleController {
      * @return
      * @throws Exception
      */
-    @RequestMapping("/list")
-    ApiResult list(Output<AppCircleArticleModel[]> articleList, Long id, Integer type, Long lastId) throws Exception;
+    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    ApiResult list(Output<AppCircleArticleModel[]> articleList
+            , @RequestParam("id") Long id
+            , @RequestParam(value = "type" ,required = false) Integer type
+            , @RequestParam(value = "lastId",required = false) Long lastId) throws Exception;
 
     /**
      * 圈子文章
@@ -94,8 +105,10 @@ public interface CircleController {
      * @return
      * @throws Exception
      */
-    @RequestMapping("/article")
-    ApiResult article(Output<AppCircleArticleDetailModel> data, Output<AppCircleArticleCommentsModel[]> commentsList, Long id) throws Exception;
+    @RequestMapping(value = "/article", method = RequestMethod.GET)
+    ApiResult article(Output<AppCircleArticleDetailModel> data
+            , Output<AppCircleArticleCommentsModel[]> commentsList
+            , @RequestParam("id") Long id) throws Exception;
 
 
     /**
@@ -107,8 +120,10 @@ public interface CircleController {
      * @return
      * @throws Exception
      */
-    @RequestMapping("/articleCommentsTop")
-    ApiResult articleCommentsTop(Output<AppCircleArticleDetailModel> articleData, Output<AppClickUserListModel[]> userList, Long id) throws Exception;
+    @RequestMapping(value = "/articleCommentsTop", method = RequestMethod.GET)
+    ApiResult articleCommentsTop(Output<AppCircleArticleDetailModel> articleData
+            , Output<AppClickUserListModel[]> userList
+            , @RequestParam("id") Long id) throws Exception;
 
 
     /**
@@ -120,8 +135,10 @@ public interface CircleController {
      * @return
      * @throws Exception
      */
-    @RequestMapping("/articleCommentsList")
-    ApiResult articleCommentsList(Output<AppCircleArticleCommentsModel[]> commentsList, Long id, Long lastId) throws Exception;
+    @RequestMapping(value = "/articleCommentsList", method = RequestMethod.GET)
+    ApiResult articleCommentsList(Output<AppCircleArticleCommentsModel[]> commentsList
+            , @RequestParam("id") Long id
+            , @RequestParam(value = "lastId",required = false) Long lastId) throws Exception;
 
 
 }

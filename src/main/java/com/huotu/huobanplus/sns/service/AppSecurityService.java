@@ -1,5 +1,7 @@
 package com.huotu.huobanplus.sns.service;
 
+import javax.servlet.http.HttpServletRequest;
+
 import io.jsonwebtoken.ExpiredJwtException;
 
 /**
@@ -18,4 +20,6 @@ public interface AppSecurityService {
     String createJWT(String issuer, String subject, long expirationTime);
 
     String parseJWT(String jwt) throws ExpiredJwtException;
+
+    String getUserId(HttpServletRequest request);
 }

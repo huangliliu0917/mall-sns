@@ -23,28 +23,28 @@ public class AppPublicModel {
      */
     private String ip;
 
-    /**
-     * 商家id
-     */
-    private Long customerId;
+//    /**
+//     * 商家id
+//     */
+//    private Long customerId;
 
-    /**
-     * 微信唯一识别openid
-     */
-    private String openId;
+//    /**
+//     * 微信唯一识别openid
+//     */
+//    private String openId;
 
-    /**
-     * 校验openid的sign
-     */
-    private String sign;
+//    /**
+//     * 校验openid的sign
+//     */
+//    private String sign;
 
-    /***
-     *
-     */
-    private String unionId;
+//    /***
+//     *
+//     */
+//    private String unionId;
 
-    /***
-     * 商城UserId
-     */
-    private Long mallUserId;
+//    /***
+//     * 商城UserId
+//     */
+//    private Long mallUserId;
 }

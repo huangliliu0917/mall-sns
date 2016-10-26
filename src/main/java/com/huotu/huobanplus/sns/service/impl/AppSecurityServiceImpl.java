@@ -3,8 +3,10 @@ package com.huotu.huobanplus.sns.service.impl;
 import com.huotu.huobanplus.sns.service.AppSecurityService;
 import io.jsonwebtoken.*;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.crypto.spec.SecretKeySpec;
+import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.DatatypeConverter;
 import java.security.Key;
 import java.util.Date;
@@ -49,7 +51,7 @@ public class AppSecurityServiceImpl implements AppSecurityService {
         return builder.compact();
     }
 
-    public String parseJWT(String jwt) throws  ExpiredJwtException {
+    public String parseJWT(String jwt) throws ExpiredJwtException {
         Claims claims = Jwts.parser()
                 .setSigningKey(DatatypeConverter.parseBase64Binary(secret))
                 .parseClaimsJws(jwt).getBody();
@@ -58,5 +60,14 @@ public class AppSecurityServiceImpl implements AppSecurityService {
 //        System.out.println("Subject: " + claims.getSubject());
 //        System.out.println("Issuer: " + claims.getIssuer());
 //        System.out.println("Expiration: " + claims.getExpiration());
+    }
+
+    public String getUserId(HttpServletRequest request) {
+        try {
+            String authentication = request.getHeader("authentication");
+            if (!StringUtils.isEmpty(authentication)) return parseJWT(authentication);
+        } catch (ExpiredJwtException ex) {
+        }
+        return null;
     }
 }

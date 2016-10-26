@@ -139,6 +139,8 @@ public class ArticleServiceImpl implements ArticleService {
                 appWikiListModel.setUserName(x.getPublisher().getNickName());
                 appWikiListModel.setUserId(x.getPublisher().getId());
             }
+            //todo
+            appWikiListModel.setConcerned(false);
             appWikiListModels.add(appWikiListModel);
         });
 

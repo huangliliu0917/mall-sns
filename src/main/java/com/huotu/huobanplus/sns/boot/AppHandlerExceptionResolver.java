@@ -1,5 +1,6 @@
 package com.huotu.huobanplus.sns.boot;
 
+import com.huotu.huobanplus.sns.exception.NeedLoginException;
 import com.huotu.huobanplus.sns.model.common.AppCode;
 import com.huotu.huobanplus.sns.model.common.PhysicalApiResult;
 import org.apache.commons.logging.Log;
@@ -31,6 +32,9 @@ public class AppHandlerExceptionResolver implements HandlerExceptionResolver {
             } catch (MissingServletRequestParameterException e) {
                 result.setSystemResultCode(AppCode.PARAMETER_ERROR.getValue());
                 result.setSystemResultDescription(AppCode.PARAMETER_ERROR.getName());
+            } catch (NeedLoginException e) {
+                result.setSystemResultCode(AppCode.ERROR_USER_NEED_LOGIN.getValue());
+                result.setSystemResultDescription(AppCode.ERROR_USER_NEED_LOGIN.getName());
             } catch (Exception e) {
                 log.error("unExcepted app error ", e);
                 result.setSystemResultCode(HttpStatus.INTERNAL_SERVER_ERROR.value());

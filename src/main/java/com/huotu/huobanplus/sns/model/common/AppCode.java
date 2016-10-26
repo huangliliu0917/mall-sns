@@ -19,22 +19,9 @@ public enum AppCode implements ICommonEnum {
     SUCCESS(1, "操作成功"),
     PARAMETER_ERROR(1001, "参数错误"),
     INTERNAL_SERVER_ERROR(1002, "内部服务器错误"),
-    /**
-     * ERROR_USER_NOT_FOUND(2001,"用户不存在")
-     */
-    ERROR_USER_NOT_FOUND(2001,"用户不存在"),
 
-    /**
-     * USER_BE_FREEZE(2101,"用户已被冻结，请联系客服")
-     */
-    USER_BE_FREEZE(2101,"用户已被冻结，无法进行任何操作，请联系客服"),
+    ERROR_USER_NEED_LOGIN(20001,"用户需要登录"),
 
-    /**
-     * USER_BE_NOTALK(2102,"您已被禁言，无法发表任何言论")
-     */
-    USER_BE_NOTALK(2102,"您已被禁言，无法发表任何言论"),
-
-    SYSTEM_BAD_REQUEST_50601(50601, "系统请求失败,code 50601"),//sign校验失败
     /**
      * ERROR_USER_LOGIN_FAIL(56000, "用户登录失败")
      */

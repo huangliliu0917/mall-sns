@@ -49,4 +49,9 @@ public interface CommonConfigService {
      */
     String getResourcesHome();
 
+    /***
+     * 获得对应商家的Id
+     */
+    String getCustomerId();
+
 }

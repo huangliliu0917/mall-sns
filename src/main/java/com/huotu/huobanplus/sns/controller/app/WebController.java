@@ -4,6 +4,7 @@ import com.huotu.common.api.ApiResult;
 import com.huotu.common.api.Output;
 import com.huotu.huobanplus.sns.model.*;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,8 +24,9 @@ public interface WebController {
      * @return
      * @throws Exception
      */
-    @RequestMapping("/user")
-    ApiResult user(Output<AppUserModel> data, Long id) throws Exception;
+    @RequestMapping(value = "/user", method = RequestMethod.GET)
+    ApiResult user(Output<AppUserModel> data
+            , @RequestParam("id") Long id) throws Exception;
 
     /**
      * 浏览用户文章
@@ -35,43 +37,68 @@ public interface WebController {
      * @return
      * @throws Exception
      */
-    @RequestMapping("/userArticleList")
-    ApiResult userArticleList(Output<AppCircleArticleModel[]> articleList, @RequestParam(value = "id") Long id, Long lastId) throws Exception;
+    @RequestMapping(value = "/userArticleList", method = RequestMethod.GET)
+    ApiResult userArticleList(Output<AppCircleArticleModel[]> articleList
+            , @RequestParam(value = "id") Long id
+            , @RequestParam(value = "lastId",required = false) Long lastId) throws Exception;
 
 
     /**
      * 搜索
      *
-     * @param userList    用户列表
-     * @param circleList  圈子列表
      * @param articleList 文章列表
-     * @param type        0用户 1小组 2话题
      * @param key         关键字
      * @param lastId      上一个id（用户Id 圈子id 话题Id）
      * @return
      * @throws Exception
      */
-    @RequestMapping("/search")
-    ApiResult search(Output<AppUserConcermListModel[]> userList, Output<AppCircleIndexListModel[]> circleList, Output<AppCircleIndexArticleListModel[]> articleList
-            , Integer type, String key, Long lastId) throws Exception;
+    @RequestMapping(value = "/search", method = RequestMethod.GET)
+    ApiResult search(Output<AppCircleIndexArticleListModel[]> articleList
+            , @RequestParam("key") String key
+            , @RequestParam(value = "lastId",required = false) Long lastId) throws Exception;
 
-
-    /***
-     * 用户登录
-     * @param data token数据
-     * @param userName 用户名
-     * @param password 密码
-     * @return
-     */
-    @RequestMapping("/userLogin")
-    ApiResult userLogin(Output<String> data, String userName, String password);
 
     /**
-     * 检测token
+     * 获取验证码 发送验证码
      *
-     * @param request
+     * @param mobile 手机号
      * @return
      */
-    @RequestMapping("/checkToken")
-    ApiResult checkToken(HttpServletRequest request);
+    @RequestMapping(value = "/sendCheckCode", method = RequestMethod.GET)
+    ApiResult sendCheckCode(@RequestParam("mobile") String mobile);
+
+    /***
+     * 用户注册/登录
+     * @param data token数据
+     * @param mobile 手机号
+     * @param code 验证码
+     * @return
+     */
+    @RequestMapping(value = "/userLogin", method = RequestMethod.GET)
+    ApiResult userLogin(Output<String> data
+            , @RequestParam("mobile") String mobile
+            , @RequestParam("code") String code);
+
+
+//    /***
+//     * 用户登录/注册
+//     * @param data token数据
+//     * @param userName 用户名 只限手机号
+//     * @param password 密码
+//     * @return
+//     */
+//    @RequestMapping("/userLogin")
+//    @Deprecated
+//    ApiResult userLogin(Output<String> data, String userName, String password);
+
+//
+//    /**
+//     * 检测token
+//     *
+//     * @param request
+//     * @return
+//     */
+//    @RequestMapping("/checkToken")
+//    @Deprecated
+//    ApiResult checkToken(HttpServletRequest request);
 }

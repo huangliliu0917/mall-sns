@@ -25,6 +25,11 @@ public class AppWikiModel {
      * 发布时间
      */
     private Long time;
+
+    /**
+     * 用户Id
+     */
+    private Long userId;
     /**
      * 发布的用户
      */
@@ -34,6 +39,19 @@ public class AppWikiModel {
      */
     private String userHeadUrl;
 
+    /**
+     * 用户等级
+     */
+    private Long userLevel;
+
+    /**
+     * 关注过的
+     */
+    private Boolean concerned;
+    /**
+     * 浏览量
+     */
+    private Long viewAmount;
 
     /**
      * 广告内容
