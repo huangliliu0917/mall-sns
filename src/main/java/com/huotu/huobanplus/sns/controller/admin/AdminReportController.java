@@ -10,8 +10,10 @@
 package com.huotu.huobanplus.sns.controller.admin;
 
 import com.huotu.huobanplus.sns.entity.Report;
+import com.huotu.huobanplus.sns.model.admin.ReportDetailsModel;
 import com.huotu.huobanplus.sns.model.admin.ReportListModel;
 import com.huotu.huobanplus.sns.model.admin.ReportSearchModel;
+import com.huotu.huobanplus.sns.repository.ReportRepository;
 import com.huotu.huobanplus.sns.service.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -31,6 +33,9 @@ import java.util.List;
 public class AdminReportController {
     @Autowired
     private ReportService reportService;
+
+    @Autowired
+    private ReportRepository reportRepository;
 
 
     /**
@@ -61,9 +66,13 @@ public class AdminReportController {
      * @return
      * @throws Exception
      */
-    @RequestMapping(value = "/editCircle",method = RequestMethod.GET)
+    @RequestMapping(value = "/editReport",method = RequestMethod.GET)
     public String editCircle(@RequestParam(required = true) Long id, Model model) throws Exception{
+        Report report= reportRepository.findOne(id);
 
-        return "/admin/report/modifyCircle";
+        ReportDetailsModel reportDetailsModel=reportService.getReportDetails(report);
+
+        model.addAttribute("model",reportDetailsModel);
+        return "/admin/report/report_details";
     }
 }

@@ -11,6 +11,7 @@ package com.huotu.huobanplus.sns.service;
 
 import com.huotu.huobanplus.sns.entity.Report;
 import com.huotu.huobanplus.sns.exception.LogException;
+import com.huotu.huobanplus.sns.model.admin.ReportDetailsModel;
 import com.huotu.huobanplus.sns.model.admin.ReportListModel;
 import com.huotu.huobanplus.sns.model.admin.ReportSearchModel;
 import com.huotu.huobanplus.sns.model.common.ReportTargetType;
@@ -50,4 +51,13 @@ public interface ReportService {
      * @return
      */
     List<ReportListModel> getReportListModelList(List<Report> reports);
+
+    /**
+     * 将举报实体转换为model
+     * @param report
+     * @return
+     */
+    ReportDetailsModel getReportDetails(Report report);
+
+
 }

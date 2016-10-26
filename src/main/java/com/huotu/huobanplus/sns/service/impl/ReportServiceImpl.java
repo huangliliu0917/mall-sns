@@ -9,13 +9,19 @@
 
 package com.huotu.huobanplus.sns.service.impl;
 
+import com.huotu.huobanplus.sns.entity.Article;
+import com.huotu.huobanplus.sns.entity.ArticleComment;
 import com.huotu.huobanplus.sns.entity.Report;
 import com.huotu.huobanplus.sns.entity.User;
 import com.huotu.huobanplus.sns.exception.LogException;
+import com.huotu.huobanplus.sns.model.admin.ReportDetailsModel;
 import com.huotu.huobanplus.sns.model.admin.ReportListModel;
 import com.huotu.huobanplus.sns.model.admin.ReportSearchModel;
 import com.huotu.huobanplus.sns.model.common.ReportTargetType;
+import com.huotu.huobanplus.sns.repository.ArticleCommentRepository;
+import com.huotu.huobanplus.sns.repository.ArticleRepository;
 import com.huotu.huobanplus.sns.repository.ReportRepository;
+import com.huotu.huobanplus.sns.repository.UserRepository;
 import com.huotu.huobanplus.sns.service.ReportService;
 import com.huotu.huobanplus.sns.utils.UserHelper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +47,15 @@ public class ReportServiceImpl implements ReportService {
 
     @Autowired
     private ReportRepository reportRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private ArticleRepository articleRepository;
+
+    @Autowired
+    private ArticleCommentRepository articleCommentRepository;
 
     @Override
     public void report(ReportTargetType type, Long id, String note) throws IOException, LogException {
@@ -98,5 +113,43 @@ public class ReportServiceImpl implements ReportService {
             models.add(model);
         });
         return models;
+    }
+
+    @Override
+    public ReportDetailsModel getReportDetails(Report report) {
+        ReportDetailsModel reportDetailsModel=new ReportDetailsModel();
+        if(report==null){
+            return reportDetailsModel;
+        }
+        reportDetailsModel.setReportId(report.getUser()==null?0:report.getUser().getId());
+        reportDetailsModel.setReportName(report.getUser()==null?"":report.getUser().getNickName());
+        ReportTargetType type=report.getReportTargetType();
+        reportDetailsModel.setContent(report.getContent());
+        if(report.getTargetId()!=null){
+            User reported=null;
+            switch (type){
+                case User:
+                    reported=userRepository.findOne(report.getTargetId());
+                    break;
+                case Article:
+                    Article article=articleRepository.findOne(report.getTargetId());
+                    if(article!=null){
+                        reported=article.getPublisher();
+                    }
+                    break;
+                case Comment:
+                    ArticleComment comment=articleCommentRepository.findOne(report.getTargetId());
+                    if(comment!=null){
+                        reported=comment.getUser();
+                    }
+                    break;
+            }
+            if(reported!=null){
+                reportDetailsModel.setReportedId(reported.getId());
+                reportDetailsModel.setReportedName(reported.getNickName());
+            }
+        }
+        reportDetailsModel.setReportTargetType(report.getReportTargetType());
+        return reportDetailsModel;
     }
 }
