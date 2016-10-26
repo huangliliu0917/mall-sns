@@ -9,10 +9,15 @@
 
 package com.huotu.huobanplus.sns.service;
 
+import com.huotu.huobanplus.sns.entity.Report;
 import com.huotu.huobanplus.sns.exception.LogException;
+import com.huotu.huobanplus.sns.model.admin.ReportListModel;
+import com.huotu.huobanplus.sns.model.admin.ReportSearchModel;
 import com.huotu.huobanplus.sns.model.common.ReportTargetType;
+import org.springframework.data.domain.Page;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Created by jin on 2016/10/18.
@@ -29,4 +34,20 @@ public interface ReportService {
      * @throws LogException
      */
     void report(ReportTargetType type, Long id, String note) throws IOException, LogException;
+
+
+    /**
+     * 举报列表
+     * @param reportSearchModel
+     * @return
+     * @throws IOException
+     */
+    Page<Report> findReportList(ReportSearchModel reportSearchModel) throws IOException;
+
+    /**
+     * 将举报实体转换为举报列表model
+     * @param reports
+     * @return
+     */
+    List<ReportListModel> getReportListModelList(List<Report> reports);
 }

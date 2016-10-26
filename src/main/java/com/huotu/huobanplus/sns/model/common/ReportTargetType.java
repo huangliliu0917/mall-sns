@@ -7,7 +7,7 @@ package com.huotu.huobanplus.sns.model.common;
 public enum ReportTargetType {
     User(0, "用户"),
     Article(1, "文章"),
-    Comment(1, "回复");
+    Comment(2, "回复");
 
     private int value;
 

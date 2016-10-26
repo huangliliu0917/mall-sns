@@ -31,7 +31,7 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth.inMemoryAuthentication().withUser("admin").password("123456")
-                .roles("USER","CIRCLE","CATEGORY","WIKI","TAG","MESSAGE","RECOMMEND","REPORT","PERMISSION");
+                .roles("USER","CIRCLE","WIKI","TAG","MESSAGE","RECOMMEND","REPORT","PERMISSION");
     }
 
     @Autowired
@@ -52,16 +52,17 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
                 .headers().frameOptions().sameOrigin().and()
                 .authorizeRequests()
                 .antMatchers("/admin/login.html").permitAll()
-                .antMatchers("**/circle/**","/top/slide/**").hasRole("CIRCLE")
-                .antMatchers("**/category/**").hasRole("CATEGORY")
-                .antMatchers("**/wiki/**").hasRole("WIKI")
-                .antMatchers("**/tags/**").hasRole("TAG")
-                .antMatchers("**/user/**").hasRole("USER")
-                .antMatchers("**/message/**").hasRole("MESSAGE")
-                .antMatchers("**/permission/**").hasRole("PERMISSION")
-                .antMatchers("**/report/**").hasRole("REPORT")
+                .antMatchers("/top/category/categoryList/0","/admin/circle/circleList.html","/top/circle/articleList/0","/top/slide/getSlideList").hasRole("CIRCLE")
+                .antMatchers("/top/category/categoryList/1","/top/circle/articleList/1").hasRole("WIKI")
+                .antMatchers("/top/tags/tagsList").hasRole("TAG")
+                .antMatchers("/top/user/index","/top/level/index","/top/user/userUpgrade").hasRole("USER")
+                .antMatchers("/top/message/pushToDevice","/top/message/pushToUser").hasRole("MESSAGE")
+                .antMatchers("/admin/permission/permissionList.html").hasRole("PERMISSION")
+                .antMatchers("/admin/report/reportList.html").hasRole("REPORT")
+                .antMatchers("/top/user/suggestedFollow").hasRole("RECOMMEND")
                 .anyRequest().authenticated()//任何请求都需要验证
                 .and()
+                .exceptionHandling().accessDeniedPage("/admin/403.html").and()
                 .csrf().disable()//关闭csrf功能
                 .formLogin()     //表单验证
                 .loginPage("/admin/login.html")

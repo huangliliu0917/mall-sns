@@ -35,26 +35,27 @@
 
 </head>
 
-<body onload="circleList.load()" class="gray-bg">
+<body onload="reportList.load()" class="gray-bg">
 <div class="wrapper wrapper-content animated fadeInRight tooltip-demo">
     <!--search-->
-    <form role="form" class="search-panel" id="searchCircle">
+    <form role="form" class="search-panel" id="searchReport">
         <div class="row">
             <div class="col-lg-12">
                 <div class="ibox float-e-margins">
                     <div class="ibox-content p-m no-borders">
                         <div class="form-inline">
                             <div class="form-group m-r-sm">
-                                <label class="control-label" for="circleName">圈子名称：</label>
-                                <input type="text" class="form-control input-sm mb10" id="circleName" name="circleName" placeholder="圈子名称"/>
+                                <label class="control-label" for="reportName">举报者名称：</label>
+                                <input type="text" class="form-control input-sm mb10" id="reportName" name="reportName" placeholder="圈子名称"/>
                             </div>
 
                             <div class="form-group m-r-sm">
-                                <label class="control-label" for="suggested">是否热门：</label>
-                                <select class="form-control" name="suggested" id="suggested">
-                                    <option value="-1">--请选择--</option>
-                                    <option value="1">热门</option>
-                                    <option value="0">普通</option>
+                                <label class="control-label" for="reportTargetType">举报类型：</label>
+                                <select class="form-control" name="reportTargetType" id="reportTargetType">
+                                    <option value="">--请选择--</option>
+                                    <option value="User">用户</option>
+                                    <option value="Article">文章</option>
+                                    <option value="Comment">评论</option>
                                 </select>
                             </div>
 
@@ -62,8 +63,8 @@
                         <p style="height: 8px;"></p>
 
                         <div class="form-inline" style="max-width: 926px; text-align: right;">
-                            <button type="button" onclick="circleList.searchCondition()" class="btn btn-success">筛选</button>
-                            <button type="button" onclick="circleList.searchAll()" class="btn btn-success">显示全部</button>
+                            <button type="button" onclick="reportList.searchCondition()" class="btn btn-success">筛选</button>
+                            <button type="button" onclick="reportList.searchAll()" class="btn btn-success">显示全部</button>
                         </div>
                     </div>
                 </div>
@@ -79,29 +80,26 @@
                 <div class="ibox float-e-margins">
                     <div class="ibox-content">
                         <div class="row">
-                            <div class="col-md-12">
-                                <a style="float: right" href="/top/circle/editCircle">
-                                    <button type="button" class="btn btn-success">新建</button>
-                                </a>
-                            </div>
+                            <!--<div class="col-md-12">-->
+                                <!--<a style="float: right" href="/top/report/editReport">-->
+                                    <!--<button type="button" class="btn btn-success">新建</button>-->
+                                <!--</a>-->
+                            <!--</div>-->
                         </div>
-                        <table id="circleList" class="table table-striped table-bordered table-hover  dataTable" aria-describedby="editable_info">
+                        <table id="reportList" class="table table-striped table-bordered table-hover  dataTable" aria-describedby="editable_info">
                             <thead>
                             <tr>
                                 <th>
                                     <div class="checkbox checkbox-primary m-b-none m-t-none">
-                                        <input onclick="circleList.checkBoxClick(this)" type="checkbox" id="chkAll" name="chkAll"/>
+                                        <input onclick="reportList.checkBoxClick(this)" type="checkbox" id="chkAll" name="chkAll"/>
                                         <label for="chkAll"></label>
                                     </div>
                                 </th>
-                                <th></th>
-                                <th>圈子图片</th>
-                                <th>圈子分类</th>
-                                <th>圈子组长</th>
-                                <th onclick="circleList.sortConfig(this,'date')" class="sorting">创建时间</th>
-                                <th onclick="circleList.sortConfig(this,'suggested')" class="sorting">是否热门</th>
-                                <th onclick="circleList.sortConfig(this,'userAmount')" class="sorting">关注人数</th>
-                                <th onclick="circleList.sortConfig(this,'articleAmount')" class="sorting">文章数</th>
+                                <th>举报者</th>
+                                <th onclick="reportList.sortConfig(this,'reportTargetType')" class="sorting">举报类型</th>
+                                <th>目标ID</th>
+                                <th>说明</th>
+                                <th onclick="reportList.sortConfig(this,'date')" class="sorting">创建时间</th>
                                 <th>操作</th>
                             </tr>
                             </thead>
@@ -109,23 +107,19 @@
                             <tr style="display: none">
                                 <td>
                                     <div class="checkbox checkbox-primary m-b-none m-t-none">
-                                        <input onclick="circleList.checkBoxClick(this)"  type="checkbox" id="chk1" name="chkGood"/>
+                                        <input onclick="reportList.checkBoxClick(this)"  type="checkbox" id="chk1" name="chkGood"/>
                                         <label for="chk1"></label>
                                     </div>
                                 </td>
-                                <td>母婴营养</td>
-                                <td><img style="width: 135px; height: 84px;" src=""/></td>
-
-                                <td>健康</td>
-                                <td>小阮</td>
-                                <td>2016-10-11 17:01:45</td>
-                                <td>热门</td>
-                                <td>487556</td>
-                                <td>785468</td>
+                                <td>AA</td>
+                                <td>用户</td>
+                                <td>4578</td>
+                                <td>色情广告</td>
+                                <td>2016-10-26</td>
                                 <td>
                                     <a href="#" class="cursor-point">
                                         <i class="fa fa-pencil tooltips" data-placement="top" data-toggle="tooltip"
-                                           data-original-title="编辑">
+                                           data-original-title="查看">
                                         </i>
                                     </a>
                                 </td>
@@ -141,22 +135,22 @@
                                     <div class="dataTables_info" id="DataTables_Table_0_paginate">
                                         <ul style="float: right;" class="pagination">
                                             <li class="paginate_button">
-                                                <a href="#" onclick="circleList.goToFirst()">首页</a></li>
+                                                <a href="#" onclick="reportList.goToFirst()">首页</a></li>
                                             <li class="paginate_button">
-                                                <a href="#" onclick="circleList.goToUp()" >上一页</a></li>
-                                            <li class="paginate_button "><a href="#" onclick="circleList.goTo(this.text-1)">1</a></li>
-                                            <li class="paginate_button "><a href="#" onclick="circleList.goTo(this.text-1)">2</a></li>
-                                            <li class="paginate_button "><a href="#" onclick="circleList.goTo(this.text-1)">3</a></li>
-                                            <li class="paginate_button "><a href="#" onclick="circleList.goTo(this.text-1)">4</a></li>
-                                            <li class="paginate_button "><a href="#" onclick="circleList.goTo(this.text-1)">5</a></li>
-                                            <li class="paginate_button "><a href="#" onclick="circleList.goTo(this.text-1)">6</a></li>
-                                            <li class="paginate_button "><a href="#" onclick="circleList.goTo(this.text-1)">7</a></li>
-                                            <li class="paginate_button "><a href="#" onclick="circleList.goTo(this.text-1)">8</a></li>
+                                                <a href="#" onclick="reportList.goToUp()" >上一页</a></li>
+                                            <li class="paginate_button "><a href="#" onclick="reportList.goTo(this.text-1)">1</a></li>
+                                            <li class="paginate_button "><a href="#" onclick="reportList.goTo(this.text-1)">2</a></li>
+                                            <li class="paginate_button "><a href="#" onclick="reportList.goTo(this.text-1)">3</a></li>
+                                            <li class="paginate_button "><a href="#" onclick="reportList.goTo(this.text-1)">4</a></li>
+                                            <li class="paginate_button "><a href="#" onclick="reportList.goTo(this.text-1)">5</a></li>
+                                            <li class="paginate_button "><a href="#" onclick="reportList.goTo(this.text-1)">6</a></li>
+                                            <li class="paginate_button "><a href="#" onclick="reportList.goTo(this.text-1)">7</a></li>
+                                            <li class="paginate_button "><a href="#" onclick="reportList.goTo(this.text-1)">8</a></li>
                                             <li class="paginate_button">
-                                                <a href="#" onclick="circleList.goToDown()">下一页</a>
+                                                <a href="#" onclick="reportList.goToDown()">下一页</a>
                                             </li>
                                             <li class="paginate_button">
-                                                <a href="#" onclick="circleList.goToLast()">尾页</a>
+                                                <a href="#" onclick="reportList.goToLast()">尾页</a>
                                             </li>
                                         </ul>
                                     </div>
@@ -178,80 +172,76 @@
 
 <script type="text/javascript" th:inline="javascript">
     /*<![CDATA[*/
-    var circleList={};
-    circleList.searchModel={};
+    var reportList={};
+    reportList.searchModel={};
 
-    circleList.load=function(){
-        circleList.circleModel=$("#circleList tr").eq(1).clone();
-        circleList.circleModel.show();
-        circleList.searchModel.pageNo=0;
-        circleList.searchModel.ascOrdesc=0;
-        circleList.searchModel.pageSize=10;
-        circleList.searchModel.sortField="";
-        circleList.searchAll();
+    reportList.load=function(){
+        reportList.reportModel=$("#reportList tr").eq(1).clone();
+        reportList.reportModel.show();
+        reportList.searchModel.pageNo=0;
+        reportList.searchModel.ascOrdesc=0;
+        reportList.searchModel.pageSize=10;
+        reportList.searchModel.sortField="";
+        reportList.searchAll();
     };
     //搜索
-    circleList.search=function(){
-        circleList.searchModel.circleName=$("#circleName").val();
-        circleList.searchModel.suggested=$("#suggested").val();
-        circleList.searchAjax(circleList.searchModel);
+    reportList.search=function(){
+        reportList.searchModel.name=$("#reportName").val();
+        reportList.searchModel.reportTargetName=$("#reportTargetType").val();
+        reportList.searchAjax(reportList.searchModel);
     };
 
-    circleList.searchAjax=function(searchModel){
+    reportList.searchAjax=function(searchModel){
         var ld=layer.load(5, {shade: false});
         $.ajax({
             type:'POST',
-            url: '/top/circle/getCircleList',
+            url: '/top/report/getReportList',
             dataType: 'json',
             contentType:"application/json",
             data: JSON.stringify(searchModel),
             success:function(result){
                 layer.close(ld);
-                circleList.total=result.total;
-                circleList.totalPage=result.totalPage;
+                reportList.total=result.total;
+                reportList.totalPage=result.totalPage;
 
 
-                circleList.buildCircleList(result.data);
+                reportList.buildReportList(result.data);
 
-                circleList.setPageNoAndSize(circleList.searchModel.pageNo,
-                        circleList.searchModel.pageSize,circleList.total,circleList.totalPage);
+                reportList.setPageNoAndSize(reportList.searchModel.pageNo,
+                        reportList.searchModel.pageSize,reportList.total,reportList.totalPage);
 
 
             },
             error:function(e){
                 layer.close(ld);
-                layer.msg("获取圈子信息出错！");
+                layer.msg("获取信息出错！");
             }
         });
     };
 
-    circleList.buildCircleList=function(list){
-        var tbody=$("#circleList tbody");
+    reportList.buildReportList=function(list){
+        var tbody=$("#reportList tbody");
         $(tbody).children("tr").remove();
         for(var i=0;i<list.length;i++){
-            var model=circleList.circleModel.clone();
+            var model=reportList.reportModel.clone();
             var val=list[i];
             var html=$(model).children("td").eq(0).html();
             html=html.replace(/chk1/g, "chk" + i);
             $(model).children("td").eq(0).html(html);
-            $(model).children("td").eq(1).text(val.circleId);
-            $(model).children("td").eq(2).text(val.circleName);
-            $(model).children("td").eq(3).children("img").attr("src",val.pictureUrl);
-            $(model).children("td").eq(4).text(val.categoryName);
-            $(model).children("td").eq(5).text(val.leaderName);
-            $(model).children("td").eq(6).text(val.createDate);
-            $(model).children("td").eq(7).text(val.suggested?'热门':'普通');
-            $(model).children("td").eq(8).text(val.userAmount);
-            $(model).children("td").eq(9).text(val.articleAmount);
-            $(model).children("td").eq(10).children("a").eq(0).attr("href","/top/circle/editCircle?id="+val.circleId);
+            $(model).children("td").eq(1).text(val.reportName);
+            $(model).children("td").eq(2).text(val.typeName);
+            $(model).children("td").eq(3).text(val.targetId);
+            $(model).children("td").eq(4).text(val.content);
+            $(model).children("td").eq(5).text(val.createDate);
+            $(model).children("td").eq(6).children("a").eq(0).attr("href","/top/report/editReport?id="+val.reportId);
             $(tbody).append(model);
         }
     };
 
-    circleList.setPageNoAndSize=function(pageNo,pageSize,total,totalPage){
+    reportList.setPageNoAndSize=function(pageNo,pageSize,total,totalPage){
         $("#DataTables_Table_0_info").text("显示 "+(pageNo*pageSize+1)+" 到 "+(pageNo+1)*pageSize+" 项，共 "+total+" 项");
 
-        var showPageNo=circleList.searchModel.pageNo-2;
+        var showPageNo=reportList.searchModel.pageNo-2;
         if(showPageNo<1){
             showPageNo=1;
         }
@@ -261,7 +251,7 @@
         $(lis).each(function(index,val){
             if(index>1&&index<=9){
                 $(val).children("a").text(showPageNo);
-                if(circleList.searchModel.pageNo==showPageNo-1){
+                if(reportList.searchModel.pageNo==showPageNo-1){
                     $(val).attr("class","paginate_button active");
                 }
                 if(showPageNo>totalPage){
@@ -273,106 +263,87 @@
 
     };
     //默认搜索
-    circleList.searchAll=function(){
-        $("#circleName").val("");
-        $("#suggested").val(-1);
-        circleList.goTo(0);
+    reportList.searchAll=function(){
+        $("#reportName").val("");
+        $("#reportTargetType").val("");
+        reportList.goTo(0);
     };
 
-    circleList.searchCondition=function(){
-        circleList.goTo(0);
+    reportList.searchCondition=function(){
+        reportList.goTo(0);
     };
 
-    circleList.goTo=function(pageNo){
-        circleList.searchModel.pageNo=pageNo;
-        circleList.search();
+    reportList.goTo=function(pageNo){
+        reportList.searchModel.pageNo=pageNo;
+        reportList.search();
     };
 
-    circleList.goToUp=function(){
-        circleList.searchModel.pageNo--;
-        if(circleList.searchModel.pageNo<0){
-            circleList.searchModel.pageNo=0;
+    reportList.goToUp=function(){
+        reportList.searchModel.pageNo--;
+        if(reportList.searchModel.pageNo<0){
+            reportList.searchModel.pageNo=0;
             return;
         }
-        circleList.search();
+        reportList.search();
     };
 
-    circleList.goToDown=function(){
-        if(circleList.searchModel.pageNo+1<circleList.totalPage){
-            circleList.searchModel.pageNo++;
+    reportList.goToDown=function(){
+        if(reportList.searchModel.pageNo+1<reportList.totalPage){
+            reportList.searchModel.pageNo++;
         }else {
             return;
         }
-        circleList.search();
+        reportList.search();
     };
 
-    circleList.goToFirst=function(){
-        circleList.searchModel.pageNo=0;
-        circleList.search();
+    reportList.goToFirst=function(){
+        reportList.searchModel.pageNo=0;
+        reportList.search();
     };
 
-    circleList.goToLast=function(){
-        circleList.searchModel.pageNo=circleList.totalPage==0?0:circleList.totalPage-1;
-        circleList.search();
+    reportList.goToLast=function(){
+        reportList.searchModel.pageNo=reportList.totalPage==0?0:reportList.totalPage-1;
+        reportList.search();
     };
 
-    circleList.sortConfig=function(obj,sortField){
+    reportList.sortConfig=function(obj,sortField){
 
         if($(obj).attr("class")=="sorting_desc"){
-            circleList.searchModel.ascOrdesc=1;
+            reportList.searchModel.ascOrdesc=1;
             $(obj).attr("class","sorting_asc");
         }else {
-            circleList.searchModel.ascOrdesc=0;
+            reportList.searchModel.ascOrdesc=0;
             $(obj).attr("class","sorting_desc");
         }
 
-        circleList.searchModel.pageNo=0;
-        circleList.searchModel.sortField=sortField;
-        circleList.search();
+        reportList.searchModel.pageNo=0;
+        reportList.searchModel.sortField=sortField;
+        reportList.search();
     };
 
-    circleList.editCircle=function(){
+    reportList.editReport=function(){
 
 
     };
 
-    circleList.checkBoxClick=function(obj){
+    reportList.checkBoxClick=function(obj){
         //获取是否单选还是多选
-        var parameter=circleList.getUrlParam("extend");
+        var parameter=reportList.getUrlParam("extend");
         if(parameter=="radio"){//单选
             if($(obj).prop("checked")){
-                $("input[type='checkbox'][name='chkGood']","#circleList").removeAttr('checked');
+                $("input[type='checkbox'][name='chkGood']","#reportList").removeAttr('checked');
                 $(obj).prop('checked',true);
             }
         }else {//多选
             var name=$(obj).attr("name");
             if(name=="chkAll"){
                 var isCheck=$(obj).prop("checked");
-                $("input[type='checkbox'][name='chkGood']","#circleList").prop("checked", isCheck);
+                $("input[type='checkbox'][name='chkGood']","#reportList").prop("checked", isCheck);
             }
         }
 
     };
 
-
-    circleList.getUrlParam=function(name){
-        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
-        var r = window.location.search.substr(1).match(reg);  //匹配目标参数
-        if (r != null) return unescape(r[2]); return null; //返回参数值
-    };
-
-    //外部调用的js,用来获取圈子的id和名称
-    circleList.externalCall=function(){
-        var data=[];
-        $("#circleList tbody tr").each(function(index,val){
-            if($("input[type='checkbox']",val).is(':checked')){
-                var id=parseInt($(this).children("td").eq(1).text());
-                var name=$(this).children("td").eq(2).text();
-                data.push({id:id,name:name});
-            }
-        });
-        return data;
-    };
 
     /*]]>*/
 </script>
