@@ -176,6 +176,20 @@
             <scope>runtime</scope>
         </dependency>
         <!--VFS END-->
+
+
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+            <version>0.6.0</version>
+            <!--<exclusions>-->
+                <!--<exclusion>-->
+                    <!--<artifactId>2.8.2</artifactId>-->
+                    <!--<groupId>com.fasterxml.jackson</groupId>-->
+                <!--</exclusion>-->
+            <!--</exclusions>-->
+        </dependency>
+
     </dependencies>
 
 

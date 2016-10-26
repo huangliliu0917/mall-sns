@@ -30,6 +30,7 @@ public interface CircleController {
      * @return
      * @throws Exception
      */
+    @RequestMapping("/circleIndexSuggestList")
     ApiResult circleIndexSuggestList(Output<AppCircleIndexSuggestModel[]> suggestList) throws Exception;
 
     /**

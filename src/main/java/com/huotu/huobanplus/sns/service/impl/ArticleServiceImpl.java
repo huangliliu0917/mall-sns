@@ -73,7 +73,7 @@ public class ArticleServiceImpl implements ArticleService {
     private EntityManager entityManager;
 
     public List<AppWikiListModel> getAppWikiList(Integer catalogId, Long lastId) {
-        List<AppWikiListModel> appWikiListModels = new ArrayList<>();
+        List<AppWikiListModel> appWikiListModels;
 
         Pageable pageable = new PageRequest(0, 10, new Sort(Sort.Direction.DESC, "id"));
 
@@ -149,7 +149,7 @@ public class ArticleServiceImpl implements ArticleService {
         AdminArticlePageModel adminArticlePageModel = new AdminArticlePageModel();
 
         Pageable pageable = new PageRequest(pageNo - 1, pageSize, new Sort(Sort.Direction.DESC, "id"));
-        Page<Article> articles = null;
+        Page<Article> articles;
         if (!StringUtils.isEmpty(name)) {
             articles = articleRepository.findByArticleTypeAndNameLike(articleType.equals(1) ? ArticleType.Wiki : ArticleType.Normal, name, pageable);
         } else {

@@ -5,11 +5,15 @@ import com.huotu.common.api.Output;
 import com.huotu.huobanplus.sns.controller.app.WebController;
 import com.huotu.huobanplus.sns.model.*;
 import com.huotu.huobanplus.sns.model.common.AppCode;
+import com.huotu.huobanplus.sns.service.AppSecurityService;
 import com.huotu.huobanplus.sns.service.ArticleService;
 import com.huotu.huobanplus.sns.service.UserService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -17,6 +21,10 @@ import java.util.List;
  */
 @Controller
 public class WebControllerImpl implements WebController {
+
+    private static Log log = LogFactory.getLog(WebControllerImpl.class);
+
+
     @Autowired
     private UserService userService;
     @Autowired
@@ -41,4 +49,25 @@ public class WebControllerImpl implements WebController {
 
         return null;
     }
+
+
+    @Autowired
+    private AppSecurityService appSecurityService;
+
+    @Override
+    public ApiResult userLogin(Output<String> data, String userName, String password) {
+        data.outputData(appSecurityService.createJWT("websns", userName, 100000));
+        return ApiResult.resultWith(AppCode.SUCCESS);
+    }
+
+    @Override
+    public ApiResult checkToken(HttpServletRequest request) {
+        String jwt = request.getHeader("authentication");
+        String userName = appSecurityService.parseJWT(jwt);
+
+        log.info(userName);
+        return ApiResult.resultWith(AppCode.SUCCESS);
+    }
+
+
 }

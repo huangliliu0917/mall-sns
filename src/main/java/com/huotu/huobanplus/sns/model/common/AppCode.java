@@ -15,14 +15,10 @@ import com.huotu.common.api.ICommonEnum;
  * Created by Administrator on 2016/10/8.
  */
 public enum AppCode implements ICommonEnum {
-    /**
-     * SUCCESS(1, "操作成功")
-     */
+
     SUCCESS(1, "操作成功"),
-    /**
-     * PARAMETER_ERROR(1001,"参数错误")
-     */
     PARAMETER_ERROR(1001, "参数错误"),
+    INTERNAL_SERVER_ERROR(1002, "内部服务器错误"),
     /**
      * ERROR_USER_NOT_FOUND(2001,"用户不存在")
      */

@@ -21,10 +21,10 @@ public class AppCircleArticleModel {
      * 图片地址
      */
     private String pictureUrl;
-    /**
-     * 跳转地址
-     */
-    private String url;
+
+
+
+    private Long userId;
     /**
      * 用户名称
      */
@@ -33,6 +33,11 @@ public class AppCircleArticleModel {
      * 用户头像
      */
     private String userHeadUrl;
+
+    /**
+     * 关注过的
+     */
+    private Boolean concerned;
     /**
      * 用户等级
      */

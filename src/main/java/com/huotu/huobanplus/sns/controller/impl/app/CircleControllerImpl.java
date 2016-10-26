@@ -35,6 +35,7 @@ public class CircleControllerImpl implements CircleController {
 
     @Override
     public ApiResult circleIndexSuggestList(Output<AppCircleIndexSuggestModel[]> suggestList) throws Exception {
+        //todo
         return null;
     }
 

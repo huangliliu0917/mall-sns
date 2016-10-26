@@ -33,18 +33,18 @@ public interface ArticleRepository extends JpaRepository<Article, Long>, JpaSpec
     Page<Article> findByArticleType(ArticleType articleType, Pageable pageable);
 
 
-    @Query("select article from Article article where article.articleType=?1 and article.id<?2")
+    @Query("select article from Article article where article.articleType=?1 and article.id<?2 order by  article.id desc")
     List<Article> findByArticleType(ArticleType articleType, Long lastId);
 
     @Query("select article from Article article where article.articleType=?1 and article.category=?2")
     Page<Article> findByArticleTypeAndCategory(ArticleType articleType, Category category, Pageable pageable);
 
 
-    @Query("select article from Article article where article.articleType=?1 and article.category=?2 and article.id<?3")
+    @Query("select article from Article article where article.articleType=?1 and article.category=?2 and article.id<?3 order by  article.id desc")
     List<Article> findByArticleTypeAndCategory(ArticleType articleType, Category category, Long lastId);
 
     Page<Article> findByArticleTypeAndNameLike(ArticleType articleType, String name, Pageable pageable);
 
-    @Query("update Article a set a.comments=a.comments+1 where u.id=?1")
+    @Query("update Article a set a.comments=a.comments+1 where a.id=?1")
     void addComments(@Param("articleId") Long articleId);
 }

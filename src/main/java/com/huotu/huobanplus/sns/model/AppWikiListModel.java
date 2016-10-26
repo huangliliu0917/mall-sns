@@ -42,6 +42,11 @@ public class AppWikiListModel {
      * 用户等级
      */
     private Long userLevel;
+
+    /**
+     * 关注过的
+     */
+    private Boolean concerned;
     /**
      * 文章发表时间
      */

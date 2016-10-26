@@ -6,6 +6,8 @@ import com.huotu.huobanplus.sns.model.*;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * 网站
  * Created by Administrator on 2016/9/29.
@@ -34,7 +36,7 @@ public interface WebController {
      * @throws Exception
      */
     @RequestMapping("/userArticleList")
-    ApiResult userArticleList(Output<AppCircleArticleModel[]> articleList, @RequestParam(value = "id", required = true) Long id, Long lastId) throws Exception;
+    ApiResult userArticleList(Output<AppCircleArticleModel[]> articleList, @RequestParam(value = "id") Long id, Long lastId) throws Exception;
 
 
     /**
@@ -52,4 +54,24 @@ public interface WebController {
     @RequestMapping("/search")
     ApiResult search(Output<AppUserConcermListModel[]> userList, Output<AppCircleIndexListModel[]> circleList, Output<AppCircleIndexArticleListModel[]> articleList
             , Integer type, String key, Long lastId) throws Exception;
+
+
+    /***
+     * 用户登录
+     * @param data token数据
+     * @param userName 用户名
+     * @param password 密码
+     * @return
+     */
+    @RequestMapping("/userLogin")
+    ApiResult userLogin(Output<String> data, String userName, String password);
+
+    /**
+     * 检测token
+     *
+     * @param request
+     * @return
+     */
+    @RequestMapping("/checkToken")
+    ApiResult checkToken(HttpServletRequest request);
 }

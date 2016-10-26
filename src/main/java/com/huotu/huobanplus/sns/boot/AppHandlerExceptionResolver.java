@@ -34,6 +34,7 @@ public class AppHandlerExceptionResolver implements HandlerExceptionResolver {
             } catch (Exception e) {
                 log.error("unExcepted app error ", e);
                 result.setSystemResultCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+                result.setSystemResultDescription(AppCode.INTERNAL_SERVER_ERROR.getName());
             }
 
             mv.addObject("__realResult", result);
@@ -46,12 +47,12 @@ public class AppHandlerExceptionResolver implements HandlerExceptionResolver {
             return mv;
         }
         if (requestURI.startsWith("/admin/")) {
-                try {
-                    throw ex;
-                } catch (Exception e) {
-                    log.error("admin upExcepted error", e);
-                }
-                return new ModelAndView("redirect:/admin/error.html");
+            try {
+                throw ex;
+            } catch (Exception e) {
+                log.error("admin upExcepted error", e);
+            }
+            return new ModelAndView("redirect:/admin/error.html");
         }
         return null;
     }
