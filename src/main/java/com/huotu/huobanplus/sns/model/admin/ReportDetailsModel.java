@@ -37,6 +37,21 @@ public class ReportDetailsModel {
     private String content;
 
     /**
+     * 帖子标题
+     */
+    private String invitationTitle;
+
+    /**
+     * 帖子内容
+     */
+    private String invitationContent;
+
+    /**
+     * 评论内容
+     */
+    private String comment;
+
+    /**
      * 类型
      */
     private ReportTargetType reportTargetType;

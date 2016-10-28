@@ -1,11 +1,10 @@
 package com.huotu.huobanplus.sns.boot;
 
-import org.springframework.security.web.context.AbstractSecurityWebApplicationInitializer;
-
 /**
+ * security安全配置(多商家版弃用)
  * Created by slt on 2016/10/10.
  *
- * @author
+ * @author slt
  */
-public class SecurityWebApplicationInitializer extends AbstractSecurityWebApplicationInitializer {
+public class SecurityWebApplicationInitializer {
 }

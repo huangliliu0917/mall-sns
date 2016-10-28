@@ -5,7 +5,6 @@ import com.huotu.huobanplus.sns.entity.User;
 import com.huotu.huobanplus.sns.model.admin.AdminTagsModel;
 import com.huotu.huobanplus.sns.model.admin.AdminTagsPageModel;
 import com.huotu.huobanplus.sns.model.admin.PagingModel;
-import com.huotu.huobanplus.sns.model.common.TagsType;
 import com.huotu.huobanplus.sns.repository.TagRespository;
 import com.huotu.huobanplus.sns.repository.UserRepository;
 import com.huotu.huobanplus.sns.service.TagsService;
@@ -23,6 +22,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
+ * 标签
  * Created by Administrator on 2016/10/14.
  */
 @Service

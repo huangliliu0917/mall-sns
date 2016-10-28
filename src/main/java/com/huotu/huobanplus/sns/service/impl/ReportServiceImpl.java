@@ -133,14 +133,18 @@ public class ReportServiceImpl implements ReportService {
                     break;
                 case Article:
                     Article article=articleRepository.findOne(report.getTargetId());
+
                     if(article!=null){
                         reported=article.getPublisher();
+                        reportDetailsModel.setInvitationTitle(article.getName());
+                        reportDetailsModel.setInvitationContent(article.getContent());
                     }
                     break;
                 case Comment:
                     ArticleComment comment=articleCommentRepository.findOne(report.getTargetId());
                     if(comment!=null){
                         reported=comment.getUser();
+                        reportDetailsModel.setComment(comment.getContent());
                     }
                     break;
             }

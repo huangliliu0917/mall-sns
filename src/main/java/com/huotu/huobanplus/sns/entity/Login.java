@@ -26,6 +26,10 @@ public class Login implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     /**
+     * 商户ID
+     */
+    private Long customerId;
+    /**
      * 账号名称
      */
     @Column

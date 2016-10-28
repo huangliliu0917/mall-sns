@@ -7,6 +7,7 @@
     <link href="http://resali.huobanplus.com/cdn/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet"/>
     <link href="http://resali.huobanplus.com/cdn/hotui/css/animate.min.css" rel="stylesheet"/>
     <link href="http://resali.huobanplus.com/cdn/hotui/css/style.min-1.0.2.css" rel="stylesheet"/>
+    <link href="../../css/layer.css" rel="stylesheet"/>
 
     <script src="http://resali.huobanplus.com/cdn/jquery/2.2.4/jquery.min.js"></script>
     <script src="http://resali.huobanplus.com/cdn/bootstrap/3.3.5/bootstrap.min.js"></script>
@@ -81,7 +82,7 @@
 </div>
 
 
-
+<script src="http://resali.huobanplus.com/cdn/layer/2.4/layer.js"></script>
 <script type="text/javascript" th:inline="javascript">
 
     var articleType = /*[[${articleType}]]*/'';
@@ -103,7 +104,9 @@
 //                alert(data.list.length);
                 var html = "";
                 for (var i = 0; data.list.length > i; i++) {
+
                     var row = data.list[i];
+                    var isTopStr=row.top?"取消置顶":"置顶";
                     html += '<tr><td>' + row.id + '</td>' +
                             '<td>' + row.name + '</td>' +
                             '<td>' + row.publisher + '</td>' +
@@ -112,7 +115,7 @@
                             '<td>' + row.view + '</td>' +
                             '<td>' +
                             '<button style="padding: 0px 5px;margin-left: 5px;" data-placement="top" data-toggle="tooltip" class="btn btn-primary tooltips" type="button" data-original-title="编辑" onclick="page.edit(' + row.id + ')">编辑</button>' +
-                            '<button style="padding: 0px 5px;margin-left: 5px;" class="btn btn-primary tooltips" type="button" onclick="page.edit(' + row.id + ')">置顶</button>' +
+                            '<button style="padding: 0px 5px;margin-left: 5px;" class="btn btn-primary tooltips" type="button" onclick="page.editTop(this,' + row.id + ')">'+isTopStr+'</button>' +
                             '<button style="padding: 0px 5px;margin-left: 5px;" class="btn btn-primary tooltips" type="button" onclick="page.edit(' + row.id + ')">删除</button>' +
                             '</td></tr>';
                 }
@@ -144,8 +147,30 @@
         window.location.href = '/top/circle/articleEdit/' + articleType + '/edit/' + id;
     }
 
-    page.editTop = function (id) {
-        window.location.href = '/top/circle/articleEdit/' + articleType + '/edit/' + id;
+    page.editTop = function (obj,id) {
+        var ld=layer.load(5, {shade: false});
+        $.ajax({
+            type:'GET',
+            url: '/top/article/setTop',
+            dataType: 'json',
+            data: {id:id},
+            success:function(result){
+                layer.close(ld);
+                if(result.isTop==true){
+                    $(obj).text("取消置顶");
+                }else if(result.isTop==false){
+                    $(obj).text("置顶");
+                }else {
+                    layer.msg("操作失败");
+                }
+
+            },
+            error:function(e){
+                layer.close(ld);
+                layer.msg("操作失败！");
+            }
+        });
+//        window.location.href = '/top/circle/setTop/' + articleType + '/edit/' + id;
     }
 
     page.editDel = function (id) {

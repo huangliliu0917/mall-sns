@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.List;
 
 /**
+ * 举报服务
  * Created by jin on 2016/10/18.
  */
 public interface ReportService {
@@ -39,23 +40,23 @@ public interface ReportService {
 
     /**
      * 举报列表
-     * @param reportSearchModel
-     * @return
+     * @param reportSearchModel 查询model
+     * @return  列表
      * @throws IOException
      */
     Page<Report> findReportList(ReportSearchModel reportSearchModel) throws IOException;
 
     /**
      * 将举报实体转换为举报列表model
-     * @param reports
-     * @return
+     * @param reports       举报实体
+     * @return  举报model列表
      */
     List<ReportListModel> getReportListModelList(List<Report> reports);
 
     /**
      * 将举报实体转换为model
-     * @param report
-     * @return
+     * @param report        举报实体
+     * @return  举报详情model
      */
     ReportDetailsModel getReportDetails(Report report);
 

@@ -10,6 +10,10 @@ import lombok.Setter;
 @Setter
 @Getter
 public class CircleSearchModel {
+    /**
+     * 商户ID
+     */
+    private Long customerId;
 
     /**
      * 圈子名称
@@ -20,6 +24,11 @@ public class CircleSearchModel {
      * 是否热门
      */
     private int suggested=-1;
+
+    /**
+     * 分类ID
+     */
+    private int category=-1;
 
     /**
      * 第几页

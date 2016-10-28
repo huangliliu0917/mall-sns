@@ -17,4 +17,5 @@ public class AdminArticleModel {
     private Date date;
     private Long click;
     private Long view;
+    private boolean top;
 }

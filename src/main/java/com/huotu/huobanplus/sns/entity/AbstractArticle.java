@@ -5,9 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Created by Administrator on 2016/9/29.
@@ -20,6 +18,11 @@ public class AbstractArticle {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    /**
+     * 商户ID
+     */
+    private Long customerId;
 
     /**
      * 文章类型

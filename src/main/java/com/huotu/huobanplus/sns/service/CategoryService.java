@@ -8,6 +8,7 @@ import com.huotu.huobanplus.sns.model.admin.AdminCategoryPageModel;
 import java.util.List;
 
 /**
+ * 分类服务
  * Created by Administrator on 2016/10/12.
  */
 

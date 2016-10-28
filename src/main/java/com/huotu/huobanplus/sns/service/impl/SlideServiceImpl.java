@@ -9,34 +9,11 @@
 
 package com.huotu.huobanplus.sns.service.impl;
 
-import com.huotu.huobanplus.sns.entity.Category;
-import com.huotu.huobanplus.sns.entity.Circle;
-import com.huotu.huobanplus.sns.entity.User;
-import com.huotu.huobanplus.sns.model.admin.CircleListModel;
-import com.huotu.huobanplus.sns.model.admin.CircleSearchModel;
-import com.huotu.huobanplus.sns.repository.CategoryRepository;
-import com.huotu.huobanplus.sns.repository.CircleRepository;
-import com.huotu.huobanplus.sns.repository.TagRespository;
-import com.huotu.huobanplus.sns.repository.UserRepository;
-import com.huotu.huobanplus.sns.service.CircleService;
 import com.huotu.huobanplus.sns.service.SlideService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
-
-import javax.persistence.criteria.Predicate;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
 
 /**
+ * 圈子banner服务
  * Created by slt on 2016/10/12.
  */
 @Service
