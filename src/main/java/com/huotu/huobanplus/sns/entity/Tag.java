@@ -20,6 +20,11 @@ public class Tag {
     private Integer id;
 
     /**
+     * 商家
+     */
+    private Long customerId;
+
+    /**
      * 名称
      */
     @Column(length = 50)

@@ -40,7 +40,7 @@ public interface WebController {
     @RequestMapping(value = "/userArticleList", method = RequestMethod.GET)
     ApiResult userArticleList(Output<AppCircleArticleModel[]> articleList
             , @RequestParam(value = "id") Long id
-            , @RequestParam(value = "lastId",required = false) Long lastId) throws Exception;
+            , @RequestParam(value = "lastId", required = false) Long lastId) throws Exception;
 
 
     /**
@@ -55,30 +55,42 @@ public interface WebController {
     @RequestMapping(value = "/search", method = RequestMethod.GET)
     ApiResult search(Output<AppCircleIndexArticleListModel[]> articleList
             , @RequestParam("key") String key
-            , @RequestParam(value = "lastId",required = false) Long lastId) throws Exception;
+            , @RequestParam(value = "lastId", required = false) Long lastId) throws Exception;
 
 
-    /**
-     * 获取验证码 发送验证码
-     *
-     * @param mobile 手机号
-     * @return
-     */
-    @RequestMapping(value = "/sendCheckCode", method = RequestMethod.GET)
-    ApiResult sendCheckCode(@RequestParam("mobile") String mobile);
 
-    /***
-     * 用户注册/登录
-     * @param data token数据
-     * @param mobile 手机号
-     * @param code 验证码
-     * @return
-     */
-    @RequestMapping(value = "/userLogin", method = RequestMethod.GET)
-    ApiResult userLogin(Output<String> data
-            , @RequestParam("mobile") String mobile
-            , @RequestParam("code") String code);
 
+
+//    /**
+//     * 获取微信信息
+//     *
+//     * @param openId     openid
+//     * @param nickName   用户昵称
+//     * @param imageUrl   用户头像
+//     * @param customerId 商家id
+//     * @return
+//     */
+//    @RequestMapping(value = "/getWeixinInfo", method = RequestMethod.GET)
+//    ApiResult getWeixinInfo(Output<String> openId, Output<String> nickName, Output<String> imageUrl
+//            , @RequestParam("customerId") Long customerId);
+
+
+
+
+//    /**
+//     * 用户注册
+//     *
+//     * @param customerId 商家Id
+//     * @param mobile     手机号
+//     * @param nickName   昵称
+//     * @param imageUrl
+//     * @return
+//     */
+//    @RequestMapping(value = "userRegister", method = RequestMethod.GET)
+//    ApiResult userRegister(@RequestParam("customerId") Long customerId
+//            , @RequestParam("mobile") String mobile
+//            , @RequestParam("nickName") String nickName
+//            , @RequestParam("imageUrl") String imageUrl);
 
 //    /***
 //     * 用户登录/注册
@@ -87,9 +99,9 @@ public interface WebController {
 //     * @param password 密码
 //     * @return
 //     */
-//    @RequestMapping("/userLogin")
+//    @RequestMapping("/mobileLogin")
 //    @Deprecated
-//    ApiResult userLogin(Output<String> data, String userName, String password);
+//    ApiResult mobileLogin(Output<String> data, String userName, String password);
 
 //
 //    /**

@@ -52,6 +52,12 @@ public interface CommonConfigService {
     /***
      * 获得对应商家的Id
      */
-    String getCustomerId();
+//    String getCustomerId();
+
+    /**
+     * 获得商城主域名
+     * @return
+     */
+    String getMallDomain();
 
 }

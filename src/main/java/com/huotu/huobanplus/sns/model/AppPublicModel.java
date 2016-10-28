@@ -23,10 +23,10 @@ public class AppPublicModel {
      */
     private String ip;
 
-//    /**
-//     * 商家id
-//     */
-//    private Long customerId;
+    /**
+     * 商家id
+     */
+    private Long customerId;
 
 //    /**
 //     * 微信唯一识别openid

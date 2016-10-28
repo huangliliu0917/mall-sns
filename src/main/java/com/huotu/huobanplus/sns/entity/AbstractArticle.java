@@ -20,7 +20,10 @@ public class AbstractArticle {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    /**
+     * 商家
+     */
+    private Long customerId;
     /**
      * 文章类型
      */

@@ -28,6 +28,11 @@ public class UserSuggested {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    /**
+     * 商家
+     */
+    private Long customerId;
+
     @OneToOne
     private User user;
 }

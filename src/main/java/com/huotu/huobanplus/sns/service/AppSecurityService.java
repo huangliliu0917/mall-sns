@@ -21,5 +21,10 @@ public interface AppSecurityService {
 
     String parseJWT(String jwt) throws ExpiredJwtException;
 
-    String getUserId(HttpServletRequest request);
+    /**
+     * 获得商家用户
+     * @param request
+     * @return
+     */
+    String getMerchantUserId(HttpServletRequest request);
 }

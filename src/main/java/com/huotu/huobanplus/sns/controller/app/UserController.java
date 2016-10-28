@@ -32,7 +32,7 @@ public interface UserController {
      * @return
      * @throws Exception
      */
-    @RequestMapping(value = "/concern", method = RequestMethod.GET)
+    @RequestMapping(value = "/concern", method = RequestMethod.POST)
     ApiResult concern(@RequestParam(value = "id") Long id) throws Exception;
 
     /**
@@ -42,7 +42,7 @@ public interface UserController {
      * @return
      * @throws Exception
      */
-    @RequestMapping(value = "/cancelConcern", method = RequestMethod.GET)
+    @RequestMapping(value = "/cancelConcern", method = RequestMethod.POST)
     ApiResult cancelConcern(@RequestParam(value = "id") Long id) throws Exception;
 
     /**
@@ -52,7 +52,7 @@ public interface UserController {
      * @return
      * @throws Exception
      */
-    @RequestMapping(value = "/concernUser", method = RequestMethod.GET)
+    @RequestMapping(value = "/concernUser", method = RequestMethod.POST)
     ApiResult concernUser(@RequestParam(value = "id") Long id) throws Exception;
 
     /**
@@ -62,7 +62,7 @@ public interface UserController {
      * @return
      * @throws Exception
      */
-    @RequestMapping(value = "/cancelUser", method = RequestMethod.GET)
+    @RequestMapping(value = "/cancelUser", method = RequestMethod.POST)
     ApiResult cancelUser(@RequestParam(value = "id") Long id) throws Exception;
 
     /**
@@ -77,7 +77,7 @@ public interface UserController {
      * @return
      * @throws Exception
      */
-    @RequestMapping(value = "/publishArticle", method = RequestMethod.GET)
+    @RequestMapping(value = "/publishArticle", method = RequestMethod.POST)
     ApiResult publishArticle(@RequestParam(value = "id") Long id
             , @RequestParam(value = "name") String name
             , @RequestParam(value = "content") String content
@@ -93,7 +93,7 @@ public interface UserController {
      * @param content 评论内容
      * @return
      */
-    @RequestMapping(value = "/commentArticle", method = RequestMethod.GET)
+    @RequestMapping(value = "/commentArticle", method = RequestMethod.POST)
     ApiResult commentArticle(@RequestParam(value = "id") Long id
             , @RequestParam(value = "content") String content) throws Exception;
 
@@ -107,7 +107,7 @@ public interface UserController {
      * @return
      * @throws Exception
      */
-    @RequestMapping(value = "/report", method = RequestMethod.GET)
+    @RequestMapping(value = "/report", method = RequestMethod.POST)
     ApiResult report(@RequestParam(value = "type") ReportTargetType type
             , @RequestParam(value = "id") Long id
             , @RequestParam(value = "note") String note) throws Exception;

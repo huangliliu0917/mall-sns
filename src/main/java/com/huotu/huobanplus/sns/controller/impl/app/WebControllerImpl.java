@@ -3,11 +3,18 @@ package com.huotu.huobanplus.sns.controller.impl.app;
 import com.huotu.common.api.ApiResult;
 import com.huotu.common.api.Output;
 import com.huotu.huobanplus.sns.controller.app.WebController;
+import com.huotu.huobanplus.sns.exception.InterrelatedException;
 import com.huotu.huobanplus.sns.model.*;
 import com.huotu.huobanplus.sns.model.common.AppCode;
+import com.huotu.huobanplus.sns.model.common.CodeType;
+import com.huotu.huobanplus.sns.model.common.VerificationType;
 import com.huotu.huobanplus.sns.service.AppSecurityService;
 import com.huotu.huobanplus.sns.service.ArticleService;
 import com.huotu.huobanplus.sns.service.UserService;
+import com.huotu.huobanplus.sns.service.VerificationService;
+import com.huotu.huobanplus.sns.utils.EnumHelper;
+import com.huotu.huobanplus.sns.utils.RegexHelper;
+import com.huotu.huobanplus.sns.utils.StringHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +22,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Created by Administrator on 2016/10/8.
@@ -30,9 +39,6 @@ public class WebControllerImpl implements WebController {
     private UserService userService;
     @Autowired
     private ArticleService articleService;
-
-    @Autowired
-    private AppSecurityService appSecurityService;
 
     @Override
     public ApiResult user(Output<AppUserModel> data, Long id) throws Exception {
@@ -52,33 +58,17 @@ public class WebControllerImpl implements WebController {
         return null;
     }
 
+//    @Override
+//    public ApiResult getWeixinInfo(Output<String> openId, Output<String> nickName, Output<String> imageUrl, @RequestParam("customerId") Long customerId) {
+//        return null;
+//    }
 
-    //todo
-    @Override
-    public ApiResult sendCheckCode(String mobile) {
-        //调用发短信接口
-        return null;
-    }
 
-    //todo
-    @Override
-    public ApiResult userLogin(Output<String> data, String mobile, String code) {
-        //判断验证码是否有效
 
-        //商城中判断用户是否存在
-        if (1 != 0) {
-            //创建商城用户和本地用户
-        } else {
-            //判断本地用户是否存在，不存在则创建本地用户
-        }
-
-        //返回token
-        return null;
-    }
 
 
 //    @Override
-//    public ApiResult userLogin(Output<String> data, String userName, String password) {
+//    public ApiResult mobileLogin(Output<String> data, String userName, String password) {
 //        data.outputData(appSecurityService.createJWT("websns", userName, 100000));
 //        return ApiResult.resultWith(AppCode.SUCCESS);
 //    }

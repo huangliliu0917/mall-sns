@@ -12,14 +12,21 @@ package com.huotu.huobanplus.sns.service.impl;
 import com.huotu.common.base.RSAHelper;
 import com.huotu.huobanplus.sns.entity.User;
 import com.huotu.huobanplus.sns.entity.UserArticle;
+import com.huotu.huobanplus.sns.entity.VerificationCode;
 import com.huotu.huobanplus.sns.model.AppCircleArticleModel;
 import com.huotu.huobanplus.sns.model.AppUserModel;
+import com.huotu.huobanplus.sns.model.common.CodeType;
+import com.huotu.huobanplus.sns.model.common.VerificationType;
 import com.huotu.huobanplus.sns.repository.UserRepository;
+import com.huotu.huobanplus.sns.repository.VerificationCodeRepository;
+import com.huotu.huobanplus.sns.service.AppSecurityService;
+import com.huotu.huobanplus.sns.service.CommonConfigService;
 import com.huotu.huobanplus.sns.service.UserService;
 import com.huotu.huobanplus.sns.utils.ContractHelper;
 import com.huotu.huobanplus.sns.utils.CookieHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
@@ -33,6 +40,7 @@ import javax.persistence.criteria.Predicate;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -55,32 +63,44 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
 
-    @Override
-    public Long getUserId(HttpServletRequest request) {
-        if (env.acceptsProfiles("development") || env.acceptsProfiles("staging")) {
-            return 97278L;//146 4471商户 王明
-//            return 96116L;
-        } else {
-            String encrypt = CookieHelper.get(request, userKey);
-            try {
-                Long userId = Long.parseLong(RSAHelper.decrypt(encrypt, privateKey));
-                if (userId > 0) return userId;
-                return null;
-            } catch (Exception ex) {
-                return null;
-            }
-        }
-    }
+    @Autowired
+    private VerificationCodeRepository verificationCodeRepository;
 
+    @Autowired
+    private CommonConfigService commonConfigService;
 
-    @Override
-    public void setUserId(Long userId, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        if (userId > 0) {
-            String encrypt = RSAHelper.encrypt(userId.toString(), publicKey);
-            CookieHelper.set(response, userKey, encrypt, request.getServerName(), 60 * 60 * 24 * 365);
-        }
+    @Autowired
+    private com.huotu.huobanplus.common.service.UserService mallUserService;
 
-    }
+    @Autowired
+    private com.huotu.huobanplus.common.repository.UserRepository mallUserRepository;
+
+//    @Override
+//    public Long getMerchantUserId(HttpServletRequest request) {
+//        if (env.acceptsProfiles("development") || env.acceptsProfiles("staging")) {
+//            return 97278L;//146 4471商户 王明
+////            return 96116L;
+//        } else {
+//            String encrypt = CookieHelper.get(request, userKey);
+//            try {
+//                Long userId = Long.parseLong(RSAHelper.decrypt(encrypt, privateKey));
+//                if (userId > 0) return userId;
+//                return null;
+//            } catch (Exception ex) {
+//                return null;
+//            }
+//        }
+//    }
+//
+//
+//    @Override
+//    public void setUserId(Long userId, HttpServletRequest request, HttpServletResponse response) throws Exception {
+//        if (userId > 0) {
+//            String encrypt = RSAHelper.encrypt(userId.toString(), publicKey);
+//            CookieHelper.set(response, userKey, encrypt, request.getServerName(), 60 * 60 * 24 * 365);
+//        }
+//
+//    }
 
     @Override
     public Page<User> findByNickNameAndAuthenticationIdAndLevelId(String nickName, Integer authenticationId,
@@ -141,5 +161,63 @@ public class UserServiceImpl implements UserService {
             models[i] = changeModel(articles.get(i));
         }
         return models;
+    }
+
+    @Autowired
+    private AppSecurityService appSecurityService;
+
+    public String userLogin(Long customerId, String phone, String code
+            , String openId
+            , String nickName
+            , String imageUrl) {
+        //判断验证码是否有效
+        VerificationCode verificationCode = verificationCodeRepository.findByMobileAndTypeAndCodeType(phone, VerificationType.BIND_REGISTER, CodeType.text);
+        if (verificationCode == null) throw new IllegalStateException("验证码无效");
+
+        Date currentDate = new Date();
+        if (currentDate.getTime() - verificationCode.getSendTime().getTime() < 60 * 60 * 1000) {
+            throw new IllegalStateException("验证码失效");//超过1小时
+        }
+
+        if (!code.equals(verificationCode.getCode())) throw new IllegalStateException("验证码错误");
+
+        com.huotu.huobanplus.common.entity.User mallUser = mallUserRepository.findByMerchantIdAndMobile(customerId, phone);
+        Long userId;
+        //商城中判断用户是否存在
+        if (mallUser == null) {
+            userId = mallUserService.userRegister(customerId, phone);
+        } else {
+            userId = mallUser.getId();
+        }
+
+        //判断本地用户是否存在，不存在则创建本地用户
+        User user = userRepository.findOne(userId);
+        if (user == null) {
+            user = register(customerId, phone, openId, nickName, imageUrl);
+        }
+        //返回token
+        String token = appSecurityService.createJWT("sns", customerId.toString() + "," + user.getId().toString(), 1000 * 3600 * 24 * 30);
+
+        return token;
+    }
+
+
+    public User register(Long customerId
+            , String mobile
+            , String openId
+            , String nickName
+            , String imageUrl) {
+        User user  = new User();
+        user.setCustomerId(customerId);
+        user.setMobile(mobile);
+        user.setOpenId(openId);
+        user.setNickName(nickName);
+        user.setImgURL(imageUrl);
+        user.setCreateDate(new Date());
+//            user.setLevel();//todo 获取最低级别
+        user.setRank(100000000L);
+//            user.setTags();
+        user = userRepository.save(user);
+        return user;
     }
 }

@@ -33,12 +33,25 @@ public class User {
      */
     private Long customerId;
     /**
+     * 手机号
+     */
+    @Column(length = 11)
+    private String mobile;
+
+    /**
+     * 微信openid
+     */
+    @Column(length = 100)
+    private String openId;
+    /**
      * 昵称
      */
+    @Column(length = 50)
     private String nickName;
     /**
      * 头像
      */
+    @Column(length = 200)
     private String imgURL;
     /**
      * 关注人数
@@ -69,8 +82,8 @@ public class User {
 
     /**
      * 身份
-     *
-//     * @see {@link com.huotu.huobanplus.sns.entity.support.AuthenticationType}
+     * <p>
+     * //     * @see {@link com.huotu.huobanplus.sns.entity.support.AuthenticationType}
      */
     private int authenticationType;
 
@@ -83,6 +96,7 @@ public class User {
      * 权限：**，两位，0代表禁用，1：代表可用
      * 第一位：发帖权限，第二位：评论权限
      */
+    @Column(length = 100)
     private String power = "11";
 
     /**

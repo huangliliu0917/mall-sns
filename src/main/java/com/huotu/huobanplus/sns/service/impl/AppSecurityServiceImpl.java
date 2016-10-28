@@ -62,7 +62,7 @@ public class AppSecurityServiceImpl implements AppSecurityService {
 //        System.out.println("Expiration: " + claims.getExpiration());
     }
 
-    public String getUserId(HttpServletRequest request) {
+    public String getMerchantUserId(HttpServletRequest request) {
         try {
             String authentication = request.getHeader("authentication");
             if (!StringUtils.isEmpty(authentication)) return parseJWT(authentication);

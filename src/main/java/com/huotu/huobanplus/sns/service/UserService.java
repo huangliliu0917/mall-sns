@@ -34,13 +34,13 @@ public interface UserService {
      * @param request
      * @return
      */
-    Long getUserId(HttpServletRequest request) throws Exception;
-
-    /**
-     * 对用户的id进行加密
-     * 放入cookie中
-     */
-    void setUserId(Long userId, HttpServletRequest request, HttpServletResponse response) throws Exception;
+//    Long getMerchantUserId(HttpServletRequest request) throws Exception;
+//
+//    /**
+//     * 对用户的id进行加密
+//     * 放入cookie中
+//     */
+//    void setUserId(Long userId, HttpServletRequest request, HttpServletResponse response) throws Exception;
 
     /**
      * 根据条件查询用户列表
@@ -58,10 +58,40 @@ public interface UserService {
 
     /**
      * 浏览App用户
+     *
      * @param userId
      * @return
      */
     AppUserModel getAppUser(Long userId);
 
     AppCircleArticleModel[] changeModelArray(List<UserArticle> articles) throws IOException;
+
+    /**
+     * 用户登录注册
+     *
+     * @param customerId
+     * @param phone
+     * @param code
+     * @return
+     */
+
+    String userLogin(Long customerId, String phone, String code
+            , String openId
+            , String nickName
+            , String imageUrl);
+
+    /**
+     * 注册用户
+     *
+     * @param customerId 商家Id
+     * @param mobile     手机号
+     * @param openId     微信openid
+     * @param nickName   用户昵称
+     * @param imageUrl   用户头像
+     */
+    User register(Long customerId
+            , String mobile
+            , String openId
+            , String nickName
+            , String imageUrl);
 }

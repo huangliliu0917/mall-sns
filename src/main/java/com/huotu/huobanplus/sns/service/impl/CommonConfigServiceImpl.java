@@ -54,8 +54,13 @@ public class CommonConfigServiceImpl implements CommonConfigService {
     }
 
     @Override
-    public String getCustomerId() {
-        return env.getProperty("customerId","4471");
+    public String getMallDomain() {
+        return env.getProperty("mallDomain", "51flashmall.com");
     }
+
+//    @Override
+//    public String getCustomerId() {
+//        return env.getProperty("customerId","4471");
+//    }
 
 }

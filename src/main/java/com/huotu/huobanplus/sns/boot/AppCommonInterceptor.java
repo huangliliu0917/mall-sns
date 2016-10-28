@@ -1,7 +1,7 @@
 package com.huotu.huobanplus.sns.boot;
 
-import com.huotu.huobanplus.sns.entity.User;
 import com.huotu.huobanplus.sns.exception.NeedLoginException;
+import com.huotu.huobanplus.sns.exception.UrlInvoidException;
 import com.huotu.huobanplus.sns.model.AppPublicModel;
 import com.huotu.huobanplus.sns.repository.UserRepository;
 import com.huotu.huobanplus.sns.service.AppSecurityService;
@@ -19,8 +19,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import java.util.List;
 
 
 /**
@@ -47,21 +45,32 @@ public class AppCommonInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object o) throws Exception {
-        String userId = appSecurityService.getUserId(request);
-        if (!StringUtils.isEmpty(userId)) {
-            AppPublicModel appPublicModel = new AppPublicModel();
-            appPublicModel.setIp(StringHelper.getIp(request));
-            appPublicModel.setCurrentUser(userRepository.findOne(Long.parseLong(userId)));
-            PublicParameterHolder.putParameters(appPublicModel);
+        if (StringUtils.isEmpty(request.getParameter("customerId"))) {
+            throw new UrlInvoidException("请求的网址不正确");
+        }
+        Long currentCustomerId = Long.valueOf(request.getParameter("customerId"));
 
-            return true;
 
-        } else {
-            String requestURI = request.getRequestURI().substring(request.getContextPath().length());
-            if (requestURI.startsWith("/app/user/")) {
-                //用户模块需要检测用户是否登录,没有登录则跳转到登录页面
-                throw new NeedLoginException("需要登录");
+        String merchantUserId = appSecurityService.getMerchantUserId(request);
+        if (!StringUtils.isEmpty(merchantUserId)) {
+            String[] items = merchantUserId.split(",");
+            Long customerId = Long.parseLong(items[0]);
+            if (currentCustomerId.equals(customerId)) {
+                Long userId = Long.parseLong(items[1]);
+                AppPublicModel appPublicModel = new AppPublicModel();
+                appPublicModel.setIp(StringHelper.getIp(request));
+                appPublicModel.setCustomerId(customerId);
+                appPublicModel.setCurrentUser(userRepository.findOne(userId));
+                PublicParameterHolder.putParameters(appPublicModel);
+
+                return true;
             }
+        }
+
+        String requestURI = request.getRequestURI().substring(request.getContextPath().length());
+        if (requestURI.startsWith("/app/user/")) {
+            //用户模块需要检测用户是否登录,没有登录则跳转到登录页面
+            throw new NeedLoginException("用户没有登录，需要登录操作");
         }
 
 
