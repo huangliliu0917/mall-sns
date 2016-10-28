@@ -7,9 +7,10 @@
  * 2013-2016. All rights reserved.
  */
 
-package com.huotu.huobanplus.sns.service;
+package com.huotu.huobanplus.sns.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.huotu.huobanplus.sns.service.SensitiveService;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
@@ -27,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * 敏感词实现
  * Created by jin on 2016/10/18.
  */
 @Service
@@ -50,49 +52,68 @@ public class SensitiveServiceImpl implements SensitiveService {
      * 将HttpEntity 转换为Stirng
      * @param entity
      * @return
-     * @throws IOException
      */
-    private String getString(HttpEntity entity) throws IOException{
+    private String getString(HttpEntity entity){
         String json="";
         if(entity!=null){
-            InputStream inputStream=entity.getContent();
-            json= IOUtils.toString(inputStream);
+            InputStream inputStream= null;
+            try {
+                inputStream = entity.getContent();
+                json= IOUtils.toString(inputStream);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         return json;
 
     }
 
-    private Boolean checkFirstWay(String content) throws IOException{
+    private Boolean checkFirstWay(String content){
         HttpPost httpPost=new HttpPost("http://www.67960.com/index/check");
         List<NameValuePair> formparams = new ArrayList<NameValuePair>();
         formparams.add(new BasicNameValuePair("text", content));
-        UrlEncodedFormEntity urlEncodedFormEntity = new UrlEncodedFormEntity(formparams, "UTF-8");
-        httpPost.setEntity(urlEncodedFormEntity);
-        CloseableHttpResponse closeableHttpResponse =httpClient.execute(httpPost);
-        HttpEntity entity=closeableHttpResponse.getEntity();
-        String json=getString(entity);
-        JSONObject object=JSONObject.parseObject(json);
-        Object o=object.get("data");
-        if(new Integer(0).equals(o)){
-            return true;
+        UrlEncodedFormEntity urlEncodedFormEntity = null;
+        try {
+            urlEncodedFormEntity = new UrlEncodedFormEntity(formparams, "UTF-8");
+
+            httpPost.setEntity(urlEncodedFormEntity);
+            CloseableHttpResponse closeableHttpResponse =httpClient.execute(httpPost);
+            HttpEntity entity=closeableHttpResponse.getEntity();
+            String json=getString(entity);
+            JSONObject object=JSONObject.parseObject(json);
+            Object o=object.get("data");
+            if(new Integer(0).equals(o)){
+                return true;
+            }
+            return false;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
-        return false;
     }
 
-    private Boolean checkSecondWay(String content) throws IOException{
+    private Boolean checkSecondWay(String content){
         HttpPost httpPost=new HttpPost("http://www.hoapi.com/index.php/Home/Api/check");
         List<NameValuePair> formparams = new ArrayList<NameValuePair>();
         formparams.add(new BasicNameValuePair("str", content));
         formparams.add(new BasicNameValuePair("token", "1bfc6c8a90c45c29ff4b8a3ec0d411ee"));
-        UrlEncodedFormEntity urlEncodedFormEntity = new UrlEncodedFormEntity(formparams, "UTF-8");
-        httpPost.setEntity(urlEncodedFormEntity);
-        CloseableHttpResponse closeableHttpResponse =httpClient.execute(httpPost);
-        HttpEntity entity=closeableHttpResponse.getEntity();
-        String json=getString(entity);
-        JSONObject object=JSONObject.parseObject(json);
-        Object o=object.get("status");
-        if(new Boolean(true).equals(o)){
-            return true;
+        UrlEncodedFormEntity urlEncodedFormEntity = null;
+        try {
+            urlEncodedFormEntity = new UrlEncodedFormEntity(formparams, "UTF-8");
+
+            httpPost.setEntity(urlEncodedFormEntity);
+            CloseableHttpResponse closeableHttpResponse =httpClient.execute(httpPost);
+            HttpEntity entity=closeableHttpResponse.getEntity();
+            String json=getString(entity);
+            JSONObject object=JSONObject.parseObject(json);
+            Object o=object.get("status");
+            if(new Boolean(true).equals(o)){
+                return true;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
         return false;
 

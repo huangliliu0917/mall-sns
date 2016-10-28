@@ -175,6 +175,7 @@ public class ArticleServiceImpl implements ArticleService {
                 adminArticleModel.setPublisher(x.getPublisher().getNickName());
             adminArticleModel.setClick(x.getClick());
             adminArticleModel.setView(x.getView());
+            adminArticleModel.setTop(x.getTop()==null?false:x.getTop());
             adminArticleModels.add(adminArticleModel);
         });
         return adminArticleModels;

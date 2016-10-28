@@ -27,22 +27,22 @@ public interface CircleService {
      * 获取圈子model列表
      *
      * @param circles 圈子实体列表
-     * @return
+     * @return  圈子model列表
      */
     List<CircleListModel> findCircleListModel(List<Circle> circles);
 
     /**
      * 将圈子实体转换为圈子model
      *
-     * @param circle
-     * @return
+     * @param circle    圈子实体
+     * @return      圈子列表model
      */
     CircleListModel circleToCircleModel(Circle circle);
 
     /**
      * 将圈子转换为详情的圈子model(model数据不一样)
-     * @param circle
-     * @return
+     * @param circle    圈子实体
+     * @return          圈子列表model
      */
     CircleListModel circleToDetailsCircleModel(Circle circle);
 

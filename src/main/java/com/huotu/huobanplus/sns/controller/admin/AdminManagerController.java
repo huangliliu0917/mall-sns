@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
+ * 权限配置(多商家版弃用)
  * Created by Administrator on 2016/10/11.
  */
 @Controller
@@ -27,8 +28,9 @@ public class AdminManagerController {
 
     /**
      * 返回权限用户列表
-     *
-     * @return
+     * @param permissionSearchModel 查询model
+     * @return  返回
+     * @throws Exception
      */
     @RequestMapping(value = "/getPermissionList", method = RequestMethod.POST)
     @ResponseBody
@@ -47,14 +49,15 @@ public class AdminManagerController {
     /**
      * 根据权限用户ID，获取权限用户具体信息
      *
-     * @param id
-     * @param model
-     * @return
+     * @param id            用户ID
+     * @param model         返回的model
+     * @return              视图模板字符串
      * @throws Exception
      */
     @RequestMapping(value = "/editPermission",method = RequestMethod.GET)
     public String editPermission(Long id, Model model) throws Exception{
         Login login=null;
+        String view= "/admin/permission/modifyPermission";
         if(id!=null){
             login=loginRepository.findOne(id);
         }
@@ -62,18 +65,18 @@ public class AdminManagerController {
             login=new Login();
         }
         String[] pers=login.getAuthors().split("\\|");
-        for(int i=0;i<pers.length;i++){
-            model.addAttribute(pers[i],true);
+        for (String per : pers) {
+            model.addAttribute(per,true);
         }
         model.addAttribute("login",login);
 
-        return "/admin/permission/modifyPermission";
+        return view;
     }
 
     /**
-     * 保存圈子
-     * @param login
-     * @return
+     * 保存后台用户
+     * @param login     后台用户实体
+     * @return          只要正常返回则表示保存成功
      * @throws Exception
      */
     @RequestMapping(value = "savePermission",method = RequestMethod.POST)

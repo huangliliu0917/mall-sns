@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 
 /**
+ * 后台登录用户验证(多商家版本废弃)
  * Created by slt on 2016/10/9.
  *
  * @author slt

@@ -16,7 +16,6 @@ import com.huotu.huobanplus.sns.model.admin.CircleListModel;
 import com.huotu.huobanplus.sns.model.admin.CircleSearchModel;
 import com.huotu.huobanplus.sns.repository.CategoryRepository;
 import com.huotu.huobanplus.sns.repository.CircleRepository;
-import com.huotu.huobanplus.sns.repository.TagRespository;
 import com.huotu.huobanplus.sns.repository.UserRepository;
 import com.huotu.huobanplus.sns.service.CircleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +35,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
+ * 圈子服务实现
  * Created by slt on 2016/10/12.
  */
 @Service
@@ -45,9 +45,6 @@ public class CircleServiceImpl implements CircleService {
 
     @Autowired
     private CategoryRepository categoryRepository;
-
-    @Autowired
-    private TagRespository tagRespository;
 
     @Autowired
     private UserRepository userRepository;
@@ -117,6 +114,7 @@ public class CircleServiceImpl implements CircleService {
         }
         Specification<Circle> specification = (root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
+            predicates.add(criteriaBuilder.equal(root.get("customerId").as(Long.class),searchModel.getCustomerId()));
             if (!StringUtils.isEmpty(searchModel.getCircleName())) {
                 predicates.add(criteriaBuilder.like(root.get("name").as(String.class), "%" + searchModel.getCircleName() + "%"));
             }
@@ -124,12 +122,17 @@ public class CircleServiceImpl implements CircleService {
                 boolean suggested = searchModel.getSuggested() == 1;
                 predicates.add(criteriaBuilder.equal(root.get("suggested").as(Boolean.class), suggested));
             }
+            if(searchModel.getCategory()>0){
+                Category category=categoryRepository.findOne(searchModel.getCategory());
+                if(category!=null){
+                    predicates.add(criteriaBuilder.equal(root.get("category").as(Category.class),category));
+                }
+            }
             return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
         };
-        Page<Circle> circleList = circleRepository.findAll(
-                specification, new PageRequest(searchModel.getPageNo(), searchModel.getPageSize(), sort));
 
-        return circleList;
+        return circleRepository.findAll(
+                specification, new PageRequest(searchModel.getPageNo(), searchModel.getPageSize(), sort));
     }
 
     @Override
@@ -137,6 +140,7 @@ public class CircleServiceImpl implements CircleService {
         Category category=circleListModel.getCategoryId()==null?null: categoryRepository.findOne(circleListModel.getCategoryId());
         User leader=circleListModel.getLeaderId()==null?null:userRepository.findOne(circleListModel.getLeaderId());
         Circle circle=new Circle();
+        circle.setCustomerId(circleListModel.getCustomerId());
         circle.setCategory(category);
         circle.setEnabled(circleListModel.isEnabled());
         circle.setLeader(leader);

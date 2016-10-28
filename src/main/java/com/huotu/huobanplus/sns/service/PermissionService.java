@@ -14,27 +14,28 @@ import com.huotu.huobanplus.sns.model.admin.PermissionSearchModel;
 import org.springframework.data.domain.Page;
 
 /**
- * Created by 后台用户 on 2016/10/9.
+ * 权限服务(多商户下弃用)ed by  on 2016/10/9.
+ * Created by slt  on 2016/10/9.
  */
 public interface PermissionService {
 
     /**
      * 根据查询条件获取管理员列表
-     * @return
+     * @return      列表
      * @throws Exception
      */
     Page<Login> getManagerList(PermissionSearchModel model) throws Exception;
 
     /**
      * 保存
-     * @param login
+     * @param login 后台用户
      * @throws Exception
      */
     void addPermission(Login login) throws Exception;
 
     /**
      * 更新
-     * @param login
+     * @param login     后台用户
      * @throws Exception
      */
     void updatePermission(Login login) throws Exception;

@@ -12,6 +12,11 @@ import lombok.Setter;
 public class ReportSearchModel {
 
     /**
+     * 商户ID
+     */
+    private Long customerId;
+
+    /**
      * 用户名称
      */
     private String name="";

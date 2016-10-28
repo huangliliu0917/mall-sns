@@ -9,6 +9,7 @@
 
 package com.huotu.huobanplus.sns.controller.admin;
 
+import com.huotu.huobanplus.sns.annotation.CustomerId;
 import com.huotu.huobanplus.sns.entity.Report;
 import com.huotu.huobanplus.sns.model.admin.ReportDetailsModel;
 import com.huotu.huobanplus.sns.model.admin.ReportListModel;
@@ -40,13 +41,16 @@ public class AdminReportController {
 
     /**
      * 返回举报列表
-     *
-     * @return
+     * @param reportSearchModel 举报查询model
+     * @param customerId        商户ID
+     * @return  查询结果
+     * @throws Exception
      */
     @RequestMapping(value = "/getReportList", method = RequestMethod.POST)
     @ResponseBody
-    public ModelMap getReportList(@RequestBody ReportSearchModel reportSearchModel) throws Exception {
+    public ModelMap getReportList(@CustomerId Long customerId,@RequestBody ReportSearchModel reportSearchModel) throws Exception {
 
+        reportSearchModel.setCustomerId(customerId);
         Page<Report> reports = reportService.findReportList(reportSearchModel);
 
         List<ReportListModel> models=reportService.getReportListModelList(reports.getContent());
@@ -62,17 +66,18 @@ public class AdminReportController {
      * 查看举报具体信息
      *
      * @param id    举报ID
-     * @param model
-     * @return
+     * @param model 具体举报信息model
+     * @return      返回具体举报信息
      * @throws Exception
      */
     @RequestMapping(value = "/editReport",method = RequestMethod.GET)
     public String editCircle(@RequestParam(required = true) Long id, Model model) throws Exception{
+        String view="/admin/report/report_details";
         Report report= reportRepository.findOne(id);
 
         ReportDetailsModel reportDetailsModel=reportService.getReportDetails(report);
 
         model.addAttribute("model",reportDetailsModel);
-        return "/admin/report/report_details";
+        return view;
     }
 }

@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
+ * 用户圈子
  * Created by jin on 2016/10/10.
  */
 @Service

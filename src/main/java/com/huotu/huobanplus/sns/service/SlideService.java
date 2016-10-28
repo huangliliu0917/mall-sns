@@ -9,11 +9,24 @@
 
 package com.huotu.huobanplus.sns.service;
 
+import com.huotu.huobanplus.sns.entity.Slide;
+
+import java.io.IOException;
+import java.util.List;
+
 /**
  * banner文章
  * Created by slt on 2016/10/12.
  */
 public interface SlideService {
+
+    /**
+     * 根据商户ID，查询圈子banner列表
+     * @param customerId    商户ID
+     * @return              banner列表
+     * @throws IOException
+     */
+    List<Slide> findSlideList(Long customerId) throws IOException;
 
 
 }

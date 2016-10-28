@@ -58,6 +58,16 @@
                                 </select>
                             </div>
 
+                            <div style="display: none" class="form-group m-r-sm">
+                                <label class="control-label" for="suggested">分类选择：</label>
+                                <select class="form-control" name="suggested" id="category">
+                                    <option value="-1">--请选择--</option>
+                                    <option value="1">娱乐</option>
+                                    <option value="2">推荐</option>
+                                    <option value="3">汽车</option>
+                                </select>
+                            </div>
+
                         </div>
                         <p style="height: 8px;"></p>
 
@@ -97,7 +107,7 @@
                                 <th>圈子ID</th>
                                 <th>圈子名称</th>
                                 <th>圈子图片</th>
-                                <th>圈子分类</th>
+                                <th onclick="circleList.sortConfig(this,'category')" class="sorting">圈子分类</th>
                                 <th>圈子组长</th>
                                 <th onclick="circleList.sortConfig(this,'date')" class="sorting">创建时间</th>
                                 <th onclick="circleList.sortConfig(this,'suggested')" class="sorting">是否热门</th>
@@ -116,7 +126,7 @@
                                 </td>
                                 <td>1</td>
                                 <td>母婴营养</td>
-                                <td><img style="width: 135px; height: 84px;" src=""/></td>
+                                <td><img style="width: 135px; height: 84px;" src="" onerror="javascript:this.src='/img/135x84图片未找到.png'"/></td>
 
                                 <td>健康</td>
                                 <td>小阮</td>
@@ -196,6 +206,7 @@
     circleList.search=function(){
         circleList.searchModel.circleName=$("#circleName").val();
         circleList.searchModel.suggested=$("#suggested").val();
+        circleList.searchModel.category=$("#category").val();
         circleList.searchAjax(circleList.searchModel);
     };
 
@@ -278,6 +289,7 @@
     circleList.searchAll=function(){
         $("#circleName").val("");
         $("#suggested").val(-1);
+        $("#category").val(-1);
         circleList.goTo(0);
     };
 

@@ -76,14 +76,43 @@
                                 <label class="control-label" th:text="*{content}">文章撒旦发生的法俄法啊刷大额发色发生</label>
                             </div>
                         </div>
+
+                        <div th:if="*{reportTargetType.value==2}" class="hr-line-dashed"></div>
+                        <div th:if="*{reportTargetType.value==2}" class="form-group">
+                            <label class="col-sm-2 control-label">评论内容</label>
+
+                            <div class="col-sm-2">
+                                <label class="control-label" th:text="*{comment}">文章撒旦发生的法俄法啊刷大额发色发生</label>
+                            </div>
+                        </div>
+
+                        <div th:if="*{reportTargetType.value==1}" class="hr-line-dashed"></div>
+                        <div th:if="*{reportTargetType.value==1}" class="form-group">
+                            <label class="col-sm-2 control-label">帖子标题</label>
+
+                            <div class="col-sm-2">
+                                <label class="control-label" th:text="*{invitationTitle}">文章撒旦发生的法俄法啊刷大额发色发生</label>
+                            </div>
+                        </div>
+
+                        <div th:if="*{reportTargetType.value==1}" class="hr-line-dashed"></div>
+                        <div th:if="*{reportTargetType.value==1}" class="form-group">
+                            <label class="col-sm-2 control-label">帖子内容</label>
+
+                            <div class="col-sm-2">
+                                <label class="control-label" th:text="*{invitationContent}">文章撒旦发生的法俄法啊刷大额发色发生</label>
+                            </div>
+                        </div>
+
+
                         <div class="hr-line-dashed"></div>
                         <div class="form-group">
                             <div class="col-sm-4 col-sm-offset-2">
                                 <button class="btn btn-primary" type="button" onclick="">查看用户</button>
-                                <button th:if="*{reportTargetType.value==1}" class="btn btn-primary" type="button" onclick="">查看文章</button>
+                                <button th:if="*{reportTargetType.value==1}" class="btn btn-primary" type="button" onclick="">查看帖子</button>
                                 <button th:if="*{reportTargetType.value==2}" class="btn btn-primary" type="button" onclick="">查看评论</button>
                                 <button class="btn btn-white" type="button">禁言用户</button>
-                                <button th:if="*{reportTargetType.value==1}" class="btn btn-white" type="button">删除文章</button>
+                                <button th:if="*{reportTargetType.value==1}" class="btn btn-white" type="button">删除帖子</button>
                                 <button  th:if="*{reportTargetType.value==2}" class="btn btn-white" type="button">删除评论</button>
                             </div>
                         </div>

@@ -9,6 +9,7 @@
 
 package com.huotu.huobanplus.sns.controller.admin;
 
+import com.huotu.huobanplus.sns.annotation.CustomerId;
 import com.huotu.huobanplus.sns.entity.Circle;
 import com.huotu.huobanplus.sns.model.admin.AdminArticlePageModel;
 import com.huotu.huobanplus.sns.model.admin.CircleListModel;
@@ -45,15 +46,18 @@ public class AdminCircleController {
     @Autowired
     private ArticleService articleService;
 
+
     /**
-     * 返回圈子列表
-     *
-     * @return
+     * 根据查询model返回圈子列表
+     * @param customerId        商户ID
+     * @param circleSearchModel 查询model
+     * @return  分页信息
+     * @throws Exception
      */
     @RequestMapping(value = "/getCircleList", method = RequestMethod.POST)
     @ResponseBody
-    public ModelMap getCircleList(@RequestBody CircleSearchModel circleSearchModel) throws Exception {
-
+    public ModelMap getCircleList(@CustomerId Long customerId,@RequestBody CircleSearchModel circleSearchModel) throws Exception {
+        circleSearchModel.setCustomerId(customerId);
         Page<Circle> circles = circleService.findCircleList(circleSearchModel);
         List<CircleListModel> models = circleService.findCircleListModel(circles.getContent());
 
@@ -69,13 +73,13 @@ public class AdminCircleController {
      * 根据圈子id,打开编辑页面,如果id为空则是新建
      *
      * @param id    圈子ID
-     * @param model
-     * @return
+     * @param model 返回的model
+     * @return      修改圈子的视图模板
      * @throws Exception
      */
     @RequestMapping(value = "/editCircle",method = RequestMethod.GET)
     public String editCircle(Long id, Model model) throws Exception{
-
+        String view="/admin/circle/modifyCircle";
         Circle circle=null;
         if(id!=null){
             circle=circleRepository.findOne(id);
@@ -85,19 +89,20 @@ public class AdminCircleController {
         }
         CircleListModel circleListModel=circleService.circleToDetailsCircleModel(circle);
         model.addAttribute("circleListModel",circleListModel);
-        return "/admin/circle/modifyCircle";
+        return view;
     }
 
     /**
      * 保存圈子
-     * @param circleListModel
-     * @return
+     * @param circleListModel   圈子的model
+     * @return      只要正常返回就说明保存成功
      * @throws Exception
      */
     @RequestMapping(value = "saveCircle",method = RequestMethod.POST)
     @ResponseBody
-    public ModelMap saveCircle(@RequestBody CircleListModel circleListModel) throws Exception{
+    public ModelMap saveCircle(@CustomerId Long customerId,@RequestBody CircleListModel circleListModel) throws Exception{
         ModelMap modelMap=new ModelMap();
+        circleListModel.setCustomerId(customerId);
         if(circleListModel.getCircleId()==null){
             circleService.addCircle(circleListModel);
         }else {
@@ -109,8 +114,8 @@ public class AdminCircleController {
     /**
      * 推荐圈子首页
      *
-     * @param model
-     * @return
+     * @param model     返回的数据model
+     * @return          视图模板
      * @throws IOException
      */
     @RequestMapping(value = "/commandIndex", method = RequestMethod.GET)

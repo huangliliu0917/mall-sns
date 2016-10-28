@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.List;
 
 /**
+ * 用户服务
  * Created by Administrator on 2016/10/9.
  */
 public interface UserService {

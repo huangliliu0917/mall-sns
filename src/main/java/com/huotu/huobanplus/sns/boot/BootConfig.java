@@ -8,6 +8,7 @@ import org.springframework.context.annotation.ImportResource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 /**
+ * 配置信息(多商家版安全弃用)
  * Created by lgh on 2016/8/1.
  */
 
@@ -15,7 +16,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @ComponentScan({"com.huotu.huobanplus.sns.service"})
 @EnableJpaRepositories(value = {"com.huotu.huobanplus.sns.repository"})
 @ImportResource(value = {"classpath:spring-jpa.xml"})
-@Import({LoggingConfig.class,AppSecurityConfig.class})
+@Import({LoggingConfig.class})
 public class BootConfig {
 
 }

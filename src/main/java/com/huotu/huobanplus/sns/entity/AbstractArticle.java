@@ -5,9 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Created by Administrator on 2016/9/29.
@@ -24,6 +22,11 @@ public class AbstractArticle {
      * 商家
      */
     private Long customerId;
+    /**
+     * 商户ID
+     */
+    private Long customerId;
+
     /**
      * 文章类型
      */

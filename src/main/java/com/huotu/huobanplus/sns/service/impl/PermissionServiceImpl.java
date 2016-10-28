@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
+ * 权限服务实现(多商户下弃用)
  * Created by Administrator on 2016/10/9.
  */
 @Service
@@ -54,8 +55,7 @@ public class PermissionServiceImpl implements PermissionService {
             }
             return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
         };
-        Page<Login> managerList = managerRepository.findAll(specification,new PageRequest(model.getPageNo(),model.getPageSize(),sort));
-        return managerList;
+        return managerRepository.findAll(specification,new PageRequest(model.getPageNo(),model.getPageSize(),sort));
     }
 
     @Override
