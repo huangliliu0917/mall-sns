@@ -9,8 +9,14 @@
 
 package com.huotu.huobanplus.sns.service.impl;
 
+import com.huotu.huobanplus.sns.entity.Slide;
+import com.huotu.huobanplus.sns.repository.SlideRepository;
 import com.huotu.huobanplus.sns.service.SlideService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.util.List;
 
 /**
  * 圈子banner服务
@@ -18,4 +24,10 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class SlideServiceImpl implements SlideService {
+    @Autowired
+    private SlideRepository slideRepository;
+    @Override
+    public List<Slide> findSlideList(Long customerId) throws IOException {
+        return slideRepository.findByCusomterId(customerId);
+    }
 }

@@ -9,6 +9,7 @@
 
 package com.huotu.huobanplus.sns.controller.admin;
 
+import com.huotu.huobanplus.sns.annotation.CustomerId;
 import com.huotu.huobanplus.sns.entity.Report;
 import com.huotu.huobanplus.sns.model.admin.ReportDetailsModel;
 import com.huotu.huobanplus.sns.model.admin.ReportListModel;
@@ -41,13 +42,15 @@ public class AdminReportController {
     /**
      * 返回举报列表
      * @param reportSearchModel 举报查询model
+     * @param customerId        商户ID
      * @return  查询结果
      * @throws Exception
      */
     @RequestMapping(value = "/getReportList", method = RequestMethod.POST)
     @ResponseBody
-    public ModelMap getReportList(@RequestBody ReportSearchModel reportSearchModel) throws Exception {
+    public ModelMap getReportList(@CustomerId Long customerId,@RequestBody ReportSearchModel reportSearchModel) throws Exception {
 
+        reportSearchModel.setCustomerId(customerId);
         Page<Report> reports = reportService.findReportList(reportSearchModel);
 
         List<ReportListModel> models=reportService.getReportListModelList(reports.getContent());

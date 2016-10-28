@@ -40,6 +40,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
+ * 举报服务实现
  * Created by jin on 2016/10/18.
  */
 @Service
@@ -80,6 +81,7 @@ public class ReportServiceImpl implements ReportService {
         }
         Specification<Report> specification = (root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
+            predicates.add(criteriaBuilder.equal(root.get("customerId").as(Long.class),searchModel.getCustomerId()));
             if (!StringUtils.isEmpty(searchModel.getName())) {
                 predicates.add(criteriaBuilder.like(root.get("user").get("nickName").as(String.class), "%" + searchModel.getName() + "%"));
             }
@@ -90,9 +92,8 @@ public class ReportServiceImpl implements ReportService {
             }
             return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
         };
-        Page<Report> circleList = reportRepository.findAll(
+        return reportRepository.findAll(
                 specification, new PageRequest(searchModel.getPageNo(), searchModel.getPageSize(), sort));
-        return circleList;
     }
 
     @Override

@@ -21,6 +21,11 @@ public class Report {
     private Long id;
 
     /**
+     * 商户ID
+     */
+    private Long customerId;
+
+    /**
      * 举报者
      */
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH})

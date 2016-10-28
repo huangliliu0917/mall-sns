@@ -140,6 +140,7 @@ public class CircleServiceImpl implements CircleService {
         Category category=circleListModel.getCategoryId()==null?null: categoryRepository.findOne(circleListModel.getCategoryId());
         User leader=circleListModel.getLeaderId()==null?null:userRepository.findOne(circleListModel.getLeaderId());
         Circle circle=new Circle();
+        circle.setCustomerId(circleListModel.getCustomerId());
         circle.setCategory(category);
         circle.setEnabled(circleListModel.isEnabled());
         circle.setLeader(leader);

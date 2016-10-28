@@ -1,7 +1,9 @@
 package com.huotu.huobanplus.sns.controller.admin;
 
+import com.huotu.huobanplus.sns.annotation.CustomerId;
 import com.huotu.huobanplus.sns.entity.Slide;
 import com.huotu.huobanplus.sns.repository.SlideRepository;
+import com.huotu.huobanplus.sns.service.SlideService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,16 +25,20 @@ public class AdminSlideController {
     @Autowired
     private SlideRepository slideRepository;
 
+    @Autowired
+    private SlideService slideService;
+
     /**
      * 获取banner数据并返回后台页面
+     * @param customerId    商户ID
      * @param model     bannerModel数据
      * @return          视图
      * @throws Exception
      */
     @RequestMapping("/getSlideList")
-    public String getSlideList(Model model) throws Exception{
+    public String getSlideList(@CustomerId Long customerId, Model model) throws Exception{
         String view="/admin/circle/bannerArticle";
-        List<Slide> slides=slideRepository.findAll();
+        List<Slide> slides=slideService.findSlideList(customerId);
         model.addAttribute("slides",slides);
         return view;
     }
@@ -45,8 +51,9 @@ public class AdminSlideController {
      */
     @RequestMapping(value = "/saveSlide",method = RequestMethod.POST)
     @ResponseBody
-    public ModelMap saveSlide(@RequestBody Slide slide) throws Exception{
+    public ModelMap saveSlide(@CustomerId Long customerId,@RequestBody Slide slide) throws Exception{
         ModelMap modelMap=new ModelMap();
+        slide.setCustomerId(customerId);
         slide=slideRepository.save(slide);
         modelMap.addAttribute("slide",slide);
         return modelMap;

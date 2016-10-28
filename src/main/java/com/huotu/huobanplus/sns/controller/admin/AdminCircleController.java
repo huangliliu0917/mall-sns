@@ -100,8 +100,9 @@ public class AdminCircleController {
      */
     @RequestMapping(value = "saveCircle",method = RequestMethod.POST)
     @ResponseBody
-    public ModelMap saveCircle(@RequestBody CircleListModel circleListModel) throws Exception{
+    public ModelMap saveCircle(@CustomerId Long customerId,@RequestBody CircleListModel circleListModel) throws Exception{
         ModelMap modelMap=new ModelMap();
+        circleListModel.setCustomerId(customerId);
         if(circleListModel.getCircleId()==null){
             circleService.addCircle(circleListModel);
         }else {

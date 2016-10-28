@@ -15,6 +15,11 @@ import java.util.List;
 public class CircleListModel {
 
     /**
+     * 商户ID
+     */
+    private Long customerId;
+
+    /**
      * 圈子ID
      */
     private Long circleId;
