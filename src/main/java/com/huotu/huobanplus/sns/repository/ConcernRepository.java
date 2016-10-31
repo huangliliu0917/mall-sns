@@ -81,4 +81,6 @@ public interface ConcernRepository extends JpaRepository<Concern, Long>, JpaSpec
      * @return
      */
     List<Concern> findTop10ByUserAndIdLessThanOrderByIdDesc(@Param("user") User user, @Param("id") Long id);
+
+    List<Concern> findByUser(@Param("user") User user);
 }

@@ -268,6 +268,8 @@ public class UserControllerImpl implements UserController {
             articleList.outputData(models);
         } else {
             //从哪里找些文章，填满关注首页
+            List<Concern> list = concernRepository.findByUser(user);
+
         }
         apiResult.setResultCode(200);
         return apiResult;
