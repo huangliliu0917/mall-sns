@@ -11,6 +11,9 @@ package com.huotu.huobanplus.sns.service;
 
 import com.huotu.huobanplus.sns.entity.User;
 import com.huotu.huobanplus.sns.entity.UserArticle;
+import com.huotu.huobanplus.sns.exception.VerificationCodeDuedException;
+import com.huotu.huobanplus.sns.exception.VerificationCodeInvoidException;
+import com.huotu.huobanplus.sns.exception.WeixinLoginFailException;
 import com.huotu.huobanplus.sns.model.AppCircleArticleModel;
 import com.huotu.huobanplus.sns.model.AppUserModel;
 import org.springframework.data.domain.Page;
@@ -78,7 +81,7 @@ public interface UserService {
     String userLogin(Long customerId, String phone, String code
             , String openId
             , String nickName
-            , String imageUrl);
+            , String imageUrl) throws VerificationCodeInvoidException, VerificationCodeDuedException;
 
     /**
      * 微信登录
@@ -91,7 +94,7 @@ public interface UserService {
     String weixinLogin(Long customerId
             , String openId
             , String nickName
-            , String imageUrl);
+            , String imageUrl) throws WeixinLoginFailException;
 
     /**
      * 注册用户

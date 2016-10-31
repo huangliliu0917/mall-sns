@@ -6,10 +6,13 @@ import com.huotu.common.api.Output;
 //import com.huotu.huobanplus.common.repository.MerchantRepository;
 import com.huotu.huobanplus.sns.controller.app.SecurityController;
 import com.huotu.huobanplus.sns.exception.InterrelatedException;
+import com.huotu.huobanplus.sns.exception.VerificationCodeDuedException;
+import com.huotu.huobanplus.sns.exception.VerificationCodeInvoidException;
+import com.huotu.huobanplus.sns.exception.WeixinLoginFailException;
+import com.huotu.huobanplus.sns.mallrepository.MallMerchantRepository;
 import com.huotu.huobanplus.sns.model.common.AppCode;
 import com.huotu.huobanplus.sns.model.common.CodeType;
 import com.huotu.huobanplus.sns.model.common.VerificationType;
-import com.huotu.huobanplus.sns.service.AppSecurityService;
 import com.huotu.huobanplus.sns.service.CommonConfigService;
 import com.huotu.huobanplus.sns.service.UserService;
 import com.huotu.huobanplus.sns.service.VerificationService;
@@ -20,7 +23,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Date;
 import java.util.Random;
@@ -40,8 +42,8 @@ public class SecurityControllerImpl implements SecurityController {
     @Autowired
     private UserService userService;
 
-//    @Autowired
-//    private MerchantRepository merchantRepository;
+    @Autowired
+    private MallMerchantRepository mallMerchantRepository;
 
     @Autowired
     private CommonConfigService commonConfigService;
@@ -49,8 +51,8 @@ public class SecurityControllerImpl implements SecurityController {
 
     @Override
     public ApiResult getSecondDomain(Output<String> data, Long customerId) {
-//        String subDomain = merchantRepository.findSubDomainByMerchantId(customerId);
-//        data.outputData(subDomain + "." + commonConfigService.getMallDomain());
+        String subDomain = mallMerchantRepository.findSubDomainByMerchantId(customerId);
+        data.outputData(subDomain + "." + commonConfigService.getMallDomain());
         return ApiResult.resultWith(AppCode.SUCCESS);
     }
 
@@ -58,7 +60,12 @@ public class SecurityControllerImpl implements SecurityController {
     public ApiResult weixinLogin(Output<String> data, Long customerId, String openId
             , String nickName, String imageUrl) {
 
-        return null;
+        try {
+            userService.weixinLogin(customerId, openId, nickName, imageUrl);
+        } catch (WeixinLoginFailException e) {
+            return ApiResult.resultWith(AppCode.ERROR_WEIXIN_LOGIN);
+        }
+        return ApiResult.resultWith(AppCode.SUCCESS);
     }
 
     @Override
@@ -78,7 +85,6 @@ public class SecurityControllerImpl implements SecurityController {
 
         try {
             verificationService.sendCode(phone, VerificationService.VerificationProject.fanmore, code, date, verificationType, codeType != null ? EnumHelper.getEnumType(CodeType.class, codeType) : CodeType.text);
-            return ApiResult.resultWith(AppCode.SUCCESS);
         } catch (IllegalStateException ex) {
             return ApiResult.resultWith(AppCode.ERROR_WRONG_VERIFICATION_INTERVAL);
         } catch (IllegalArgumentException ex) {
@@ -91,6 +97,7 @@ public class SecurityControllerImpl implements SecurityController {
             log.error("短信发送失败", ex);
             return ApiResult.resultWith(AppCode.ERROR_SEND_MESSAGE_FAIL);
         }
+        return ApiResult.resultWith(AppCode.SUCCESS);
     }
 
     @Override
@@ -98,10 +105,16 @@ public class SecurityControllerImpl implements SecurityController {
             , String openId
             , String nickName
             , String imageUrl) {
-        data.outputData(userService.userLogin(customerId, phone, code
-                , openId
-                , nickName
-                , imageUrl));
+        try {
+            data.outputData(userService.userLogin(customerId, phone, code
+                    , openId
+                    , nickName
+                    , imageUrl));
+        } catch (VerificationCodeInvoidException e) {
+            return ApiResult.resultWith(AppCode.VERIFICATION_CODE_INVOID);
+        } catch (VerificationCodeDuedException e) {
+            return ApiResult.resultWith(AppCode.VERIFICATION_CODE_DUED);
+        }
         return ApiResult.resultWith(AppCode.SUCCESS);
     }
 }

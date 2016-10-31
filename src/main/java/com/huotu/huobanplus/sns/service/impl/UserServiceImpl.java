@@ -12,6 +12,9 @@ package com.huotu.huobanplus.sns.service.impl;
 import com.huotu.huobanplus.sns.entity.User;
 import com.huotu.huobanplus.sns.entity.UserArticle;
 import com.huotu.huobanplus.sns.entity.VerificationCode;
+import com.huotu.huobanplus.sns.exception.VerificationCodeDuedException;
+import com.huotu.huobanplus.sns.exception.VerificationCodeInvoidException;
+import com.huotu.huobanplus.sns.exception.WeixinLoginFailException;
 import com.huotu.huobanplus.sns.mallentity.MallUser;
 import com.huotu.huobanplus.sns.mallrepository.MallUserRepository;
 import com.huotu.huobanplus.sns.mallservice.MallUserService;
@@ -166,20 +169,19 @@ public class UserServiceImpl implements UserService {
     public String userLogin(Long customerId, String phone, String code
             , String openId
             , String nickName
-            , String imageUrl) {
+            , String imageUrl) throws VerificationCodeInvoidException, VerificationCodeDuedException {
         //判断验证码是否有效
         VerificationCode verificationCode = verificationCodeRepository.findByMobileAndTypeAndCodeType(phone, VerificationType.BIND_REGISTER, CodeType.text);
-        if (verificationCode == null) throw new IllegalStateException("验证码无效");
+        if (verificationCode == null) throw new VerificationCodeInvoidException("验证码无效");
 
         Date currentDate = new Date();
         if (currentDate.getTime() - verificationCode.getSendTime().getTime() < 60 * 60 * 1000) {
-            throw new IllegalStateException("验证码失效");//超过1小时
+            throw new VerificationCodeDuedException("验证码失效");//超过1小时
         }
 
-        if (!code.equals(verificationCode.getCode())) throw new IllegalStateException("验证码错误");
+        if (!code.equals(verificationCode.getCode())) throw new VerificationCodeInvoidException("验证码错误");
 
         MallUser mallUser = mallUserRepository.findByCustomerIdAndMobile(customerId, phone);
-//        MallUser mallUser = null;
         Long userId;
         //商城中判断用户是否存在
         if (mallUser == null) {
@@ -200,8 +202,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String weixinLogin(Long customerId, String openId, String nickName, String imageUrl) {
-        return null;
+    public String weixinLogin(Long customerId, String openId, String nickName, String imageUrl) throws WeixinLoginFailException {
+
+        //判断本地用户是否存在
+        User user = userRepository.findByCustomerIdAndOpenId(customerId, openId);
+        if (user == null) {
+            throw new WeixinLoginFailException("微信登录失败，没有注册手机");
+        }
+        //返回token
+        String token = appSecurityService.createJWT("sns", customerId.toString() + "," + user.getId().toString(), 1000 * 3600 * 24 * 30);
+
+        return token;
     }
 
 

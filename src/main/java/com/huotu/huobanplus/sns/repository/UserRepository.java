@@ -39,4 +39,7 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
 
     @Query("update User u set u.fansAmount=u.fansAmount-1 where u.id=?1")
     void reduceFansAmount(@Param("userId") Long userId);
+
+    @Query("select user from User user where user.customerId=?1 and user.openId=?2")
+    User findByCustomerIdAndOpenId(Long customerId, String openId);
 }

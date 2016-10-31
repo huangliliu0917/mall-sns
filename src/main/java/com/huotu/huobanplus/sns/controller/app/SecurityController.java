@@ -2,6 +2,8 @@ package com.huotu.huobanplus.sns.controller.app;
 
 import com.huotu.common.api.ApiResult;
 import com.huotu.common.api.Output;
+import com.huotu.huobanplus.sns.exception.VerificationCodeDuedException;
+import com.huotu.huobanplus.sns.exception.VerificationCodeInvoidException;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -51,7 +53,11 @@ public interface SecurityController {
      * @param phone      String(11)
      * @param type       类型1：注册    2：忘记密码    3:绑定(更换)手机
      * @param codeType   0文本 1语音
-     * @return
+     * @return <ul>
+     * <li>20003 不合法的手机号</li>
+     * <li>20104 验证码发送间隔为90秒</li>
+     * <li>20105 短信发送通道不稳定，请重新尝试</li>
+     * </ul>
      */
     @RequestMapping(value = "/sendCode", method = RequestMethod.POST)
     ApiResult sendCode(Output<Boolean> voiceAble
@@ -69,7 +75,11 @@ public interface SecurityController {
      * @param openId     openid
      * @param nickName   用户昵称
      * @param imageUrl   用户头像
-     * @return token数据
+     * @return* token数据
+     * <ul>
+     *     <li>20106, "验证码错误"</li>
+     *     <li>20107, "验证码到期了"</li>
+     * </ul>
      */
     @Deprecated
     @RequestMapping(value = "/userLogin", method = RequestMethod.POST)
