@@ -124,7 +124,7 @@
                                 <div class="form-group ">
                                     <label class="col-sm-2 control-label">标签:</label>
                                     <div class="col-sm-10">
-                                        <button  class="btn btn-primary" type="button" onclick="page.addTags()" id="btnTags">添加标签</button>
+                                        <button class="btn btn-primary" type="button" onclick="page.addTags()" id="btnTags">添加标签</button>
                                         <div class="feed-activity-list">
 
                                             <div id="divTags">
@@ -193,6 +193,23 @@
                 </div>
                 <div class="modal-footer">
                     <button id="submitSelectTags" class="btn btn-success" type="button" onclick="page.submitSelectTags()" data-dismiss="modal">确定选择</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modal_circle">
+        <div class="modal-dialog" style="width: 1000px;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">×</button>
+                    <h4 class="modal-title">选择圈子</h4>
+                </div>
+                <div class="modal-body" style="height: 600px;">
+                    <iframe id="frame_circle" width="100%" height="100%" frameborder="0"></iframe>
+                </div>
+                <div class="modal-footer">
+                    <button id="submitSelectCircle" class="btn btn-success" type="button" onclick="page.submitSelectCircle()" data-dismiss="modal">确定选择</button>
                 </div>
             </div>
         </div>
@@ -326,6 +343,22 @@
         })
         if (result.length > 0) result = result.substr(0, result.length - 1);
         $("#tags").val(result);
+    }
+
+
+    page.selectCircle = function () {
+        $("#frame_circle").attr("src", "/admin/circle/circleList.html?extend=radio");
+        $("#btnCircle").attr("data-toggle", "modal");
+        $("#btnCircle").attr("data-target", "#modal_circle");
+
+    }
+
+    page.submitSelectCircle = function () {
+        var circle = $("#frame_circle")[0].contentWindow.circleList.externalCall();
+        $("#circleId").val(circle[0].id);
+        $("#divCircle").html(circle[0].name);
+
+        $("#submitSelectCircle").attr("data-dismiss", "modal");
     }
 
     $(function () {
