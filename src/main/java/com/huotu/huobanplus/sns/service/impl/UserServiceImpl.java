@@ -11,8 +11,14 @@ package com.huotu.huobanplus.sns.service.impl;
 
 import com.huotu.huobanplus.sns.entity.User;
 import com.huotu.huobanplus.sns.entity.UserArticle;
+import com.huotu.huobanplus.sns.entity.VerificationCode;
+import com.huotu.huobanplus.sns.mallentity.MallUser;
+import com.huotu.huobanplus.sns.mallrepository.MallUserRepository;
+import com.huotu.huobanplus.sns.mallservice.MallUserService;
 import com.huotu.huobanplus.sns.model.AppCircleArticleModel;
 import com.huotu.huobanplus.sns.model.AppUserModel;
+import com.huotu.huobanplus.sns.model.common.CodeType;
+import com.huotu.huobanplus.sns.model.common.VerificationType;
 import com.huotu.huobanplus.sns.repository.UserRepository;
 import com.huotu.huobanplus.sns.repository.VerificationCodeRepository;
 import com.huotu.huobanplus.sns.service.AppSecurityService;
@@ -62,13 +68,13 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private CommonConfigService commonConfigService;
 
-//    @Autowired
-//    private com.huotu.huobanplus.common.service.UserService mallUserService;
+    @Autowired
+    private MallUserService mallUserService;
 
-//    @Autowired
-//    private com.huotu.huobanplus.common.repository.UserRepository mallUserRepository;
+    @Autowired
+    private MallUserRepository mallUserRepository;
 
-//    @Override
+    //    @Override
 //    public Long getMerchantUserId(HttpServletRequest request) {
 //        if (env.acceptsProfiles("development") || env.acceptsProfiles("staging")) {
 //            return 97278L;//146 4471商户 王明
@@ -94,8 +100,8 @@ public class UserServiceImpl implements UserService {
 //        }
 //
 //    }
-@Autowired
-private AppSecurityService appSecurityService;
+    @Autowired
+    private AppSecurityService appSecurityService;
 
     @Override
     public Page<User> findByNickNameAndAuthenticationIdAndLevelId(String nickName, Integer authenticationId,
@@ -161,36 +167,36 @@ private AppSecurityService appSecurityService;
             , String openId
             , String nickName
             , String imageUrl) {
-//        //判断验证码是否有效
-//        VerificationCode verificationCode = verificationCodeRepository.findByMobileAndTypeAndCodeType(phone, VerificationType.BIND_REGISTER, CodeType.text);
-//        if (verificationCode == null) throw new IllegalStateException("验证码无效");
-//
-//        Date currentDate = new Date();
-//        if (currentDate.getTime() - verificationCode.getSendTime().getTime() < 60 * 60 * 1000) {
-//            throw new IllegalStateException("验证码失效");//超过1小时
-//        }
-//
-//        if (!code.equals(verificationCode.getCode())) throw new IllegalStateException("验证码错误");
-//
-//        com.huotu.huobanplus.common.entity.User mallUser = mallUserRepository.findByMerchantIdAndMobile(customerId, phone);
-//        Long userId;
-//        //商城中判断用户是否存在
-//        if (mallUser == null) {
-//            userId = mallUserService.userRegister(customerId, phone);
-//        } else {
-//            userId = mallUser.getId();
-//        }
-//
-//        //判断本地用户是否存在，不存在则创建本地用户
-//        User user = userRepository.findOne(userId);
-//        if (user == null) {
-//            user = register(customerId, phone, openId, nickName, imageUrl);
-//        }
-//        //返回token
-//        String token = appSecurityService.createJWT("sns", customerId.toString() + "," + user.getId().toString(), 1000 * 3600 * 24 * 30);
-//
-//        return token;
-        return null;
+        //判断验证码是否有效
+        VerificationCode verificationCode = verificationCodeRepository.findByMobileAndTypeAndCodeType(phone, VerificationType.BIND_REGISTER, CodeType.text);
+        if (verificationCode == null) throw new IllegalStateException("验证码无效");
+
+        Date currentDate = new Date();
+        if (currentDate.getTime() - verificationCode.getSendTime().getTime() < 60 * 60 * 1000) {
+            throw new IllegalStateException("验证码失效");//超过1小时
+        }
+
+        if (!code.equals(verificationCode.getCode())) throw new IllegalStateException("验证码错误");
+
+        MallUser mallUser = mallUserRepository.findByCustomerIdAndMobile(customerId, phone);
+//        MallUser mallUser = null;
+        Long userId;
+        //商城中判断用户是否存在
+        if (mallUser == null) {
+            userId = mallUserService.userRegister(customerId, phone);
+        } else {
+            userId = mallUser.getId();
+        }
+
+        //判断本地用户是否存在，不存在则创建本地用户
+        User user = userRepository.findOne(userId);
+        if (user == null) {
+            user = register(customerId, phone, openId, nickName, imageUrl);
+        }
+        //返回token
+        String token = appSecurityService.createJWT("sns", customerId.toString() + "," + user.getId().toString(), 1000 * 3600 * 24 * 30);
+
+        return token;
     }
 
     @Override

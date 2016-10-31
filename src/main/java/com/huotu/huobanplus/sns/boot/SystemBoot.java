@@ -19,6 +19,7 @@ public class SystemBoot extends AbstractAnnotationConfigDispatcherServletInitial
     protected Class<?>[] getRootConfigClasses() {
         return new Class<?>[]{
                 BootConfig.class
+                , MallBootConfig.class
                 , MvcConfig.class
                 , ContainerRuntimeConfig.class
                 , LocalRuntimeConfig.class
