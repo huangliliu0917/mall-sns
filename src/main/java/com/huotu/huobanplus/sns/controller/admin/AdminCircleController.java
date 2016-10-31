@@ -56,7 +56,7 @@ public class AdminCircleController {
      */
     @RequestMapping(value = "/getCircleList", method = RequestMethod.POST)
     @ResponseBody
-    public ModelMap getCircleList(@CustomerId Long customerId,@RequestBody CircleSearchModel circleSearchModel) throws Exception {
+    public ModelMap getCircleList(@CustomerId Long customerId, @RequestBody CircleSearchModel circleSearchModel) throws Exception {
         circleSearchModel.setCustomerId(customerId);
         Page<Circle> circles = circleService.findCircleList(circleSearchModel);
         List<CircleListModel> models = circleService.findCircleListModel(circles.getContent());
