@@ -9,6 +9,7 @@
 
 package com.huotu.huobanplus.sns.controller.admin;
 
+import com.huotu.huobanplus.sns.annotation.CustomerId;
 import com.huotu.huobanplus.sns.entity.Level;
 import com.huotu.huobanplus.sns.repository.LevelRepository;
 import com.huotu.huobanplus.sns.repository.UserRepository;
@@ -50,20 +51,20 @@ public class AdminLevelController {
     /**
      * 等级列表页
      *
-     * @param page       页码
-     * @param pageSize   每页条数
+     * @param page     页码
+     * @param pageSize 每页条数
      * @param model
      * @return
      * @throws IOException
      */
     @RequestMapping(value = "/index", method = RequestMethod.GET)
-    public String index(@RequestParam(required = false) Integer page,
+    public String index(@CustomerId Long customerId, @RequestParam(required = false) Integer page,
                         @RequestParam(required = false) Integer pageSize, Model model) throws IOException {
         if (Objects.isNull(page)) page = ContractHelper.list_page;
         if (Objects.isNull(pageSize)) pageSize = ContractHelper.list_pageSize;
         Sort sort = new Sort(Sort.Direction.ASC, "experience");
         Pageable pageable = new PageRequest(page - 1, pageSize, sort);
-        Page<Level> pages = levelRepository.findAll(pageable);
+        Page<Level> pages = levelRepository.findAllByCustomerId(customerId, pageable);
         model.addAttribute("total", pages.getTotalElements());
         model.addAttribute("pageSize", pageSize);
         model.addAttribute("page", page);
@@ -86,6 +87,7 @@ public class AdminLevelController {
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     @ResponseBody
     public ModelMap save(
+            @CustomerId Long customerId,
             @RequestParam(required = false) Long id, @RequestParam String name, @RequestParam Long experience
     ) throws IOException {
         Level level;
@@ -93,6 +95,7 @@ public class AdminLevelController {
         else level = levelRepository.findOne(id);
         level.setName(name);
         level.setExperience(experience);
+        level.setCustomerId(customerId);
         levelRepository.save(level);
         ModelMap map = new ModelMap();
         map.addAttribute("success", true);
@@ -139,7 +142,7 @@ public class AdminLevelController {
      */
     @RequestMapping(value = "/findAll", method = RequestMethod.GET)
     @ResponseBody
-    public List<Level> findAll() throws IOException {
+    public List<Level> findAll(@CustomerId Long customerId) throws IOException {
         List<Level> levels = levelRepository.findAll(new Sort(Sort.Direction.ASC, "experience"));
         return levels;
     }

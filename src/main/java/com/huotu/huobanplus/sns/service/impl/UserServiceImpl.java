@@ -9,24 +9,18 @@
 
 package com.huotu.huobanplus.sns.service.impl;
 
-import com.huotu.common.base.RSAHelper;
 import com.huotu.huobanplus.sns.entity.User;
 import com.huotu.huobanplus.sns.entity.UserArticle;
-import com.huotu.huobanplus.sns.entity.VerificationCode;
 import com.huotu.huobanplus.sns.model.AppCircleArticleModel;
 import com.huotu.huobanplus.sns.model.AppUserModel;
-import com.huotu.huobanplus.sns.model.common.CodeType;
-import com.huotu.huobanplus.sns.model.common.VerificationType;
 import com.huotu.huobanplus.sns.repository.UserRepository;
 import com.huotu.huobanplus.sns.repository.VerificationCodeRepository;
 import com.huotu.huobanplus.sns.service.AppSecurityService;
 import com.huotu.huobanplus.sns.service.CommonConfigService;
 import com.huotu.huobanplus.sns.service.UserService;
 import com.huotu.huobanplus.sns.utils.ContractHelper;
-import com.huotu.huobanplus.sns.utils.CookieHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
@@ -37,8 +31,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.criteria.Predicate;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
@@ -102,6 +94,8 @@ public class UserServiceImpl implements UserService {
 //        }
 //
 //    }
+@Autowired
+private AppSecurityService appSecurityService;
 
     @Override
     public Page<User> findByNickNameAndAuthenticationIdAndLevelId(String nickName, Integer authenticationId,
@@ -120,7 +114,6 @@ public class UserServiceImpl implements UserService {
             return predicate;
         }, pageable);
     }
-
 
     public AppUserModel getAppUser(Long userId) {
         User user = userRepository.findOne(userId);
@@ -163,9 +156,6 @@ public class UserServiceImpl implements UserService {
         }
         return models;
     }
-
-    @Autowired
-    private AppSecurityService appSecurityService;
 
     public String userLogin(Long customerId, String phone, String code
             , String openId
