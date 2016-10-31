@@ -28,6 +28,6 @@ public class SlideServiceImpl implements SlideService {
     private SlideRepository slideRepository;
     @Override
     public List<Slide> findSlideList(Long customerId) throws IOException {
-        return slideRepository.findByCusomterId(customerId);
+        return slideRepository.findByCustomerId(customerId);
     }
 }

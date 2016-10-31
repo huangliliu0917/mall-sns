@@ -22,5 +22,5 @@ import java.util.List;
 @Repository
 public interface SlideRepository extends JpaRepository<Slide, Long>, JpaSpecificationExecutor<Slide> {
 
-    List<Slide> findByCusomterId(Long id);
+    List<Slide> findByCustomerId(Long id);
 }
