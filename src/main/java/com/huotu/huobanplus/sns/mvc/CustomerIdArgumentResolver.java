@@ -10,6 +10,8 @@
 package com.huotu.huobanplus.sns.mvc;
 
 import com.huotu.huobanplus.sns.annotation.CustomerId;
+import com.huotu.huobanplus.sns.service.CustomerService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.support.WebDataBinderFactory;
@@ -17,11 +19,17 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * Created by jin on 2016/10/31.
  */
 @Component
 public class CustomerIdArgumentResolver implements HandlerMethodArgumentResolver {
+
+    @Autowired
+    private CustomerService customerService;
+
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
         return parameter.getParameterAnnotation(CustomerId.class) != null && (parameter.getParameterType().isAssignableFrom(Long.class));
@@ -29,6 +37,6 @@ public class CustomerIdArgumentResolver implements HandlerMethodArgumentResolver
 
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
-        return null;
+        return customerService.currentCustomerId(webRequest.getNativeRequest(HttpServletRequest.class));
     }
 }

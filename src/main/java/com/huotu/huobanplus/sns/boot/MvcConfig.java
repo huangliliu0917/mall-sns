@@ -11,6 +11,7 @@ package com.huotu.huobanplus.sns.boot;
 
 import com.huotu.common.api.ApiResultHandler;
 import com.huotu.common.api.OutputHandler;
+import com.huotu.huobanplus.sns.mvc.CustomerIdArgumentResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -32,12 +33,16 @@ import java.util.List;
 /**
  * Created by Administrator on 2016/8/20.
  */
+@SuppressWarnings("SpringJavaAutowiringInspection")
 @Configuration
 @EnableWebMvc
 @ComponentScan({"com.huotu.huobanplus.sns.controller"})
 public class MvcConfig extends WebMvcConfigurerAdapter {
     @Autowired
     private Environment environment;
+
+    @Autowired
+    private CustomerIdArgumentResolver customerIdArgumentResolver;
 
 
     @Autowired
@@ -72,6 +77,7 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
      */
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
         argumentResolvers.add(new OutputHandler());
+        argumentResolvers.add(customerIdArgumentResolver);
     }
 
     /**

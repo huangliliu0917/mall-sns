@@ -48,7 +48,7 @@ public class AdminReportController {
      */
     @RequestMapping(value = "/getReportList", method = RequestMethod.POST)
     @ResponseBody
-    public ModelMap getReportList(@CustomerId Long customerId,@RequestBody ReportSearchModel reportSearchModel) throws Exception {
+    public ModelMap getReportList(@CustomerId Long customerId, @RequestBody ReportSearchModel reportSearchModel) throws Exception {
 
         reportSearchModel.setCustomerId(customerId);
         Page<Report> reports = reportService.findReportList(reportSearchModel);
