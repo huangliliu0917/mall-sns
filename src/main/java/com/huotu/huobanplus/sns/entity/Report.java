@@ -19,10 +19,6 @@ public class Report {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    /**
-     * 商家
-     */
-    private Long customerId;
 
     /**
      * 商户ID

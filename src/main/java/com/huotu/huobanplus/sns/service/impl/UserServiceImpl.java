@@ -70,8 +70,8 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private CommonConfigService commonConfigService;
 
-    @Autowired
-    private com.huotu.huobanplus.common.service.UserService mallUserService;
+//    @Autowired
+//    private com.huotu.huobanplus.common.service.UserService mallUserService;
 
     @Autowired
     private com.huotu.huobanplus.common.repository.UserRepository mallUserRepository;
@@ -171,35 +171,41 @@ public class UserServiceImpl implements UserService {
             , String openId
             , String nickName
             , String imageUrl) {
-        //判断验证码是否有效
-        VerificationCode verificationCode = verificationCodeRepository.findByMobileAndTypeAndCodeType(phone, VerificationType.BIND_REGISTER, CodeType.text);
-        if (verificationCode == null) throw new IllegalStateException("验证码无效");
+//        //判断验证码是否有效
+//        VerificationCode verificationCode = verificationCodeRepository.findByMobileAndTypeAndCodeType(phone, VerificationType.BIND_REGISTER, CodeType.text);
+//        if (verificationCode == null) throw new IllegalStateException("验证码无效");
+//
+//        Date currentDate = new Date();
+//        if (currentDate.getTime() - verificationCode.getSendTime().getTime() < 60 * 60 * 1000) {
+//            throw new IllegalStateException("验证码失效");//超过1小时
+//        }
+//
+//        if (!code.equals(verificationCode.getCode())) throw new IllegalStateException("验证码错误");
+//
+//        com.huotu.huobanplus.common.entity.User mallUser = mallUserRepository.findByMerchantIdAndMobile(customerId, phone);
+//        Long userId;
+//        //商城中判断用户是否存在
+//        if (mallUser == null) {
+//            userId = mallUserService.userRegister(customerId, phone);
+//        } else {
+//            userId = mallUser.getId();
+//        }
+//
+//        //判断本地用户是否存在，不存在则创建本地用户
+//        User user = userRepository.findOne(userId);
+//        if (user == null) {
+//            user = register(customerId, phone, openId, nickName, imageUrl);
+//        }
+//        //返回token
+//        String token = appSecurityService.createJWT("sns", customerId.toString() + "," + user.getId().toString(), 1000 * 3600 * 24 * 30);
+//
+//        return token;
+        return null;
+    }
 
-        Date currentDate = new Date();
-        if (currentDate.getTime() - verificationCode.getSendTime().getTime() < 60 * 60 * 1000) {
-            throw new IllegalStateException("验证码失效");//超过1小时
-        }
-
-        if (!code.equals(verificationCode.getCode())) throw new IllegalStateException("验证码错误");
-
-        com.huotu.huobanplus.common.entity.User mallUser = mallUserRepository.findByMerchantIdAndMobile(customerId, phone);
-        Long userId;
-        //商城中判断用户是否存在
-        if (mallUser == null) {
-            userId = mallUserService.userRegister(customerId, phone);
-        } else {
-            userId = mallUser.getId();
-        }
-
-        //判断本地用户是否存在，不存在则创建本地用户
-        User user = userRepository.findOne(userId);
-        if (user == null) {
-            user = register(customerId, phone, openId, nickName, imageUrl);
-        }
-        //返回token
-        String token = appSecurityService.createJWT("sns", customerId.toString() + "," + user.getId().toString(), 1000 * 3600 * 24 * 30);
-
-        return token;
+    @Override
+    public String weixinLogin(Long customerId, String openId, String nickName, String imageUrl) {
+        return null;
     }
 
 
@@ -208,7 +214,7 @@ public class UserServiceImpl implements UserService {
             , String openId
             , String nickName
             , String imageUrl) {
-        User user  = new User();
+        User user = new User();
         user.setCustomerId(customerId);
         user.setMobile(mobile);
         user.setOpenId(openId);

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  * app安全相关模块
  * Created by Administrator on 2016/10/28.
  */
+@RequestMapping("/app/security")
 public interface SecurityController {
 
 
@@ -33,7 +34,9 @@ public interface SecurityController {
      * @return 登录成功返回token数据
      */
     @RequestMapping(value = "/weixinLogin", method = RequestMethod.POST)
-    ApiResult weixinLogin(Output<String> data, @RequestParam(value = "openId") String openId
+    ApiResult weixinLogin(Output<String> data
+            , @RequestParam("customerId") Long customerId
+            , @RequestParam(value = "openId") String openId
             , @RequestParam(value = "nickName", required = false) String nickName
             , @RequestParam(value = "imageUrl", required = false) String imageUrl);
 

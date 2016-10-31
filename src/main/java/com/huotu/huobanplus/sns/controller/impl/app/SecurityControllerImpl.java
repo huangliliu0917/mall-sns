@@ -55,8 +55,9 @@ public class SecurityControllerImpl implements SecurityController {
     }
 
     @Override
-    public ApiResult weixinLogin(Output<String> data, String openId
+    public ApiResult weixinLogin(Output<String> data, Long customerId, String openId
             , String nickName, String imageUrl) {
+
         return null;
     }
 

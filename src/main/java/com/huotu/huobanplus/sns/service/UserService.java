@@ -75,8 +75,20 @@ public interface UserService {
      * @param code
      * @return
      */
-
     String userLogin(Long customerId, String phone, String code
+            , String openId
+            , String nickName
+            , String imageUrl);
+
+    /**
+     * 微信登录
+     * @param customerId
+     * @param openId
+     * @param nickName
+     * @param imageUrl
+     * @return
+     */
+    String weixinLogin(Long customerId
             , String openId
             , String nickName
             , String imageUrl);
