@@ -2,8 +2,8 @@ package com.huotu.huobanplus.sns.controller.impl.app;
 
 import com.huotu.common.api.ApiResult;
 import com.huotu.common.api.Output;
-import com.huotu.huobanplus.common.entity.Merchant;
-import com.huotu.huobanplus.common.repository.MerchantRepository;
+//import com.huotu.huobanplus.common.entity.Merchant;
+//import com.huotu.huobanplus.common.repository.MerchantRepository;
 import com.huotu.huobanplus.sns.controller.app.SecurityController;
 import com.huotu.huobanplus.sns.exception.InterrelatedException;
 import com.huotu.huobanplus.sns.model.common.AppCode;
@@ -40,8 +40,8 @@ public class SecurityControllerImpl implements SecurityController {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private MerchantRepository merchantRepository;
+//    @Autowired
+//    private MerchantRepository merchantRepository;
 
     @Autowired
     private CommonConfigService commonConfigService;
@@ -49,8 +49,8 @@ public class SecurityControllerImpl implements SecurityController {
 
     @Override
     public ApiResult getSecondDomain(Output<String> data, Long customerId) {
-        String subDomain = merchantRepository.findSubDomainByMerchantId(customerId);
-        data.outputData(subDomain + "." + commonConfigService.getMallDomain());
+//        String subDomain = merchantRepository.findSubDomainByMerchantId(customerId);
+//        data.outputData(subDomain + "." + commonConfigService.getMallDomain());
         return ApiResult.resultWith(AppCode.SUCCESS);
     }
 

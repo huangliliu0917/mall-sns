@@ -73,8 +73,8 @@ public class UserServiceImpl implements UserService {
 //    @Autowired
 //    private com.huotu.huobanplus.common.service.UserService mallUserService;
 
-    @Autowired
-    private com.huotu.huobanplus.common.repository.UserRepository mallUserRepository;
+//    @Autowired
+//    private com.huotu.huobanplus.common.repository.UserRepository mallUserRepository;
 
 //    @Override
 //    public Long getMerchantUserId(HttpServletRequest request) {

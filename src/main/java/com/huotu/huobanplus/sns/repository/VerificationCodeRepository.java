@@ -15,7 +15,7 @@ import java.util.List;
  * @author CJ
  */
 @Repository
-public interface VerificationCodeRepository extends JpaRepository<VerificationCode,Long>, ClassicsRepository<VerificationCode>,JpaSpecificationExecutor<VerificationCode> {
+public interface VerificationCodeRepository extends JpaRepository<VerificationCode,Long>{
 
     /**
      * 根据手机和类型返回验证码
