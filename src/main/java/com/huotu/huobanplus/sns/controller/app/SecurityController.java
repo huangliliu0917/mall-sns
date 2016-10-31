@@ -31,7 +31,10 @@ public interface SecurityController {
      * @param openId   openid
      * @param nickName 用户昵称
      * @param imageUrl 用户头像
-     * @return 登录成功返回token数据
+     * @return <ul>
+     * <li>1 成功返回token数据</li>
+     * <li>20002 微信登录失败，没有注册手机</li>
+     * </ul>
      */
     @RequestMapping(value = "/weixinLogin", method = RequestMethod.POST)
     ApiResult weixinLogin(Output<String> data
