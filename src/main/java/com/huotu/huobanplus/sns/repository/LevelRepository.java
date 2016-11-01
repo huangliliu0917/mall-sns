@@ -12,10 +12,13 @@ package com.huotu.huobanplus.sns.repository;
 import com.huotu.huobanplus.sns.entity.Level;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * Created by jin on 2016/10/11.
@@ -24,4 +27,6 @@ import org.springframework.stereotype.Repository;
 public interface LevelRepository extends JpaRepository<Level, Long>, JpaSpecificationExecutor<Level> {
 
     Page<Level> findAllByCustomerId(@Param("customerId") Long customerId, Pageable pageable);
+
+    List<Level> findAllByCustomerId(@Param("customerId") Long customerId, Sort sort);
 }

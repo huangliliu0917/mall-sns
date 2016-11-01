@@ -10,6 +10,8 @@
 package com.huotu.huobanplus.sns.repository;
 
 import com.huotu.huobanplus.sns.entity.UserSuggested;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.query.Param;
@@ -24,4 +26,6 @@ import java.util.Optional;
 public interface UserSuggestedRepository extends JpaRepository<UserSuggested, Long>, JpaSpecificationExecutor<UserSuggested> {
 
     Optional<UserSuggested> findByUserId(@Param("userId") Long userId);
+
+    Page<UserSuggested> findByCustomerId(@Param("customerId") Long customerId, Pageable pageable);
 }

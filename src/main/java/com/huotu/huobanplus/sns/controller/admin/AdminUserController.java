@@ -9,6 +9,7 @@
 
 package com.huotu.huobanplus.sns.controller.admin;
 
+import com.huotu.huobanplus.sns.annotation.CustomerId;
 import com.huotu.huobanplus.sns.entity.Level;
 import com.huotu.huobanplus.sns.entity.Tag;
 import com.huotu.huobanplus.sns.entity.User;
@@ -75,9 +76,9 @@ public class AdminUserController {
      * @throws IOException
      */
     @RequestMapping(value = "/index", method = RequestMethod.GET)
-    public String index(@RequestParam(required = false) String selectType, Model model) throws IOException {
+    public String index(@CustomerId Long customerId, @RequestParam(required = false) String selectType, Model model) throws IOException {
 //        model.addAttribute("lessThan",lessThan);
-        List<Level> levels = levelRepository.findAll(new Sort(Sort.Direction.ASC, "experience"));
+        List<Level> levels = levelRepository.findAllByCustomerId(customerId, new Sort(Sort.Direction.ASC, "experience"));
         model.addAttribute("levels", levels);
         List<AuthenticationTypeModel> types = AuthenticationType.allTypes();
         model.addAttribute("types", types);
@@ -100,7 +101,9 @@ public class AdminUserController {
      */
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     @ResponseBody
-    public ModelMap list(@RequestParam(required = false) Integer page, @RequestParam(required = false) Integer pageSize,
+    public ModelMap list(@RequestParam(required = false) Integer page,
+                         @RequestParam(required = false) Integer pageSize,
+                         @CustomerId Long customerId,
                          @RequestParam(required = false) String nickName,
                          @RequestParam(required = false) Integer authenticationId,
                          @RequestParam(required = false) Long levelId, String sortName, String sortType) throws IOException {
@@ -112,8 +115,8 @@ public class AdminUserController {
         else
             sort = new Sort(Sort.Direction.DESC, sortName);
         Pageable pageable = new PageRequest(page - 1, pageSize, sort);
-        Page<User> pages = userService.findByNickNameAndAuthenticationIdAndLevelId(nickName, authenticationId,
-                levelId, pageable);
+        Page<User> pages = userService.findByNickNameAndAuthenticationIdAndLevelIdAndCustomerId(nickName, authenticationId,
+                levelId, customerId, pageable);
         ModelMap map = new ModelMap();
         map.addAttribute("list", pages.getContent());
         map.addAttribute("total", pages.getTotalElements());
@@ -217,12 +220,13 @@ public class AdminUserController {
      */
     @RequestMapping(value = "/suggestedFollow", method = RequestMethod.GET)
     public String suggestedFollow(@RequestParam(required = false) Integer page,
-                                  @RequestParam(required = false) Integer pageSize, Model model) throws IOException {
+                                  @RequestParam(required = false) Integer pageSize,
+                                  @CustomerId Long customerId, Model model) throws IOException {
         if (Objects.isNull(page)) page = ContractHelper.list_page;
         if (Objects.isNull(pageSize)) pageSize = ContractHelper.list_pageSize;
         Sort sort = new Sort(Sort.Direction.DESC, "id");
         Pageable pageable = new PageRequest(page - 1, pageSize, sort);
-        Page<UserSuggested> pages = userSuggestedRepository.findAll(pageable);
+        Page<UserSuggested> pages = userSuggestedRepository.findByCustomerId(customerId, pageable);
         Long count = pages.getTotalElements();
         List<Long> idList = pages.getContent().stream().map(userSuggested ->
                 userSuggested.getUser().getId()).collect(Collectors.toList());
@@ -244,11 +248,12 @@ public class AdminUserController {
 
     @RequestMapping(value = "/suggested", method = RequestMethod.POST)
     @ResponseBody
-    public ModelMap suggested(Long[] ids) throws Exception {
+    public ModelMap suggested(@CustomerId Long customerId, Long[] ids) throws Exception {
         for (Long id : ids) {
             User user = userRepository.getOne(id);
             UserSuggested userSuggested = new UserSuggested();
             userSuggested.setUser(user);
+            userSuggested.setCustomerId(customerId);
             userSuggestedRepository.save(userSuggested);
         }
         return ResultUtil.success();

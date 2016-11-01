@@ -13,7 +13,8 @@ package com.huotu.huobanplus.sns.exception;
  * Created by jin on 2016/10/10.
  * 关注异常
  */
-public class ConcernException extends Exception {
+public class ConcernException extends SnsException {
+
     public ConcernException(String message) {
         super(message);
     }

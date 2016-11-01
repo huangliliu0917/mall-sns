@@ -13,7 +13,7 @@ import com.huotu.huobanplus.sns.entity.Article;
 import com.huotu.huobanplus.sns.entity.ArticleComment;
 import com.huotu.huobanplus.sns.entity.Report;
 import com.huotu.huobanplus.sns.entity.User;
-import com.huotu.huobanplus.sns.exception.LogException;
+import com.huotu.huobanplus.sns.exception.NeedLoginException;
 import com.huotu.huobanplus.sns.model.admin.ReportDetailsModel;
 import com.huotu.huobanplus.sns.model.admin.ReportListModel;
 import com.huotu.huobanplus.sns.model.admin.ReportSearchModel;
@@ -59,7 +59,7 @@ public class ReportServiceImpl implements ReportService {
     private ArticleCommentRepository articleCommentRepository;
 
     @Override
-    public void report(ReportTargetType type, Long id, String note) throws IOException, LogException {
+    public void report(ReportTargetType type, Long id, String note) throws IOException, NeedLoginException {
         Report report = new Report();
         report.setContent(note);
         User user = UserHelper.getUser();

@@ -10,7 +10,7 @@
 package com.huotu.huobanplus.sns.service;
 
 import com.huotu.huobanplus.sns.entity.Report;
-import com.huotu.huobanplus.sns.exception.LogException;
+import com.huotu.huobanplus.sns.exception.NeedLoginException;
 import com.huotu.huobanplus.sns.model.admin.ReportDetailsModel;
 import com.huotu.huobanplus.sns.model.admin.ReportListModel;
 import com.huotu.huobanplus.sns.model.admin.ReportSearchModel;
@@ -33,9 +33,9 @@ public interface ReportService {
      * @param id   举报的id，针对用户，文章，评论等
      * @param note 举报理由
      * @throws IOException
-     * @throws LogException
+     * @throws NeedLoginException 未登录
      */
-    void report(ReportTargetType type, Long id, String note) throws IOException, LogException;
+    void report(ReportTargetType type, Long id, String note) throws IOException, NeedLoginException;
 
 
     /**

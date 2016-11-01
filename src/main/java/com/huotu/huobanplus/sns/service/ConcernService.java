@@ -11,7 +11,7 @@ package com.huotu.huobanplus.sns.service;
 
 import com.huotu.huobanplus.sns.entity.Concern;
 import com.huotu.huobanplus.sns.exception.ConcernException;
-import com.huotu.huobanplus.sns.exception.LogException;
+import com.huotu.huobanplus.sns.exception.NeedLoginException;
 import com.huotu.huobanplus.sns.model.AppUserConcermListModel;
 
 import java.io.IOException;
@@ -27,20 +27,20 @@ public interface ConcernService {
      *
      * @param id 被关注用户id
      * @throws ConcernException 关注异常
-     * @throws LogException     登录异常
+     * @throws NeedLoginException     登录异常
      * @throws IOException      读写异常
      */
-    void concernUser(Long id) throws ConcernException, LogException, IOException;
+    void concernUser(Long id) throws ConcernException, NeedLoginException, IOException;
 
     /**
      * 取消关注用户
      *
      * @param id 被关注用户id
      * @throws ConcernException 关注异常
-     * @throws LogException     登录异常
+     * @throws NeedLoginException     登录异常
      * @throws IOException      读写异常
      */
-    void leaveUser(Long id) throws ConcernException, LogException, IOException;
+    void leaveUser(Long id) throws ConcernException, NeedLoginException, IOException;
 
     /**
      * 转化类型

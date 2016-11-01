@@ -12,7 +12,7 @@ package com.huotu.huobanplus.sns.service.impl;
 import com.huotu.huobanplus.sns.entity.Concern;
 import com.huotu.huobanplus.sns.entity.User;
 import com.huotu.huobanplus.sns.exception.ConcernException;
-import com.huotu.huobanplus.sns.exception.LogException;
+import com.huotu.huobanplus.sns.exception.NeedLoginException;
 import com.huotu.huobanplus.sns.model.AppUserConcermListModel;
 import com.huotu.huobanplus.sns.repository.ConcernRepository;
 import com.huotu.huobanplus.sns.repository.UserRepository;
@@ -41,7 +41,7 @@ public class ConcernServiceImpl implements ConcernService {
     private RedisTemplate<String, String> redisTemplate;
 
     @Override
-    public void concernUser(Long id) throws ConcernException, LogException, IOException {
+    public void concernUser(Long id) throws ConcernException, NeedLoginException, IOException {
         User user = UserHelper.getUser();
         User toUser = userRepository.getOne(id);
         List<Concern> concerns = concernRepository.findByUserAndToUser(user, toUser);
@@ -76,7 +76,7 @@ public class ConcernServiceImpl implements ConcernService {
     }
 
     @Override
-    public void leaveUser(Long id) throws ConcernException, LogException, IOException {
+    public void leaveUser(Long id) throws ConcernException, NeedLoginException, IOException {
         User user = UserHelper.getUser();
         User toUser = userRepository.getOne(id);
         List<Concern> concerns = concernRepository.findByUserAndToUser(user, toUser);

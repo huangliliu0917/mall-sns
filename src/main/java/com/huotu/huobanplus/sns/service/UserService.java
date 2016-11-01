@@ -19,8 +19,6 @@ import com.huotu.huobanplus.sns.model.AppUserModel;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
@@ -52,13 +50,14 @@ public interface UserService {
      * @param nickName         用户昵称
      * @param authenticationId 身份id
      * @param levelId          等级id
+     * @param customerId       商户id
      * @param pageable         分页
      * @return 用户列表
      * @throws IOException
      */
-    Page<User> findByNickNameAndAuthenticationIdAndLevelId(String nickName,
-                                                           Integer authenticationId,
-                                                           Long levelId, Pageable pageable) throws IOException;
+    Page<User> findByNickNameAndAuthenticationIdAndLevelIdAndCustomerId(String nickName,
+                                                                        Integer authenticationId,
+                                                                        Long levelId, Long customerId, Pageable pageable) throws IOException;
 
     /**
      * 浏览App用户
@@ -85,6 +84,7 @@ public interface UserService {
 
     /**
      * 微信登录
+     *
      * @param customerId
      * @param openId
      * @param nickName

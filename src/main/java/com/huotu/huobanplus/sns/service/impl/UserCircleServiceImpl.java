@@ -9,16 +9,15 @@
 
 package com.huotu.huobanplus.sns.service.impl;
 
-import com.huotu.huobanplus.sns.boot.PublicParameterHolder;
 import com.huotu.huobanplus.sns.entity.Circle;
 import com.huotu.huobanplus.sns.entity.User;
 import com.huotu.huobanplus.sns.entity.UserCircle;
 import com.huotu.huobanplus.sns.exception.ConcernException;
-import com.huotu.huobanplus.sns.exception.LogException;
-import com.huotu.huobanplus.sns.model.AppPublicModel;
+import com.huotu.huobanplus.sns.exception.NeedLoginException;
 import com.huotu.huobanplus.sns.repository.CircleRepository;
 import com.huotu.huobanplus.sns.repository.UserCircleRepository;
 import com.huotu.huobanplus.sns.service.UserCircleService;
+import com.huotu.huobanplus.sns.utils.UserHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -44,17 +43,10 @@ public class UserCircleServiceImpl implements UserCircleService {
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
 
-    private User getUser() throws LogException {
-        AppPublicModel model = PublicParameterHolder.getParameters();
-        if (Objects.isNull(model) || Objects.isNull(model.getCurrentUser()))
-            throw new LogException("您尚未登录");
-        return model.getCurrentUser();
-    }
-
     @Transactional
     @Override
-    public void concern(Long id) throws ConcernException, LogException, IOException {
-        User user = getUser();
+    public void concern(Long id) throws ConcernException, NeedLoginException, IOException {
+        User user = UserHelper.getUser();
         Circle circle = circleRepository.getOne(id);
         List<UserCircle> userCircles = userCircleRepository.findByUserAndCircle(user, circle);
         if (Objects.nonNull(userCircles) && userCircles.size() > 0)
@@ -76,8 +68,8 @@ public class UserCircleServiceImpl implements UserCircleService {
 
     @Transactional
     @Override
-    public void cancelConcern(Long id) throws ConcernException, LogException, IOException {
-        User user = getUser();
+    public void cancelConcern(Long id) throws ConcernException, NeedLoginException, IOException {
+        User user = UserHelper.getUser();
         Circle circle = circleRepository.getOne(id);
         List<UserCircle> userCircles = userCircleRepository.findByUserAndCircle(user, circle);
         if (Objects.isNull(userCircles) || userCircles.size() == 0)
