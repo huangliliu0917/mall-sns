@@ -108,10 +108,10 @@ public class UserServiceImpl implements UserService {
     private AppSecurityService appSecurityService;
 
     @Override
-    public Page<User> findByNickNameAndAuthenticationIdAndLevelId(String nickName, Integer authenticationId,
-                                                                  Long levelId, Pageable pageable) throws IOException {
+    public Page<User> findByNickNameAndAuthenticationIdAndLevelIdAndCustomerId(String nickName, Integer authenticationId,
+                                                                               Long levelId, Long customerId, Pageable pageable) throws IOException {
         return userRepository.findAll((root, query, cb) -> {
-            Predicate predicate = cb.and();
+            Predicate predicate = cb.and(cb.equal(root.get("customerId").as(Long.class), customerId));
             if (StringUtils.hasText(nickName)) {
                 predicate = cb.and(predicate, cb.like(root.get("nickName").as(String.class), "%" + nickName + "%"));
             }

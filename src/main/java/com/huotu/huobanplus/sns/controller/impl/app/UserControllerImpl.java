@@ -17,7 +17,7 @@ import com.huotu.huobanplus.sns.entity.Concern;
 import com.huotu.huobanplus.sns.entity.User;
 import com.huotu.huobanplus.sns.entity.UserArticle;
 import com.huotu.huobanplus.sns.exception.ConcernException;
-import com.huotu.huobanplus.sns.exception.LogException;
+import com.huotu.huobanplus.sns.exception.NeedLoginException;
 import com.huotu.huobanplus.sns.model.AppCircleArticleModel;
 import com.huotu.huobanplus.sns.model.AppUserConcermListModel;
 import com.huotu.huobanplus.sns.model.common.ArticleType;
@@ -60,7 +60,7 @@ public class UserControllerImpl implements UserController {
     private UserArticleRepository userArticleRepository;
 
     @Override
-    public ApiResult concern(Long id) {
+    public ApiResult concern(Long id) throws NeedLoginException {
         ApiResult apiResult = new ApiResult();
         try {
             userCircleService.concern(id);
@@ -70,10 +70,6 @@ public class UserControllerImpl implements UserController {
             apiResult.setResultCode(50001);
             apiResult.setResultDescription(e.getMessage());
             return apiResult;
-        } catch (LogException e) {
-            apiResult.setResultCode(50002);
-            apiResult.setResultDescription(e.getMessage());
-            return apiResult;
         } catch (IOException e) {
             apiResult.setResultCode(50003);
             apiResult.setResultDescription(e.getMessage());
@@ -83,7 +79,7 @@ public class UserControllerImpl implements UserController {
     }
 
     @Override
-    public ApiResult cancelConcern(Long id) {
+    public ApiResult cancelConcern(Long id) throws NeedLoginException {
         ApiResult apiResult = new ApiResult();
         try {
             userCircleService.cancelConcern(id);
@@ -93,10 +89,6 @@ public class UserControllerImpl implements UserController {
             apiResult.setResultCode(50001);
             apiResult.setResultDescription(e.getMessage());
             return apiResult;
-        } catch (LogException e) {
-            apiResult.setResultCode(50002);
-            apiResult.setResultDescription(e.getMessage());
-            return apiResult;
         } catch (IOException e) {
             apiResult.setResultCode(50003);
             apiResult.setResultDescription(e.getMessage());
@@ -106,7 +98,7 @@ public class UserControllerImpl implements UserController {
     }
 
     @Override
-    public ApiResult concernUser(Long id) throws Exception {
+    public ApiResult concernUser(Long id) throws NeedLoginException {
         ApiResult apiResult = new ApiResult();
         try {
             concernService.concernUser(id);
@@ -116,10 +108,6 @@ public class UserControllerImpl implements UserController {
             apiResult.setResultCode(50001);
             apiResult.setResultDescription(e.getMessage());
             return apiResult;
-        } catch (LogException e) {
-            apiResult.setResultCode(50002);
-            apiResult.setResultDescription(e.getMessage());
-            return apiResult;
         } catch (IOException e) {
             apiResult.setResultCode(50003);
             apiResult.setResultDescription(e.getMessage());
@@ -129,7 +117,7 @@ public class UserControllerImpl implements UserController {
     }
 
     @Override
-    public ApiResult cancelUser(Long id) throws Exception {
+    public ApiResult cancelUser(Long id) throws NeedLoginException {
         ApiResult apiResult = new ApiResult();
         try {
             concernService.leaveUser(id);
@@ -137,10 +125,6 @@ public class UserControllerImpl implements UserController {
             apiResult.setResultDescription("取消关注成功");
         } catch (ConcernException e) {
             apiResult.setResultCode(50001);
-            apiResult.setResultDescription(e.getMessage());
-            return apiResult;
-        } catch (LogException e) {
-            apiResult.setResultCode(50002);
             apiResult.setResultDescription(e.getMessage());
             return apiResult;
         } catch (IOException e) {
@@ -182,7 +166,7 @@ public class UserControllerImpl implements UserController {
     }
 
     @Override
-    public ApiResult commentArticle(Long id, String content) throws Exception {
+    public ApiResult commentArticle(Long id, String content) throws NeedLoginException, IOException {
         ApiResult apiResult = new ApiResult();
         if (sensitiveService.ContainSensitiveWords(content)) {
             apiResult.setResultCode(50001);
@@ -203,7 +187,7 @@ public class UserControllerImpl implements UserController {
     }
 
     @Override
-    public ApiResult report(ReportTargetType type, Long id, String note) throws Exception {
+    public ApiResult report(ReportTargetType type, Long id, String note) throws NeedLoginException {
         ApiResult apiResult = new ApiResult();
         try {
             reportService.report(type, id, note);
@@ -211,10 +195,6 @@ public class UserControllerImpl implements UserController {
             apiResult.setResultDescription("举报成功");
         } catch (IOException e) {
             apiResult.setResultCode(50003);
-            apiResult.setResultDescription(e.getMessage());
-            return apiResult;
-        } catch (LogException e) {
-            apiResult.setResultCode(50002);
             apiResult.setResultDescription(e.getMessage());
             return apiResult;
         }

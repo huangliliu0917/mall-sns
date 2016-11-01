@@ -89,16 +89,16 @@
 
                                                         <div class="row m-t-lg">
                                                             <div class="col-sm-4">
-                                                                <span class="bar">5,3,9,6,5,9,7,3,5,2</span>
+                                                                <span class="bar"><img src="/img/1.png"/></span>
                                                                 <h5><strong th:text="${articleAmount}">169</strong> 文章
                                                                 </h5>
                                                             </div>
                                                             <div class="col-sm-4">
-                                                                <span class="line">5,3,9,6,5,9,7,3,5,2</span>
+                                                                <span class="line"><img src="/img/2.png"/></span>
                                                                 <h5><strong th:text="${userAmount}">28</strong> 关注</h5>
                                                             </div>
                                                             <div class="col-sm-4">
-                                                                <span class="bar">5,3,2,-1,-3,-2,2,3,5,2</span>
+                                                                <span class="bar"><img src="/img/3.png"/></span>
                                                                 <h5><strong th:text="${fansAmount}">240</strong> 粉丝</h5>
                                                             </div>
                                                         </div>
@@ -218,7 +218,7 @@
         else {
             $("#submitSelectTags").attr("data-dismiss", "modal");
         }
-    }
+    };
 
     page.deleteTags = function (id, obj) {
         var request = {tagsType: 0, id: userId, tagsId: id};

@@ -1,6 +1,16 @@
+/*
+ * 版权所有:杭州火图科技有限公司
+ * 地址:浙江省杭州市滨江区西兴街道阡陌路智慧E谷B幢4楼
+ *
+ * (c) Copyright Hangzhou Hot Technology Co., Ltd.
+ * Floor 4,Block B,Wisdom E Valley,Qianmo Road,Binjiang District
+ * 2013-2016. All rights reserved.
+ */
+
 package com.huotu.huobanplus.sns.boot;
 
 import com.huotu.huobanplus.sns.exception.NeedLoginException;
+import com.huotu.huobanplus.sns.exception.SnsException;
 import com.huotu.huobanplus.sns.model.common.AppCode;
 import com.huotu.huobanplus.sns.model.common.PhysicalApiResult;
 import org.apache.commons.logging.Log;
@@ -35,6 +45,9 @@ public class AppHandlerExceptionResolver implements HandlerExceptionResolver {
             } catch (NeedLoginException e) {
                 result.setSystemResultCode(AppCode.ERROR_USER_NEED_LOGIN.getValue());
                 result.setSystemResultDescription(AppCode.ERROR_USER_NEED_LOGIN.getName());
+            } catch (SnsException e) {
+                result.setSystemResultCode(e.getCode());
+                result.setSystemResultDescription(e.getMessage());
             } catch (Exception e) {
                 log.error("unExcepted app error ", e);
                 result.setSystemResultCode(HttpStatus.INTERNAL_SERVER_ERROR.value());

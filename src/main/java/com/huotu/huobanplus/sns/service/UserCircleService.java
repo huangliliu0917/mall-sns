@@ -10,7 +10,7 @@
 package com.huotu.huobanplus.sns.service;
 
 import com.huotu.huobanplus.sns.exception.ConcernException;
-import com.huotu.huobanplus.sns.exception.LogException;
+import com.huotu.huobanplus.sns.exception.NeedLoginException;
 
 import java.io.IOException;
 
@@ -24,18 +24,18 @@ public interface UserCircleService {
      *
      * @param id 圈子id
      * @throws ConcernException 关注异常
-     * @throws LogException     登录异常
+     * @throws NeedLoginException     登录异常
      * @throws IOException      读写数据异常
      */
-    void concern(Long id) throws ConcernException, LogException, IOException;
+    void concern(Long id) throws ConcernException, NeedLoginException, IOException;
 
     /**
      * 取消关注圈子
      *
      * @param id 圈子id
      * @throws ConcernException 关注异常
-     * @throws LogException     登录异常
+     * @throws NeedLoginException     登录异常
      * @throws IOException      读写数据异常
      */
-    void cancelConcern(Long id) throws ConcernException, LogException, IOException;
+    void cancelConcern(Long id) throws ConcernException, NeedLoginException, IOException;
 }

@@ -11,7 +11,7 @@ package com.huotu.huobanplus.sns.utils;
 
 import com.huotu.huobanplus.sns.boot.PublicParameterHolder;
 import com.huotu.huobanplus.sns.entity.User;
-import com.huotu.huobanplus.sns.exception.LogException;
+import com.huotu.huobanplus.sns.exception.NeedLoginException;
 import com.huotu.huobanplus.sns.model.AppPublicModel;
 
 import java.util.Objects;
@@ -21,10 +21,10 @@ import java.util.Objects;
  */
 public class UserHelper {
 
-    public static User getUser() throws LogException {
+    public static User getUser() throws NeedLoginException {
         AppPublicModel model = PublicParameterHolder.getParameters();
         if (Objects.isNull(model) || Objects.isNull(model.getCurrentUser()))
-            throw new LogException("您尚未登录");
+            throw new NeedLoginException("您尚未登录");
         return model.getCurrentUser();
     }
 }
