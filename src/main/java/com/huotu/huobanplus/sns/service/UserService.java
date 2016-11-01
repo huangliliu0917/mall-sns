@@ -22,6 +22,7 @@ import org.springframework.data.domain.Pageable;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 /**
@@ -81,7 +82,7 @@ public interface UserService {
     String userLogin(Long customerId, String phone, String code
             , String openId
             , String nickName
-            , String imageUrl) throws VerificationCodeInvoidException, VerificationCodeDuedException;
+            , String imageUrl) throws VerificationCodeInvoidException, VerificationCodeDuedException, UnsupportedEncodingException;
 
     /**
      * 微信登录

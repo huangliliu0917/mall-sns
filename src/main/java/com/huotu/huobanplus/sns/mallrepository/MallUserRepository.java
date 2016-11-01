@@ -11,6 +11,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface MallUserRepository extends JpaRepository<MallUser, Long> {
 
-    @Query("select user from MallUser user where user.customerId=?1 and user.mobile=?2")
-    MallUser findByCustomerIdAndMobile(Long customerId, String phone);
+    @Query("select user from MallUser user where user.customerId=?1 and user.loginName=?2")
+    MallUser findByCustomerIdAndLoginName(Long customerId, String loginName);
 }

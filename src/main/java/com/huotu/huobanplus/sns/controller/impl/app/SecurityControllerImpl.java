@@ -24,6 +24,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.Random;
 
@@ -104,7 +105,7 @@ public class SecurityControllerImpl implements SecurityController {
     public ApiResult mobileLogin(Output<String> data, Long customerId, String phone, String code
             , String openId
             , String nickName
-            , String imageUrl) {
+            , String imageUrl) throws UnsupportedEncodingException {
         try {
             data.outputData(userService.userLogin(customerId, phone, code
                     , openId

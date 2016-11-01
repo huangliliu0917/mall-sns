@@ -20,7 +20,9 @@ import javax.transaction.Transactional;
  */
 @WebAppConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {BootConfig.class, MvcConfig.class
+@ContextConfiguration(classes = {BootConfig.class
+        , MvcConfig.class
+        , MallBootConfig.class
         , ContainerRuntimeConfig.class
         , LocalRuntimeConfig.class
         , RedisConfig.class})
@@ -46,7 +48,13 @@ public class AppSecurityServiceImplTest {
 
     @Test
     public void parseJWT() throws Exception {
+        Long id = 1L;
+        change(id);
+        log.info("change id=" + id);
+    }
 
+    private void change(Long id) {
+        id = 100L;
     }
 
 }

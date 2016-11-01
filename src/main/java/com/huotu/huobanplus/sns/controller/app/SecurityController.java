@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.io.UnsupportedEncodingException;
+
 /**
  * app安全相关模块
  * Created by Administrator on 2016/10/28.
@@ -89,6 +91,6 @@ public interface SecurityController {
             , @RequestParam("code") String code
             , @RequestParam(value = "openId", required = false) String openId
             , @RequestParam(value = "nickName", required = false) String nickName
-            , @RequestParam(value = "imageUrl", required = false) String imageUrl);
+            , @RequestParam(value = "imageUrl", required = false) String imageUrl) throws UnsupportedEncodingException;
 
 }

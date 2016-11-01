@@ -29,7 +29,7 @@ public class MallUser {
     /**
      * 商家
      */
-    @JoinColumn(name = "UB_CustomerID")
+    @Column(name = "UB_CustomerID")
     @Description("所在商户")
     private Long customerId;
 
@@ -100,7 +100,7 @@ public class MallUser {
      */
     @Column(name = "UB_LevelID")
     @Description("具体级别id")
-    private int levelId;
+    private long levelId;
 
 
 

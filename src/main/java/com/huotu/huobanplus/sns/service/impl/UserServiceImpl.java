@@ -41,6 +41,7 @@ import org.springframework.util.StringUtils;
 
 import javax.persistence.criteria.Predicate;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -169,7 +170,7 @@ public class UserServiceImpl implements UserService {
     public String userLogin(Long customerId, String phone, String code
             , String openId
             , String nickName
-            , String imageUrl) throws VerificationCodeInvoidException, VerificationCodeDuedException {
+            , String imageUrl) throws VerificationCodeInvoidException, VerificationCodeDuedException, UnsupportedEncodingException {
         //判断验证码是否有效
         VerificationCode verificationCode = verificationCodeRepository.findByMobileAndTypeAndCodeType(phone, VerificationType.BIND_REGISTER, CodeType.text);
         if (verificationCode == null) throw new VerificationCodeInvoidException("验证码无效");
@@ -181,11 +182,11 @@ public class UserServiceImpl implements UserService {
 
         if (!code.equals(verificationCode.getCode())) throw new VerificationCodeInvoidException("验证码错误");
 
-        MallUser mallUser = mallUserRepository.findByCustomerIdAndMobile(customerId, phone);
+        MallUser mallUser = mallUserRepository.findByCustomerIdAndLoginName(customerId, phone);
         Long userId;
         //商城中判断用户是否存在
         if (mallUser == null) {
-            userId = mallUserService.userRegister(customerId, phone);
+            userId = mallUserService.userRegister(customerId, phone, openId, nickName, imageUrl);
         } else {
             userId = mallUser.getId();
         }
