@@ -17,9 +17,11 @@ import com.huotu.huobanplus.sns.entity.Concern;
 import com.huotu.huobanplus.sns.entity.User;
 import com.huotu.huobanplus.sns.entity.UserArticle;
 import com.huotu.huobanplus.sns.exception.ConcernException;
+import com.huotu.huobanplus.sns.exception.ContentException;
 import com.huotu.huobanplus.sns.exception.NeedLoginException;
 import com.huotu.huobanplus.sns.model.AppCircleArticleModel;
 import com.huotu.huobanplus.sns.model.AppUserConcermListModel;
+import com.huotu.huobanplus.sns.model.common.AppCode;
 import com.huotu.huobanplus.sns.model.common.ArticleType;
 import com.huotu.huobanplus.sns.model.common.ReportTargetType;
 import com.huotu.huobanplus.sns.repository.ConcernRepository;
@@ -60,89 +62,36 @@ public class UserControllerImpl implements UserController {
     private UserArticleRepository userArticleRepository;
 
     @Override
-    public ApiResult concern(Long id) throws NeedLoginException {
-        ApiResult apiResult = new ApiResult();
-        try {
-            userCircleService.concern(id);
-            apiResult.setResultCode(200);
-            apiResult.setResultDescription("关注成功");
-        } catch (ConcernException e) {
-            apiResult.setResultCode(50001);
-            apiResult.setResultDescription(e.getMessage());
-            return apiResult;
-        } catch (IOException e) {
-            apiResult.setResultCode(50003);
-            apiResult.setResultDescription(e.getMessage());
-            return apiResult;
-        }
-        return apiResult;
+    public ApiResult concern(Long id) throws NeedLoginException, ConcernException, IOException {
+        userCircleService.concern(id);
+        return ApiResult.resultWith(AppCode.SUCCESS);
     }
 
     @Override
-    public ApiResult cancelConcern(Long id) throws NeedLoginException {
-        ApiResult apiResult = new ApiResult();
-        try {
-            userCircleService.cancelConcern(id);
-            apiResult.setResultCode(200);
-            apiResult.setResultDescription("取消关注成功");
-        } catch (ConcernException e) {
-            apiResult.setResultCode(50001);
-            apiResult.setResultDescription(e.getMessage());
-            return apiResult;
-        } catch (IOException e) {
-            apiResult.setResultCode(50003);
-            apiResult.setResultDescription(e.getMessage());
-            return apiResult;
-        }
-        return apiResult;
+    public ApiResult cancelConcern(Long id) throws NeedLoginException, IOException, ConcernException {
+        userCircleService.cancelConcern(id);
+        return ApiResult.resultWith(AppCode.SUCCESS);
     }
 
     @Override
-    public ApiResult concernUser(Long id) throws NeedLoginException {
-        ApiResult apiResult = new ApiResult();
-        try {
-            concernService.concernUser(id);
-            apiResult.setResultCode(200);
-            apiResult.setResultDescription("关注成功");
-        } catch (ConcernException e) {
-            apiResult.setResultCode(50001);
-            apiResult.setResultDescription(e.getMessage());
-            return apiResult;
-        } catch (IOException e) {
-            apiResult.setResultCode(50003);
-            apiResult.setResultDescription(e.getMessage());
-            return apiResult;
-        }
-        return apiResult;
+    public ApiResult concernUser(Long id) throws NeedLoginException, IOException, ConcernException {
+        concernService.concernUser(id);
+        return ApiResult.resultWith(AppCode.SUCCESS);
     }
 
     @Override
-    public ApiResult cancelUser(Long id) throws NeedLoginException {
-        ApiResult apiResult = new ApiResult();
-        try {
-            concernService.leaveUser(id);
-            apiResult.setResultCode(200);
-            apiResult.setResultDescription("取消关注成功");
-        } catch (ConcernException e) {
-            apiResult.setResultCode(50001);
-            apiResult.setResultDescription(e.getMessage());
-            return apiResult;
-        } catch (IOException e) {
-            apiResult.setResultCode(50003);
-            apiResult.setResultDescription(e.getMessage());
-            return apiResult;
-        }
-        return apiResult;
+    public ApiResult cancelUser(Long id) throws NeedLoginException, IOException, ConcernException {
+        concernService.leaveUser(id);
+        return ApiResult.resultWith(AppCode.SUCCESS);
     }
 
     @Transactional
     @Override
-    public ApiResult publishArticle(Long id, String name, String content, String pictureUrl, Long circleId) throws Exception {
+    public ApiResult publishArticle(Long id, String name, String content, String pictureUrl, Long circleId)
+            throws ContentException, IOException, NeedLoginException, InterruptedException {
         ApiResult apiResult = new ApiResult();
         if (sensitiveService.ContainSensitiveWords(content)) {
-            apiResult.setResultCode(50001);
-            apiResult.setResultDescription("您发表的内容包含敏感词汇");
-            return apiResult;
+            throw new ContentException(AppCode.ERROR_SENSITIVE_CONTENT.getValue(), AppCode.ERROR_SENSITIVE_CONTENT.getName());
         }
         User user = UserHelper.getUser();
         //文章内容截取成为简介,暂定为80个字

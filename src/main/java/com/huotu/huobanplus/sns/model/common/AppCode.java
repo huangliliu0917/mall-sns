@@ -30,13 +30,18 @@ public enum AppCode implements ICommonEnum {
     ERROR_WRONG_VERIFICATION_INTERVAL(20104, "验证码发送间隔为90秒"),
     ERROR_SEND_MESSAGE_FAIL(20105, "短信发送通道不稳定，请重新尝试"),
     VERIFICATION_CODE_INVOID(20106, "验证码错误"),
-    VERIFICATION_CODE_DUED(20107, "验证码到期了");
+    VERIFICATION_CODE_DUED(20107, "验证码到期了"),
 
 
     /**
      * 用户关注圈子，举报等操作以3开头
      */
+    ERROR_CONCERN_ALREADY(30001, "您已关注该圈子"),
+    ERROR_UNCONCERN_ALREADY(30002, "您已取消关注该圈子"),
+    ERROR_CONCERNUSER_ALREADY(30101, "您已关注该用户"),
+    ERROR_UNCONCERNUSER_ALREADY(30102, "您已经取消关注该用户"),
 
+    ERROR_SENSITIVE_CONTENT(30201, "您发表的内容包含敏感词汇");
 
     /**
      * 圈子，百科等以4开头

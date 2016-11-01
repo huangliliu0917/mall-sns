@@ -14,12 +14,12 @@ import com.huotu.huobanplus.sns.entity.User;
 import com.huotu.huobanplus.sns.entity.UserCircle;
 import com.huotu.huobanplus.sns.exception.ConcernException;
 import com.huotu.huobanplus.sns.exception.NeedLoginException;
+import com.huotu.huobanplus.sns.model.common.AppCode;
 import com.huotu.huobanplus.sns.repository.CircleRepository;
 import com.huotu.huobanplus.sns.repository.UserCircleRepository;
 import com.huotu.huobanplus.sns.service.UserCircleService;
 import com.huotu.huobanplus.sns.utils.UserHelper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -40,8 +40,6 @@ public class UserCircleServiceImpl implements UserCircleService {
     private CircleRepository circleRepository;
     @Autowired
     private UserCircleRepository userCircleRepository;
-    @Autowired
-    private RedisTemplate<String, String> redisTemplate;
 
     @Transactional
     @Override
@@ -50,7 +48,7 @@ public class UserCircleServiceImpl implements UserCircleService {
         Circle circle = circleRepository.getOne(id);
         List<UserCircle> userCircles = userCircleRepository.findByUserAndCircle(user, circle);
         if (Objects.nonNull(userCircles) && userCircles.size() > 0)
-            throw new ConcernException("您已关注该圈子");
+            throw new ConcernException(AppCode.ERROR_CONCERN_ALREADY.getValue(), AppCode.ERROR_CONCERN_ALREADY.getName());
         UserCircle userCircle = new UserCircle();
         userCircle.setCircle(circle);
         userCircle.setDate(new Date());
@@ -73,7 +71,7 @@ public class UserCircleServiceImpl implements UserCircleService {
         Circle circle = circleRepository.getOne(id);
         List<UserCircle> userCircles = userCircleRepository.findByUserAndCircle(user, circle);
         if (Objects.isNull(userCircles) || userCircles.size() == 0)
-            throw new ConcernException("您已经取消关注该圈子~");
+            throw new ConcernException(AppCode.ERROR_UNCONCERN_ALREADY.getValue(), AppCode.ERROR_UNCONCERN_ALREADY.getName());
         for (UserCircle userCircle : userCircles) {
             userCircleRepository.delete(userCircle);
         }

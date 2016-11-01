@@ -11,6 +11,8 @@ package com.huotu.huobanplus.sns.controller.app;
 
 import com.huotu.common.api.ApiResult;
 import com.huotu.common.api.Output;
+import com.huotu.huobanplus.sns.exception.ConcernException;
+import com.huotu.huobanplus.sns.exception.NeedLoginException;
 import com.huotu.huobanplus.sns.model.AppCircleArticleModel;
 import com.huotu.huobanplus.sns.model.AppUserConcermListModel;
 import com.huotu.huobanplus.sns.model.common.ReportTargetType;
@@ -18,52 +20,63 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.io.IOException;
+
 /**
  * 用户模块
  * Created by Administrator on 2016/9/28.
  */
+@SuppressWarnings("unused")
 @RequestMapping("/app/user")
 public interface UserController {
 
     /**
      * 关注圈子
      *
-     * @param id 圈子Id
+     * @param id 圈子id
      * @return
-     * @throws Exception
+     * @throws NeedLoginException 用户未登录
+     * @throws ConcernException   30001 已经关注过该圈子
+     * @throws IOException        读写数据异常
      */
     @RequestMapping(value = "/concern", method = RequestMethod.POST)
-    ApiResult concern(@RequestParam(value = "id") Long id) throws Exception;
+    ApiResult concern(@RequestParam(value = "id") Long id) throws NeedLoginException, ConcernException, IOException;
 
     /**
      * 取消关注圈子
      *
      * @param id 圈子id
      * @return
-     * @throws Exception
+     * @throws NeedLoginException 用户未登录
+     * @throws ConcernException   30002 未关注该圈子
+     * @throws IOException        读写数据异常
      */
     @RequestMapping(value = "/cancelConcern", method = RequestMethod.POST)
-    ApiResult cancelConcern(@RequestParam(value = "id") Long id) throws Exception;
+    ApiResult cancelConcern(@RequestParam(value = "id") Long id) throws NeedLoginException, IOException, ConcernException;
 
     /**
      * 关注用户
      *
-     * @param id 用户Id
+     * @param id 用户id
      * @return
-     * @throws Exception
+     * @throws NeedLoginException 用户未登录
+     * @throws IOException        读写数据异常
+     * @throws ConcernException   30101 已关注该用户
      */
     @RequestMapping(value = "/concernUser", method = RequestMethod.POST)
-    ApiResult concernUser(@RequestParam(value = "id") Long id) throws Exception;
+    ApiResult concernUser(@RequestParam(value = "id") Long id) throws NeedLoginException, IOException, ConcernException;
 
     /**
      * 取消关注用户
      *
-     * @param id 用户Id
+     * @param id 用户id
      * @return
-     * @throws Exception
+     * @throws NeedLoginException 用户未登录
+     * @throws IOException        读写数据异常
+     * @throws ConcernException   30102 未关注该用户
      */
     @RequestMapping(value = "/cancelUser", method = RequestMethod.POST)
-    ApiResult cancelUser(@RequestParam(value = "id") Long id) throws Exception;
+    ApiResult cancelUser(@RequestParam(value = "id") Long id) throws NeedLoginException, IOException, ConcernException;
 
     /**
      * 发布一篇文章
@@ -81,7 +94,7 @@ public interface UserController {
     ApiResult publishArticle(@RequestParam(value = "id") Long id
             , @RequestParam(value = "name") String name
             , @RequestParam(value = "content") String content
-            , @RequestParam(value = "pictureUrl",required = false) String pictureUrl
+            , @RequestParam(value = "pictureUrl", required = false) String pictureUrl
             , @RequestParam(value = "circleId") Long circleId) throws Exception;
 
 
@@ -122,7 +135,7 @@ public interface UserController {
      */
     @RequestMapping(value = "/myConcern", method = RequestMethod.GET)
     ApiResult myConcern(Output<AppUserConcermListModel[]> list
-            , @RequestParam(value = "lastId",required = false) Long lastId) throws Exception;
+            , @RequestParam(value = "lastId", required = false) Long lastId) throws Exception;
 
     /**
      * 我的粉丝
@@ -134,7 +147,7 @@ public interface UserController {
      */
     @RequestMapping(value = "/myConcerned", method = RequestMethod.GET)
     ApiResult myConcerned(Output<AppUserConcermListModel[]> list
-            , @RequestParam(value = "lastId",required = false) Long lastId) throws Exception;
+            , @RequestParam(value = "lastId", required = false) Long lastId) throws Exception;
 
 
     /**
@@ -147,5 +160,5 @@ public interface UserController {
      */
     @RequestMapping(value = "concernIndex", method = RequestMethod.GET)
     ApiResult concernIndex(Output<AppCircleArticleModel[]> articleList
-            , @RequestParam(value = "lastId",required = false) Long lastId) throws Exception;
+            , @RequestParam(value = "lastId", required = false) Long lastId) throws Exception;
 }
