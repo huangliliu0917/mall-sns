@@ -14,6 +14,7 @@ import com.huotu.huobanplus.sns.entity.User;
 import com.huotu.huobanplus.sns.exception.ConcernException;
 import com.huotu.huobanplus.sns.exception.NeedLoginException;
 import com.huotu.huobanplus.sns.model.AppUserConcermListModel;
+import com.huotu.huobanplus.sns.model.common.AppCode;
 import com.huotu.huobanplus.sns.repository.ConcernRepository;
 import com.huotu.huobanplus.sns.repository.UserRepository;
 import com.huotu.huobanplus.sns.service.ConcernService;
@@ -46,7 +47,7 @@ public class ConcernServiceImpl implements ConcernService {
         User toUser = userRepository.getOne(id);
         List<Concern> concerns = concernRepository.findByUserAndToUser(user, toUser);
         if (Objects.nonNull(concerns) && concerns.size() > 0)
-            throw new ConcernException("您已关注该用户");
+            throw new ConcernException(AppCode.ERROR_CONCERNUSER_ALREADY.getValue(), AppCode.ERROR_CONCERNUSER_ALREADY.getName());
         Concern concern = new Concern();
         concern.setToUser(toUser);
         concern.setDate(new Date());
@@ -81,7 +82,7 @@ public class ConcernServiceImpl implements ConcernService {
         User toUser = userRepository.getOne(id);
         List<Concern> concerns = concernRepository.findByUserAndToUser(user, toUser);
         if (Objects.isNull(concerns) || concerns.size() == 0)
-            throw new ConcernException("您已经取消关注该用户");
+            throw new ConcernException(AppCode.ERROR_UNCONCERNUSER_ALREADY.getValue(), AppCode.ERROR_UNCONCERNUSER_ALREADY.getName());
         for (Concern concern : concerns) {
             concernRepository.delete(concern);
         }

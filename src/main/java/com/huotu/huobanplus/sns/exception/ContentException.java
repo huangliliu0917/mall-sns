@@ -10,16 +10,16 @@
 package com.huotu.huobanplus.sns.exception;
 
 /**
- * Created by jin on 2016/10/10.
- * 关注异常
+ * Created by jin on 2016/11/1.
+ * 内容异常
  */
-public class ConcernException extends SnsException {
+public class ContentException extends SnsException {
 
-    public ConcernException(String message) {
+    public ContentException(String message) {
         super(message);
     }
 
-    public ConcernException(int code, String message) {
+    public ContentException(int code, String message) {
         super(code, message);
     }
 }
