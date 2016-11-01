@@ -2,8 +2,10 @@ package com.huotu.huobanplus.sns.controller.app;
 
 import com.huotu.common.api.ApiResult;
 import com.huotu.common.api.Output;
+import com.huotu.huobanplus.sns.exception.InterrelatedException;
 import com.huotu.huobanplus.sns.exception.VerificationCodeDuedException;
 import com.huotu.huobanplus.sns.exception.VerificationCodeInvoidException;
+import com.huotu.huobanplus.sns.exception.WeixinLoginFailException;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -45,7 +47,7 @@ public interface SecurityController {
             , @RequestParam("customerId") Long customerId
             , @RequestParam(value = "openId") String openId
             , @RequestParam(value = "nickName", required = false) String nickName
-            , @RequestParam(value = "imageUrl", required = false) String imageUrl);
+            , @RequestParam(value = "imageUrl", required = false) String imageUrl) throws WeixinLoginFailException;
 
     /**
      * 获取验证码 发送验证码
@@ -91,6 +93,6 @@ public interface SecurityController {
             , @RequestParam("code") String code
             , @RequestParam(value = "openId", required = false) String openId
             , @RequestParam(value = "nickName", required = false) String nickName
-            , @RequestParam(value = "imageUrl", required = false) String imageUrl) throws UnsupportedEncodingException;
+            , @RequestParam(value = "imageUrl", required = false) String imageUrl) throws UnsupportedEncodingException, VerificationCodeDuedException, VerificationCodeInvoidException;
 
 }

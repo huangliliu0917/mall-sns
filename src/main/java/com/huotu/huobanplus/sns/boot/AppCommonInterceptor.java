@@ -3,6 +3,7 @@ package com.huotu.huobanplus.sns.boot;
 import com.huotu.huobanplus.sns.exception.NeedLoginException;
 import com.huotu.huobanplus.sns.exception.UrlInvoidException;
 import com.huotu.huobanplus.sns.model.AppPublicModel;
+import com.huotu.huobanplus.sns.model.common.AppCode;
 import com.huotu.huobanplus.sns.repository.UserRepository;
 import com.huotu.huobanplus.sns.service.AppSecurityService;
 import com.huotu.huobanplus.sns.service.CommonConfigService;
@@ -70,7 +71,7 @@ public class AppCommonInterceptor implements HandlerInterceptor {
         String requestURI = request.getRequestURI().substring(request.getContextPath().length());
         if (requestURI.startsWith("/app/user/")) {
             //用户模块需要检测用户是否登录,没有登录则跳转到登录页面
-            throw new NeedLoginException("用户没有登录，需要登录操作");
+            throw new NeedLoginException(AppCode.ERROR_USER_NEED_LOGIN.getValue(), AppCode.ERROR_USER_NEED_LOGIN.getName());
         }
 
 

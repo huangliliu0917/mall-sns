@@ -59,13 +59,9 @@ public class SecurityControllerImpl implements SecurityController {
 
     @Override
     public ApiResult weixinLogin(Output<String> data, Long customerId, String openId
-            , String nickName, String imageUrl) {
+            , String nickName, String imageUrl) throws WeixinLoginFailException {
 
-        try {
-            userService.weixinLogin(customerId, openId, nickName, imageUrl);
-        } catch (WeixinLoginFailException e) {
-            return ApiResult.resultWith(AppCode.ERROR_WEIXIN_LOGIN);
-        }
+        userService.weixinLogin(customerId, openId, nickName, imageUrl);
         return ApiResult.resultWith(AppCode.SUCCESS);
     }
 
@@ -81,11 +77,11 @@ public class SecurityControllerImpl implements SecurityController {
             return ApiResult.resultWith(AppCode.ERROR_WRONG_MOBILE);
         }
 
-        Random rnd = new Random();
-        String code = StringHelper.RandomNum(rnd, 4);
-
         try {
+            Random rnd = new Random();
+            String code = StringHelper.RandomNum(rnd, 4);
             verificationService.sendCode(phone, VerificationService.VerificationProject.fanmore, code, date, verificationType, codeType != null ? EnumHelper.getEnumType(CodeType.class, codeType) : CodeType.text);
+
         } catch (IllegalStateException ex) {
             return ApiResult.resultWith(AppCode.ERROR_WRONG_VERIFICATION_INTERVAL);
         } catch (IllegalArgumentException ex) {
@@ -105,17 +101,11 @@ public class SecurityControllerImpl implements SecurityController {
     public ApiResult mobileLogin(Output<String> data, Long customerId, String phone, String code
             , String openId
             , String nickName
-            , String imageUrl) throws UnsupportedEncodingException {
-        try {
-            data.outputData(userService.userLogin(customerId, phone, code
-                    , openId
-                    , nickName
-                    , imageUrl));
-        } catch (VerificationCodeInvoidException e) {
-            return ApiResult.resultWith(AppCode.VERIFICATION_CODE_INVOID);
-        } catch (VerificationCodeDuedException e) {
-            return ApiResult.resultWith(AppCode.VERIFICATION_CODE_DUED);
-        }
+            , String imageUrl) throws UnsupportedEncodingException, VerificationCodeDuedException, VerificationCodeInvoidException {
+        data.outputData(userService.userLogin(customerId, phone, code
+                , openId
+                , nickName
+                , imageUrl));
         return ApiResult.resultWith(AppCode.SUCCESS);
     }
 }

@@ -39,15 +39,12 @@ public class AppHandlerExceptionResolver implements HandlerExceptionResolver {
             result.setSystemResultDescription(ex.getLocalizedMessage());
             try {
                 throw ex;
-            } catch (MissingServletRequestParameterException e) {
-                result.setSystemResultCode(AppCode.PARAMETER_ERROR.getValue());
-                result.setSystemResultDescription(AppCode.PARAMETER_ERROR.getName());
-            } catch (NeedLoginException e) {
-                result.setSystemResultCode(AppCode.ERROR_USER_NEED_LOGIN.getValue());
-                result.setSystemResultDescription(AppCode.ERROR_USER_NEED_LOGIN.getName());
             } catch (SnsException e) {
                 result.setSystemResultCode(e.getCode());
                 result.setSystemResultDescription(e.getMessage());
+            } catch (MissingServletRequestParameterException e) {
+                result.setSystemResultCode(AppCode.PARAMETER_ERROR.getValue());
+                result.setSystemResultDescription(AppCode.PARAMETER_ERROR.getName());
             } catch (Exception e) {
                 log.error("unExcepted app error ", e);
                 result.setSystemResultCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
