@@ -10,7 +10,9 @@
 package com.huotu.huobanplus.sns.service;
 
 import com.huotu.huobanplus.sns.entity.Article;
+import com.huotu.huobanplus.sns.entity.ArticleComment;
 import com.huotu.huobanplus.sns.entity.User;
+import com.huotu.huobanplus.sns.exception.ClickException;
 import com.huotu.huobanplus.sns.model.AppCircleArticleModel;
 import com.huotu.huobanplus.sns.model.AppWikiListModel;
 import com.huotu.huobanplus.sns.model.AppWikiModel;
@@ -48,7 +50,7 @@ public interface ArticleService {
      */
     Article save(Integer articleType, Long id
             , String name, Long userId, String pictureUrl, String content
-            , String summary, Integer categoryId, Long circleId, String adConent,String tags);
+            , String summary, Integer categoryId, Long circleId, String adConent, String tags);
 
     /**
      * 新增一篇文章后，圈子文章数量加1，用户文章数加1，每个关注了该用户的都保存一份文章
@@ -78,9 +80,28 @@ public interface ArticleService {
 
     /**
      * 获得用户文章列表
+     *
      * @param userId
      * @param lastId
      * @return
      */
     List<AppCircleArticleModel> getUserArticleList(Long userId, Long lastId);
+
+    /**
+     * 给某篇文章点赞
+     *
+     * @param article 文章
+     * @param user    点赞用户
+     * @throws IOException
+     * @throws ClickException 点赞异常
+     */
+    void articleClick(Article article, User user) throws IOException, ClickException;
+
+    /**
+     * @param articleComment 评论
+     * @param user           评论用户
+     * @param content        评论内容
+     * @throws IOException
+     */
+    void replyComment(ArticleComment articleComment, User user, String content) throws IOException;
 }

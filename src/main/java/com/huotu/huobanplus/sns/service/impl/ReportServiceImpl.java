@@ -64,6 +64,7 @@ public class ReportServiceImpl implements ReportService {
         report.setContent(note);
         User user = UserHelper.getUser();
         report.setReportTargetType(type);
+        report.setCustomerId(user.getCustomerId());
         report.setUser(user);
         report.setTargetId(id);
         report.setDate(new Date());

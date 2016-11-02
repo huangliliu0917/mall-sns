@@ -11,7 +11,9 @@ package com.huotu.huobanplus.sns.controller.app;
 
 import com.huotu.common.api.ApiResult;
 import com.huotu.common.api.Output;
+import com.huotu.huobanplus.sns.exception.ClickException;
 import com.huotu.huobanplus.sns.exception.ConcernException;
+import com.huotu.huobanplus.sns.exception.ContentException;
 import com.huotu.huobanplus.sns.exception.NeedLoginException;
 import com.huotu.huobanplus.sns.model.AppCircleArticleModel;
 import com.huotu.huobanplus.sns.model.AppUserConcermListModel;
@@ -88,14 +90,18 @@ public interface UserController {
      * @param pictureUrl 文章图片地址
      * @param circleId   所属圈子id
      * @return
-     * @throws Exception
+     * @throws ContentException     30201 内容包含敏感词汇
+     * @throws IOException          读写数据异常
+     * @throws NeedLoginException   未登录
+     * @throws InterruptedException 线程异常
      */
     @RequestMapping(value = "/publishArticle", method = RequestMethod.POST)
     ApiResult publishArticle(@RequestParam(value = "id") Long id
             , @RequestParam(value = "name") String name
             , @RequestParam(value = "content") String content
             , @RequestParam(value = "pictureUrl", required = false) String pictureUrl
-            , @RequestParam(value = "circleId") Long circleId) throws Exception;
+            , @RequestParam(value = "circleId") Long circleId)
+            throws ContentException, IOException, NeedLoginException, InterruptedException;
 
 
     /**
@@ -105,10 +111,13 @@ public interface UserController {
      * @param id      文章Id
      * @param content 评论内容
      * @return
+     * @throws NeedLoginException 用户未登录
+     * @throws IOException        读写数据异常
+     * @throws ContentException   30201 评论包含敏感词汇
      */
     @RequestMapping(value = "/commentArticle", method = RequestMethod.POST)
     ApiResult commentArticle(@RequestParam(value = "id") Long id
-            , @RequestParam(value = "content") String content) throws Exception;
+            , @RequestParam(value = "content") String content) throws NeedLoginException, IOException, ContentException;
 
 
     /**
@@ -118,36 +127,40 @@ public interface UserController {
      * @param id   类型对应 id
      * @param note 说明
      * @return
-     * @throws Exception
+     * @throws NeedLoginException 用户未登录
+     * @throws IOException        读写数据异常
      */
     @RequestMapping(value = "/report", method = RequestMethod.POST)
     ApiResult report(@RequestParam(value = "type") ReportTargetType type
             , @RequestParam(value = "id") Long id
-            , @RequestParam(value = "note") String note) throws Exception;
+            , @RequestParam(value = "note") String note) throws NeedLoginException, IOException;
 
     /**
      * 我的关注
      * todo 暂定从redis获取数据
      *
+     * @param list   关注列表
      * @param lastId 上一个id
      * @return
-     * @throws Exception
+     * @throws NeedLoginException 用户未登录
+     * @throws IOException        数据读写异常
      */
     @RequestMapping(value = "/myConcern", method = RequestMethod.GET)
     ApiResult myConcern(Output<AppUserConcermListModel[]> list
-            , @RequestParam(value = "lastId", required = false) Long lastId) throws Exception;
+            , @RequestParam(value = "lastId", required = false) Long lastId) throws NeedLoginException, IOException;
 
     /**
      * 我的粉丝
      *
-     * @param list
-     * @param lastId
+     * @param list   粉丝列表
+     * @param lastId 上一个id
      * @return
-     * @throws Exception
+     * @throws NeedLoginException 用户未登录
+     * @throws IOException        数据读写异常
      */
     @RequestMapping(value = "/myConcerned", method = RequestMethod.GET)
     ApiResult myConcerned(Output<AppUserConcermListModel[]> list
-            , @RequestParam(value = "lastId", required = false) Long lastId) throws Exception;
+            , @RequestParam(value = "lastId", required = false) Long lastId) throws NeedLoginException, IOException;
 
 
     /**
@@ -158,7 +171,33 @@ public interface UserController {
      * @return
      * @throws Exception
      */
-    @RequestMapping(value = "concernIndex", method = RequestMethod.GET)
+    @RequestMapping(value = "/concernIndex", method = RequestMethod.GET)
     ApiResult concernIndex(Output<AppCircleArticleModel[]> articleList
             , @RequestParam(value = "lastId", required = false) Long lastId) throws Exception;
+
+    /**
+     * 文章点赞
+     *
+     * @param id 文章id
+     * @return
+     * @throws NeedLoginException 用户未登录
+     * @throws IOException        读写数据异常
+     * @throws ClickException     文章已点赞
+     */
+    @RequestMapping(value = "/articleClick", method = RequestMethod.POST)
+    ApiResult articleClick(@RequestParam(value = "id") Long id) throws NeedLoginException, IOException, ClickException;
+
+    /**
+     * 回复评论
+     *
+     * @param id      评论id
+     * @param content 评论内容
+     * @return
+     * @throws NeedLoginException 用户未登录
+     * @throws IOException        读写数据异常
+     * @throws ContentException   评论涉及敏感词汇
+     */
+    @RequestMapping(value = "/replyComment", method = RequestMethod.POST)
+    ApiResult replyComment(@RequestParam(value = "id") Long id
+            , @RequestParam(value = "content") String content) throws NeedLoginException, IOException, ContentException;
 }

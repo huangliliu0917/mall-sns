@@ -12,14 +12,14 @@ package com.huotu.huobanplus.sns.model;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
-
 /**
- * Created by Administrator on 2016/9/29.
+ * Created by jin on 2016/11/2.
+ * 评论中的冗余评论
  */
 @Getter
 @Setter
-public class AppCircleArticleCommentsModel {
+public class AppArticleCommentModel {
+
     /**
      * 评论id
      */
@@ -44,15 +44,6 @@ public class AppCircleArticleCommentsModel {
      * 评论日期
      */
     private Long date;
-
-    /**
-     * 扩展信息 (评论的评论)
-     * 评论的评论内容无限循环冗余 以json格式存储
-     * {fromId:,id:,content:,date:,userName:,userPictureUrl:,data:[{fromId:,id:,content:,date:,userName:,userPictureUrl:}]}
-     */
-//    private String extend;
-
-    private List<AppArticleCommentModel> list;
 
     /**
      * 楼层

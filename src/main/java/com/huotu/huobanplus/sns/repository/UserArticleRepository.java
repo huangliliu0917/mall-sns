@@ -16,6 +16,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by jin on 2016/10/19.
@@ -39,4 +40,6 @@ public interface UserArticleRepository extends JpaRepository<UserArticle, Long>,
      * @return
      */
     List<UserArticle> findTop10ByOwnerIdAndIdLessThanOrderByIdDesc(@Param("ownerId") Long ownerId, @Param("id") Long id);
+
+    Optional<Long> countByArticleId(@Param("articleId") Long articleId);
 }

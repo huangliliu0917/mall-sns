@@ -50,6 +50,7 @@ public class UserCircleServiceImpl implements UserCircleService {
         if (Objects.nonNull(userCircles) && userCircles.size() > 0)
             throw new ConcernException(AppCode.ERROR_CONCERN_ALREADY.getValue(), AppCode.ERROR_CONCERN_ALREADY.getName());
         UserCircle userCircle = new UserCircle();
+        userCircle.setCustomerId(user.getCustomerId());
         userCircle.setCircle(circle);
         userCircle.setDate(new Date());
         userCircle.setUser(user);

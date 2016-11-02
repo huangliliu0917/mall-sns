@@ -9,11 +9,15 @@
 
 package com.huotu.huobanplus.sns.service.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.huotu.huobanplus.sns.entity.*;
+import com.huotu.huobanplus.sns.exception.ClickException;
+import com.huotu.huobanplus.sns.model.AppArticleCommentModel;
 import com.huotu.huobanplus.sns.model.AppCircleArticleModel;
 import com.huotu.huobanplus.sns.model.AppWikiListModel;
 import com.huotu.huobanplus.sns.model.AppWikiModel;
 import com.huotu.huobanplus.sns.model.admin.*;
+import com.huotu.huobanplus.sns.model.common.AppCode;
 import com.huotu.huobanplus.sns.model.common.ArticleType;
 import com.huotu.huobanplus.sns.model.common.CommentStatus;
 import com.huotu.huobanplus.sns.repository.*;
@@ -29,6 +33,7 @@ import org.springframework.data.redis.core.BoundHashOperations;
 import org.springframework.data.redis.core.BoundListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityManager;
@@ -67,10 +72,16 @@ public class ArticleServiceImpl implements ArticleService {
     private RedisTemplate<String, String> redisTemplate;
     @Autowired
     private RedisTemplate<String, ArticleComment> articleCommentRedisTemplate;
+
+    @Autowired
+    private RedisTemplate<String, AppArticleCommentModel> articleReplyCommentRedisTemplate;
     @Autowired
     private TagRespository tagRespository;
     @Autowired
+    private ArticleClickRepository articleClickRepository;
+    @Autowired
     private EntityManager entityManager;
+    private ObjectMapper objectMapper = new ObjectMapper();
 
     public List<AppWikiListModel> getAppWikiList(Integer catalogId, Long lastId) {
         List<AppWikiListModel> appWikiListModels;
@@ -175,7 +186,7 @@ public class ArticleServiceImpl implements ArticleService {
                 adminArticleModel.setPublisher(x.getPublisher().getNickName());
             adminArticleModel.setClick(x.getClick());
             adminArticleModel.setView(x.getView());
-            adminArticleModel.setTop(x.getTop()==null?false:x.getTop());
+            adminArticleModel.setTop(x.getTop() == null ? false : x.getTop());
             adminArticleModels.add(adminArticleModel);
         });
         return adminArticleModels;
@@ -306,6 +317,7 @@ public class ArticleServiceImpl implements ArticleService {
         Article article = articleRepository.getOne(id);
         ArticleComment articleComment = new ArticleComment();
         articleComment.setUser(user);
+        articleComment.setCustomerId(user.getCustomerId());
         articleComment.setContent(content);
         articleComment.setDate(new Date());
         articleComment.setCommentStatus(CommentStatus.Normal);
@@ -325,7 +337,7 @@ public class ArticleServiceImpl implements ArticleService {
         }
 
         BoundListOperations<String, ArticleComment> articleCommentBoundListOperations =
-                articleCommentRedisTemplate.boundListOps(ContractHelper.articleCommentFlag + articleComment.getId());
+                articleCommentRedisTemplate.boundListOps(ContractHelper.articleCommentFlag + id);
         articleCommentBoundListOperations.set(0L, articleComment);
     }
 
@@ -348,6 +360,7 @@ public class ArticleServiceImpl implements ArticleService {
         Date date = new Date();
         for (int i = 0; i < size; i++) {
             UserArticle userArticle = new UserArticle();
+            userArticle.setCustomerId(user.getCustomerId());
             userArticle.setArticleType(articleType.equals(1) ? ArticleType.Wiki : ArticleType.Normal);
             userArticle.setName(name);
             userArticle.setPictureUrl(pictureUrl);
@@ -401,5 +414,89 @@ public class ArticleServiceImpl implements ArticleService {
             appCircleArticleModels.add(appCircleArticleModel);
         });
         return appCircleArticleModels;
+    }
+
+    @Transactional
+    @Override
+    public void articleClick(Article article, User user) throws IOException, ClickException {
+        ArticleClick click = articleClickRepository.findByArticleAndUser(article, user);
+        if (Objects.nonNull(click)) {
+            throw new ClickException(AppCode.ERROR_CLICK_ALREADY.getValue(), AppCode.ERROR_CLICK_ALREADY.getName());
+        }
+        click = new ArticleClick();
+        click.setCustomerId(user.getCustomerId());
+        click.setArticle(article);
+        click.setDate(new Date());
+        click.setUser(user);
+        articleClickRepository.save(click);
+        //文章点赞数加一
+        articleRepository.addClick(article.getId());
+
+    }
+
+    @Transactional
+    @Override
+    public void replyComment(ArticleComment articleComment, User user, String content) throws IOException {
+        ArticleComment replyArticleComment = new ArticleComment();
+        replyArticleComment.setUser(user);
+        replyArticleComment.setCustomerId(user.getCustomerId());
+        replyArticleComment.setContent(content);
+        replyArticleComment.setDate(new Date());
+        replyArticleComment.setCommentStatus(CommentStatus.Normal);
+        replyArticleComment.setArticle(articleComment.getArticle());
+        replyArticleComment.setArticleComment(articleComment);
+        Long articleId = articleComment.getArticle().getId();
+        Optional<Long> maxFloor = articleCommentRepository.getMaxFloorByArticleId(articleId);
+        replyArticleComment.setFloor(maxFloor.orElse(0L) + 1L);
+
+        //评论列表+1
+        BoundListOperations<String, ArticleComment> articleCommentBoundListOperations =
+                articleCommentRedisTemplate.boundListOps(ContractHelper.articleCommentFlag + articleId);
+        articleCommentBoundListOperations.set(0L, articleComment);
+
+        //取出上一条评论的冗余列表
+        BoundListOperations<String, AppArticleCommentModel> lastArticleReplyCommentBoundListOperations =
+                articleReplyCommentRedisTemplate.boundListOps(ContractHelper.articleReplyCommentFlag + articleComment.getId());
+        Long size = lastArticleReplyCommentBoundListOperations.size();
+        //转化model
+        AppArticleCommentModel model = changeModel(replyArticleComment);
+        List<AppArticleCommentModel> models;
+        if (Objects.isNull(size)) {
+            models = new ArrayList<>();
+        } else {
+            models = lastArticleReplyCommentBoundListOperations.range(0L, size - 1);
+        }
+        models.add(model);
+        replyArticleComment.setExtend(objectMapper.writeValueAsString(models));
+        replyArticleComment = articleCommentRepository.save(replyArticleComment);
+        //本次评论的redis缓存
+        BoundListOperations<String, AppArticleCommentModel> ArticleReplyCommentBoundListOperations =
+                articleReplyCommentRedisTemplate.boundListOps(ContractHelper.articleReplyCommentFlag + replyArticleComment.getId());
+        for (int i = 0; i < models.size(); i++) {
+            ArticleReplyCommentBoundListOperations.set(i, models.get(i));
+        }
+
+        BoundHashOperations<String, String, Long> articleOperations = redisTemplate
+                .boundHashOps(ContractHelper.articleFlag + articleId);
+        articleOperations.putIfAbsent("comments", 0L);
+        synchronized (articleOperations.get("comments")) {
+            Long comments = articleOperations.get("comments");
+            articleOperations.put("comments", comments + 1L);
+        }
+        //        articleRepository.addComments(id);
+    }
+
+    private AppArticleCommentModel changeModel(ArticleComment articleComment) {
+        if (Objects.nonNull(articleComment)) {
+            AppArticleCommentModel model = new AppArticleCommentModel();
+            model.setContent(articleComment.getContent());
+            model.setDate(articleComment.getDate().getTime());
+            model.setFloor(articleComment.getFloor());
+            model.setPid(articleComment.getId());
+            model.setUserHeadUrl(articleComment.getUser().getImgURL());
+            model.setUserName(articleComment.getUser().getNickName());
+            return model;
+        }
+        return null;
     }
 }

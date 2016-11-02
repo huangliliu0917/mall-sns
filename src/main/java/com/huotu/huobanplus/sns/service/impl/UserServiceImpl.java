@@ -9,6 +9,7 @@
 
 package com.huotu.huobanplus.sns.service.impl;
 
+import com.huotu.huobanplus.sns.entity.Article;
 import com.huotu.huobanplus.sns.entity.User;
 import com.huotu.huobanplus.sns.entity.UserArticle;
 import com.huotu.huobanplus.sns.entity.VerificationCode;
@@ -23,10 +24,10 @@ import com.huotu.huobanplus.sns.model.AppUserModel;
 import com.huotu.huobanplus.sns.model.common.AppCode;
 import com.huotu.huobanplus.sns.model.common.CodeType;
 import com.huotu.huobanplus.sns.model.common.VerificationType;
+import com.huotu.huobanplus.sns.repository.UserArticleRepository;
 import com.huotu.huobanplus.sns.repository.UserRepository;
 import com.huotu.huobanplus.sns.repository.VerificationCodeRepository;
 import com.huotu.huobanplus.sns.service.AppSecurityService;
-import com.huotu.huobanplus.sns.service.CommonConfigService;
 import com.huotu.huobanplus.sns.service.UserService;
 import com.huotu.huobanplus.sns.utils.ContractHelper;
 import org.apache.commons.logging.Log;
@@ -46,6 +47,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * 用户
@@ -71,13 +73,13 @@ public class UserServiceImpl implements UserService {
     private VerificationCodeRepository verificationCodeRepository;
 
     @Autowired
-    private CommonConfigService commonConfigService;
-
-    @Autowired
     private MallUserService mallUserService;
 
     @Autowired
     private MallUserRepository mallUserRepository;
+
+    @Autowired
+    private UserArticleRepository userArticleRepository;
 
     //    @Override
 //    public Long getMerchantUserId(HttpServletRequest request) {
@@ -153,8 +155,13 @@ public class UserServiceImpl implements UserService {
 //        model.setCommentsAmount(article.geta);
         BoundHashOperations<String, String, Long> articleOperations = redisTemplate
                 .boundHashOps(ContractHelper.articleFlag + article.getArticleId());
-        articleOperations.putIfAbsent("comments", 0L);
-        model.setCommentsAmount(articleOperations.get("comments"));
+        if (Objects.isNull(articleOperations.get("comments"))) {
+            Optional<Long> optional = userArticleRepository.countByArticleId(article.getArticleId());
+            articleOperations.put("comments", optional.orElse(0L));
+            model.setCommentsAmount(optional.orElse(0L));
+        } else {
+            model.setCommentsAmount(articleOperations.get("comments"));
+        }
         //浏览量不知道怎么统计
         return model;
     }
@@ -164,6 +171,38 @@ public class UserServiceImpl implements UserService {
         AppCircleArticleModel[] models = new AppCircleArticleModel[articles.size()];
         for (int i = 0; i < articles.size(); i++) {
             models[i] = changeModel(articles.get(i));
+        }
+        return models;
+    }
+
+    private AppCircleArticleModel changeModelByArticle(Article article) throws IOException {
+        AppCircleArticleModel model = new AppCircleArticleModel();
+        model.setPid(article.getId());
+        model.setName(article.getName());
+        model.setPictureUrl(article.getPictureUrl());
+//        model.setUrl("");
+        model.setUserName(article.getPublisher().getNickName());
+        model.setUserHeadUrl(article.getPublisher().getImgURL());
+        model.setUserLevel(article.getPublisher().getLevel().getId());
+        model.setTime(article.getDate().getTime());
+//        model.setCommentsAmount(article.geta);
+        BoundHashOperations<String, String, Long> articleOperations = redisTemplate
+                .boundHashOps(ContractHelper.articleFlag + article.getId());
+        if (Objects.isNull(articleOperations.get("comments"))) {
+            Optional<Long> optional = userArticleRepository.countByArticleId(article.getId());
+            articleOperations.put("comments", optional.orElse(0L));
+            model.setCommentsAmount(optional.orElse(0L));
+        } else {
+            model.setCommentsAmount(articleOperations.get("comments"));
+        }
+        return model;
+    }
+
+    @Override
+    public AppCircleArticleModel[] changeModelArrayByArticle(List<Article> articles) throws IOException {
+        AppCircleArticleModel[] models = new AppCircleArticleModel[articles.size()];
+        for (int i = 0; i < articles.size(); i++) {
+            models[i] = changeModelByArticle(articles.get(i));
         }
         return models;
     }

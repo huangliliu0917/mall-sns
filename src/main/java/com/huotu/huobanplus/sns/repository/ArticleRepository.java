@@ -11,6 +11,7 @@ package com.huotu.huobanplus.sns.repository;
 
 import com.huotu.huobanplus.sns.entity.Article;
 import com.huotu.huobanplus.sns.entity.Category;
+import com.huotu.huobanplus.sns.entity.User;
 import com.huotu.huobanplus.sns.model.common.ArticleType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -47,4 +48,9 @@ public interface ArticleRepository extends JpaRepository<Article, Long>, JpaSpec
 
     @Query("update Article a set a.comments=a.comments+1 where a.id=?1")
     void addComments(@Param("articleId") Long articleId);
+
+    @Query("update Article a set a.click=a.click+1 where a.id=?1")
+    void addClick(@Param("articleId") Long articleId);
+
+    List<Article> findTop10ByPublisherOrderByIdDesc(@Param("publisher") User publisher);
 }

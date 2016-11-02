@@ -42,7 +42,9 @@ public enum AppCode implements ICommonEnum {
     ERROR_CONCERNUSER_ALREADY(30101, "您已关注该用户"),
     ERROR_UNCONCERNUSER_ALREADY(30102, "您已经取消关注该用户"),
 
-    ERROR_SENSITIVE_CONTENT(30201, "您发表的内容包含敏感词汇");
+    ERROR_SENSITIVE_CONTENT(30201, "您发表的内容包含敏感词汇"),
+
+    ERROR_CLICK_ALREADY(30301, "您已经点过赞了");
 
     /**
      * 圈子，百科等以4开头

@@ -9,6 +9,7 @@
 
 package com.huotu.huobanplus.sns.service;
 
+import com.huotu.huobanplus.sns.entity.Article;
 import com.huotu.huobanplus.sns.entity.User;
 import com.huotu.huobanplus.sns.entity.UserArticle;
 import com.huotu.huobanplus.sns.exception.VerificationCodeDuedException;
@@ -69,6 +70,8 @@ public interface UserService {
     AppUserModel getAppUser(Long userId);
 
     AppCircleArticleModel[] changeModelArray(List<UserArticle> articles) throws IOException;
+
+    AppCircleArticleModel[] changeModelArrayByArticle(List<Article> articles) throws IOException;
 
     /**
      * 用户登录注册

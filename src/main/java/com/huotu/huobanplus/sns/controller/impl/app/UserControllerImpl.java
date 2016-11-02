@@ -12,10 +12,8 @@ package com.huotu.huobanplus.sns.controller.impl.app;
 import com.huotu.common.api.ApiResult;
 import com.huotu.common.api.Output;
 import com.huotu.huobanplus.sns.controller.app.UserController;
-import com.huotu.huobanplus.sns.entity.Article;
-import com.huotu.huobanplus.sns.entity.Concern;
-import com.huotu.huobanplus.sns.entity.User;
-import com.huotu.huobanplus.sns.entity.UserArticle;
+import com.huotu.huobanplus.sns.entity.*;
+import com.huotu.huobanplus.sns.exception.ClickException;
 import com.huotu.huobanplus.sns.exception.ConcernException;
 import com.huotu.huobanplus.sns.exception.ContentException;
 import com.huotu.huobanplus.sns.exception.NeedLoginException;
@@ -24,6 +22,8 @@ import com.huotu.huobanplus.sns.model.AppUserConcermListModel;
 import com.huotu.huobanplus.sns.model.common.AppCode;
 import com.huotu.huobanplus.sns.model.common.ArticleType;
 import com.huotu.huobanplus.sns.model.common.ReportTargetType;
+import com.huotu.huobanplus.sns.repository.ArticleCommentRepository;
+import com.huotu.huobanplus.sns.repository.ArticleRepository;
 import com.huotu.huobanplus.sns.repository.ConcernRepository;
 import com.huotu.huobanplus.sns.repository.UserArticleRepository;
 import com.huotu.huobanplus.sns.service.*;
@@ -31,10 +31,12 @@ import com.huotu.huobanplus.sns.utils.UserHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 
 /**
  * Created by Administrator on 2016/9/28.
@@ -42,16 +44,15 @@ import java.util.Objects;
 @Controller
 public class UserControllerImpl implements UserController {
 
+    private static Random random = new Random();
     @Autowired
     private UserCircleService userCircleService;
-
     @Autowired
     private ConcernService concernService;
     @Autowired
     private UserService userService;
     @Autowired
     private ReportService reportService;
-
     @Autowired
     private SensitiveService sensitiveService;
     @Autowired
@@ -60,6 +61,10 @@ public class UserControllerImpl implements UserController {
     private ConcernRepository concernRepository;
     @Autowired
     private UserArticleRepository userArticleRepository;
+    @Autowired
+    private ArticleRepository articleRepository;
+    @Autowired
+    private ArticleCommentRepository articleCommentRepository;
 
     @Override
     public ApiResult concern(Long id) throws NeedLoginException, ConcernException, IOException {
@@ -89,7 +94,6 @@ public class UserControllerImpl implements UserController {
     @Override
     public ApiResult publishArticle(Long id, String name, String content, String pictureUrl, Long circleId)
             throws ContentException, IOException, NeedLoginException, InterruptedException {
-        ApiResult apiResult = new ApiResult();
         if (sensitiveService.ContainSensitiveWords(content)) {
             throw new ContentException(AppCode.ERROR_SENSITIVE_CONTENT.getValue(), AppCode.ERROR_SENSITIVE_CONTENT.getName());
         }
@@ -109,49 +113,27 @@ public class UserControllerImpl implements UserController {
             articleService.addArticleResult(ArticleType.Normal.getValue(), article.getId(),
                     name, user, pictureUrl, summary, circleId);
         }
-        apiResult.setResultCode(200);
-        apiResult.setResultDescription("发表成功");
-        return apiResult;
+        return ApiResult.resultWith(AppCode.SUCCESS);
     }
 
     @Override
-    public ApiResult commentArticle(Long id, String content) throws NeedLoginException, IOException {
-        ApiResult apiResult = new ApiResult();
+    public ApiResult commentArticle(Long id, String content) throws NeedLoginException, IOException, ContentException {
         if (sensitiveService.ContainSensitiveWords(content)) {
-            apiResult.setResultCode(50001);
-            apiResult.setResultDescription("您的评论包含敏感词汇");
-            return apiResult;
+            throw new ContentException(AppCode.ERROR_SENSITIVE_CONTENT.getValue(), AppCode.ERROR_SENSITIVE_CONTENT.getName());
         }
         User user = UserHelper.getUser();
-        try {
-            articleService.commentArticle(id, content, user);
-        } catch (IOException e) {
-            apiResult.setResultCode(50002);
-            apiResult.setResultDescription("评论异常");
-            return apiResult;
-        }
-        apiResult.setResultCode(200);
-        apiResult.setResultDescription("评论成功");
-        return null;
+        articleService.commentArticle(id, content, user);
+        return ApiResult.resultWith(AppCode.SUCCESS);
     }
 
     @Override
-    public ApiResult report(ReportTargetType type, Long id, String note) throws NeedLoginException {
-        ApiResult apiResult = new ApiResult();
-        try {
-            reportService.report(type, id, note);
-            apiResult.setResultCode(200);
-            apiResult.setResultDescription("举报成功");
-        } catch (IOException e) {
-            apiResult.setResultCode(50003);
-            apiResult.setResultDescription(e.getMessage());
-            return apiResult;
-        }
-        return apiResult;
+    public ApiResult report(ReportTargetType type, Long id, String note) throws NeedLoginException, IOException {
+        reportService.report(type, id, note);
+        return ApiResult.resultWith(AppCode.SUCCESS);
     }
 
     @Override
-    public ApiResult myConcern(Output<AppUserConcermListModel[]> list, Long lastId) throws Exception {
+    public ApiResult myConcern(Output<AppUserConcermListModel[]> list, Long lastId) throws NeedLoginException, IOException {
         User user = UserHelper.getUser();
         List<Concern> concerns;
         if (Objects.isNull(lastId)) {
@@ -161,13 +143,11 @@ public class UserControllerImpl implements UserController {
         }
         AppUserConcermListModel[] models = concernService.changeModelList(concerns);
         list.outputData(models);
-        ApiResult apiResult = new ApiResult();
-        apiResult.setResultCode(200);
-        return apiResult;
+        return ApiResult.resultWith(AppCode.SUCCESS);
     }
 
     @Override
-    public ApiResult myConcerned(Output<AppUserConcermListModel[]> list, Long lastId) throws Exception {
+    public ApiResult myConcerned(Output<AppUserConcermListModel[]> list, Long lastId) throws NeedLoginException, IOException {
         User user = UserHelper.getUser();
         List<Concern> concerns;
         if (Objects.isNull(lastId)) {
@@ -177,14 +157,11 @@ public class UserControllerImpl implements UserController {
         }
         AppUserConcermListModel[] models = concernService.changeModelList(concerns);
         list.outputData(models);
-        ApiResult apiResult = new ApiResult();
-        apiResult.setResultCode(200);
-        return apiResult;
+        return ApiResult.resultWith(AppCode.SUCCESS);
     }
 
     @Override
     public ApiResult concernIndex(Output<AppCircleArticleModel[]> articleList, Long lastId) throws Exception {
-        ApiResult apiResult = new ApiResult();
         User user = UserHelper.getUser();
         List<UserArticle> articles;
         if (Objects.isNull(lastId)) {
@@ -197,10 +174,34 @@ public class UserControllerImpl implements UserController {
             articleList.outputData(models);
         } else {
             //从哪里找些文章，填满关注首页
-            List<Concern> list = concernRepository.findByUser(user);
-
+            List<Concern> concerns = concernRepository.findByUser(user);
+            if (Objects.isNull(lastId)) {
+                int index = random.nextInt(concerns.size());
+                List<Article> list = articleRepository.findTop10ByPublisherOrderByIdDesc(concerns.get(index).getToUser());
+                AppCircleArticleModel[] models = userService.changeModelArrayByArticle(list);
+                articleList.outputData(models);
+            }
         }
-        apiResult.setResultCode(200);
-        return apiResult;
+        return ApiResult.resultWith(AppCode.SUCCESS);
+    }
+
+    @Override
+    public ApiResult articleClick(@RequestParam(value = "id") Long id) throws NeedLoginException, IOException, ClickException {
+        User user = UserHelper.getUser();
+        Article article = articleRepository.getOne(id);
+        articleService.articleClick(article, user);
+        return ApiResult.resultWith(AppCode.SUCCESS);
+    }
+
+    @Override
+    public ApiResult replyComment(@RequestParam(value = "id") Long id, @RequestParam(value = "content") String content)
+            throws NeedLoginException, IOException, ContentException {
+        if (sensitiveService.ContainSensitiveWords(content)) {
+            throw new ContentException(AppCode.ERROR_SENSITIVE_CONTENT.getValue(), AppCode.ERROR_SENSITIVE_CONTENT.getName());
+        }
+        ArticleComment articleComment = articleCommentRepository.getOne(id);
+        User user = UserHelper.getUser();
+        articleService.replyComment(articleComment, user, content);
+        return ApiResult.resultWith(AppCode.SUCCESS);
     }
 }

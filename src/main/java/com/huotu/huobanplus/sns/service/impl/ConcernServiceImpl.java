@@ -49,6 +49,7 @@ public class ConcernServiceImpl implements ConcernService {
         if (Objects.nonNull(concerns) && concerns.size() > 0)
             throw new ConcernException(AppCode.ERROR_CONCERNUSER_ALREADY.getValue(), AppCode.ERROR_CONCERNUSER_ALREADY.getName());
         Concern concern = new Concern();
+        concern.setCustomerId(user.getCustomerId());
         concern.setToUser(toUser);
         concern.setDate(new Date());
         concern.setUser(user);
