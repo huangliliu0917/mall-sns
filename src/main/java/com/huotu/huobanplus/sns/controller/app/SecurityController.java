@@ -2,10 +2,7 @@ package com.huotu.huobanplus.sns.controller.app;
 
 import com.huotu.common.api.ApiResult;
 import com.huotu.common.api.Output;
-import com.huotu.huobanplus.sns.exception.InterrelatedException;
-import com.huotu.huobanplus.sns.exception.VerificationCodeDuedException;
-import com.huotu.huobanplus.sns.exception.VerificationCodeInvoidException;
-import com.huotu.huobanplus.sns.exception.WeixinLoginFailException;
+import com.huotu.huobanplus.sns.exception.*;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -60,7 +57,8 @@ public interface SecurityController {
      * @return <ul>
      * <li>20003 不合法的手机号</li>
      * <li>20104 验证码发送间隔为90秒</li>
-     * <li>20105 短信发送通道不稳定，请重新尝试</li>
+     * <li>20109 短信发送通道不稳定，请重新尝试</li>
+     * <li>20108  "还不支持的语音播报"</li>
      * </ul>
      */
     @RequestMapping(value = "/sendCode", method = RequestMethod.POST)
@@ -68,7 +66,8 @@ public interface SecurityController {
             , @RequestParam("customerId") Long customerId
             , @RequestParam("phone") String phone
             , @RequestParam("type") Integer type
-            , @RequestParam("codeType") Integer codeType);
+            , @RequestParam("codeType") Integer codeType)
+            throws VericationCodeIntervalException, WrongMobileException, NotSupportVoiceException, MessageInternetException;
 
     /***
      * 用户手机注册/登录
@@ -86,7 +85,7 @@ public interface SecurityController {
      * </ul>
      */
     @Deprecated
-    @RequestMapping(value = "/userLogin", method = RequestMethod.POST)
+    @RequestMapping(value = "/mobileLogin", method = RequestMethod.POST)
     ApiResult mobileLogin(Output<String> data
             , @RequestParam("customerId") Long customerId
             , @RequestParam("phone") String phone

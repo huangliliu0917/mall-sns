@@ -97,18 +97,18 @@ public interface UserService {
             , String nickName
             , String imageUrl) throws WeixinLoginFailException;
 
-    /**
-     * 注册用户
-     *
-     * @param customerId 商家Id
-     * @param mobile     手机号
-     * @param openId     微信openid
-     * @param nickName   用户昵称
-     * @param imageUrl   用户头像
-     */
-    User register(Long customerId
-            , String mobile
-            , String openId
-            , String nickName
-            , String imageUrl);
+//    /**
+//     * 注册用户
+//     *
+//     * @param customerId 商家Id
+//     * @param mobile     手机号
+//     * @param openId     微信openid
+//     * @param nickName   用户昵称
+//     * @param imageUrl   用户头像
+//     */
+//    User register(Long customerId
+//            , String mobile
+//            , String openId
+//            , String nickName
+//            , String imageUrl);
 }

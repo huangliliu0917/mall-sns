@@ -3,28 +3,17 @@ package com.huotu.huobanplus.sns.controller.impl.app;
 import com.huotu.common.api.ApiResult;
 import com.huotu.common.api.Output;
 import com.huotu.huobanplus.sns.controller.app.WebController;
-import com.huotu.huobanplus.sns.exception.InterrelatedException;
 import com.huotu.huobanplus.sns.model.*;
 import com.huotu.huobanplus.sns.model.common.AppCode;
-import com.huotu.huobanplus.sns.model.common.CodeType;
-import com.huotu.huobanplus.sns.model.common.VerificationType;
-import com.huotu.huobanplus.sns.service.AppSecurityService;
 import com.huotu.huobanplus.sns.service.ArticleService;
 import com.huotu.huobanplus.sns.service.UserService;
-import com.huotu.huobanplus.sns.service.VerificationService;
-import com.huotu.huobanplus.sns.utils.EnumHelper;
-import com.huotu.huobanplus.sns.utils.RegexHelper;
-import com.huotu.huobanplus.sns.utils.StringHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
 import java.util.List;
-import java.util.Random;
 
 /**
  * Created by Administrator on 2016/10/8.

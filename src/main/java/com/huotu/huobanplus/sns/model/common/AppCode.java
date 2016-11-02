@@ -27,10 +27,11 @@ public enum AppCode implements ICommonEnum {
     ERROR_WEIXIN_LOGIN(20002, "微信登录失败，没有注册手机"),
     ERROR_WRONG_MOBILE(20003, "不合法的手机号"),
 
-    ERROR_WRONG_VERIFICATION_INTERVAL(20104, "验证码发送间隔为90秒"),
-    ERROR_SEND_MESSAGE_FAIL(20105, "短信发送通道不稳定，请重新尝试"),
+    VERICATIONCOD_EINTERVAL(20104, "验证码发送间隔为90秒"),
     VERIFICATION_CODE_INVOID(20106, "验证码错误"),
     VERIFICATION_CODE_DUED(20107, "验证码到期了"),
+    Not_Support_Voice(20108, "还不支持的语音播报"),
+    MESSAGE_INTERNET(20109,"短信发送通道不稳定，请重新尝试"),
 
 
     /**

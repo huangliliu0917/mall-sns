@@ -10,9 +10,9 @@
 package com.huotu.huobanplus.sns.service.impl;
 
 
-
 import com.huotu.huobanplus.sns.entity.VerificationCode;
-import com.huotu.huobanplus.sns.exception.InterrelatedException;
+import com.huotu.huobanplus.sns.exception.MessageInternetException;
+import com.huotu.huobanplus.sns.model.common.AppCode;
 import com.huotu.huobanplus.sns.model.common.ResultModel;
 import com.huotu.huobanplus.sns.service.VerificationService;
 import com.huotu.huobanplus.sns.utils.SMSHelper;
@@ -43,15 +43,16 @@ public class YimeiVerificationService extends AbstractVerificationService implem
     public boolean supportVoice() {
         return false;
     }
+
     @Override
-    protected void doSend(VerificationProject project, VerificationCode code) throws InterrelatedException {
+    protected void doSend(VerificationProject project, VerificationCode code) throws MessageInternetException {
 //        if (env.acceptsProfiles("test") && !env.acceptsProfiles("prod"))
 //            return;
 
-        String smsContent = new Formatter(Locale.CHINA).format(project.getFormat(),code.getCode()).toString();
+        String smsContent = new Formatter(Locale.CHINA).format(project.getFormat(), code.getCode()).toString();
         SMSHelper sms = new SMSHelper();
         ResultModel resultSMS = sms.send(code.getMobile(), smsContent);
         if (resultSMS.getCode() != 0)
-            throw new InterrelatedException();
+            throw new MessageInternetException(AppCode.MESSAGE_INTERNET.getValue(), AppCode.MESSAGE_INTERNET.getName());
     }
 }
