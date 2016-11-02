@@ -173,11 +173,11 @@ public class UserServiceImpl implements UserService {
             , String nickName
             , String imageUrl) throws VerificationCodeInvoidException, VerificationCodeDuedException, UnsupportedEncodingException {
         //判断验证码是否有效
-        VerificationCode verificationCode = verificationCodeRepository.findByMobileAndTypeAndCodeType(phone, VerificationType.BIND_REGISTER, CodeType.text);
+        VerificationCode verificationCode = verificationCodeRepository.findByCustomerIdAndMobileAndTypeAndCodeType(customerId, phone, VerificationType.BIND_REGISTER, CodeType.text);
         if (verificationCode == null) throw new VerificationCodeInvoidException(AppCode.VERIFICATION_CODE_INVOID.getValue(), AppCode.VERIFICATION_CODE_INVOID.getName());
 
         Date currentDate = new Date();
-        if (currentDate.getTime() - verificationCode.getSendTime().getTime() < 60 * 60 * 1000) {
+        if (currentDate.getTime() - verificationCode.getSendTime().getTime() > 60 * 60 * 1000) {
             throw new VerificationCodeDuedException(AppCode.VERIFICATION_CODE_DUED.getValue(), AppCode.VERIFICATION_CODE_DUED.getName());//超过1小时
         }
 
@@ -196,7 +196,7 @@ public class UserServiceImpl implements UserService {
         //判断本地用户是否存在，不存在则创建本地用户
         User user = userRepository.findOne(userId);
         if (user == null) {
-            user = register(customerId, phone, openId, nickName, imageUrl);
+            user = register(userId, customerId, phone, openId, nickName, imageUrl);
         }
         //返回token
         String token = appSecurityService.createJWT("sns", customerId.toString() + "," + user.getId().toString(), 1000 * 3600 * 24 * 30);
@@ -218,11 +218,13 @@ public class UserServiceImpl implements UserService {
 
 
     public User register(Long customerId
+            , Long userId
             , String mobile
             , String openId
             , String nickName
             , String imageUrl) {
         User user = new User();
+        user.setId(userId);
         user.setCustomerId(customerId);
         user.setMobile(mobile);
         user.setOpenId(openId);

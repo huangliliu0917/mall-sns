@@ -1,8 +1,10 @@
 package com.huotu.huobanplus.sns.service;
 
 
-
-import com.huotu.huobanplus.sns.exception.InterrelatedException;
+import com.huotu.huobanplus.sns.exception.MessageInternetException;
+import com.huotu.huobanplus.sns.exception.NotSupportVoiceException;
+import com.huotu.huobanplus.sns.exception.VericationCodeIntervalException;
+import com.huotu.huobanplus.sns.exception.WrongMobileException;
 import com.huotu.huobanplus.sns.model.common.CodeType;
 import com.huotu.huobanplus.sns.model.common.VerificationType;
 import org.springframework.transaction.annotation.Transactional;
@@ -61,23 +63,26 @@ public interface VerificationService {
      */
     boolean supportVoice();
 
+
     /**
+     * /**
      * 发送验证码
      *
+     * @param customerId  商家
      * @param mobile      接受者手机号码
      * @param project     项目信息，比如短信包含内容什么的
      * @param code        验证码
      * @param currentDate 当前日期
      * @param type        验证码类型
      * @param sentType    发送类型
-     * @throws IllegalStateException    90秒内已发过
-     * @throws IllegalArgumentException 手机号码或者其他参数有误
-     * @throws NoSuchMethodException    该发送类别不受支持
-     * @throws InterrelatedException    第三方平台错误
+     * @throws VericationCodeIntervalException
+     * @throws NotSupportVoiceException
+     * @throws WrongMobileException
+     * @throws MessageInternetException
      */
     @Transactional
-    void sendCode(String mobile, VerificationProject project, String code, Date currentDate, VerificationType type, CodeType sentType)
-            throws IllegalStateException, IllegalArgumentException, NoSuchMethodException, InterrelatedException;
+    void sendCode(Long customerId, String mobile, VerificationProject project, String code, Date currentDate, VerificationType type, CodeType sentType)
+            throws VericationCodeIntervalException, NotSupportVoiceException, WrongMobileException, MessageInternetException;
 
     /**
      * 验证该验证码
@@ -90,7 +95,7 @@ public interface VerificationService {
      * @return true表示验证通过
      * @throws IllegalArgumentException 手机号码或者其他参数有误
      */
-    @Transactional
-    boolean verifyCode(String mobile, VerificationProject project, String code, Date currentDate, VerificationType type) throws IllegalArgumentException;
+//    @Transactional
+//    boolean verifyCode(String mobile, VerificationProject project, String code, Date currentDate, VerificationType type) throws IllegalArgumentException;
 
 }

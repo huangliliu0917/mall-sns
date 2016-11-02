@@ -8,6 +8,10 @@ import com.huotu.huobanplus.sns.mallrepository.MallUserRepository;
 import com.huotu.huobanplus.sns.mallservice.MallUserService;
 import com.huotu.huobanplus.sns.model.common.UserType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
@@ -52,8 +56,9 @@ public class MallUserServiceImpl implements MallUserService {
 //        mallUser.setRealName();
 //        mallUser.setNickName();
 
-        MallUserLevel mallUserLevel = mallUserLevelRepository.findByCustomerIdAndTypeMin(customerId, UserType.normal);
-        if (mallUserLevel != null) mallUser.setLevelId(mallUserLevel.getId());
+        Pageable pageable = new PageRequest(0, 1, new Sort(Sort.Direction.ASC, "level"));
+        Page<MallUserLevel> mallUserLevel = mallUserLevelRepository.findByCustomerIdAndTypeMin(customerId, UserType.normal, pageable);
+        if (mallUserLevel.getContent().size() > 0) mallUser.setLevelId(mallUserLevel.getContent().get(0).getId());
 
         MallUserBinding mallUserBinding = new MallUserBinding();
         mallUserBinding.setOpenId(openId);
