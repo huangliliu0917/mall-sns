@@ -11,11 +11,16 @@ package com.huotu.huobanplus.sns.controller.impl.app;
 
 import com.huotu.huobanplus.sns.CommonTestBase;
 import com.huotu.huobanplus.sns.entity.Article;
+import com.huotu.huobanplus.sns.entity.Circle;
+import com.huotu.huobanplus.sns.model.common.AppCode;
 import org.junit.Test;
 
 import java.util.UUID;
 
+import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * Created by Administrator on 2016/11/1.
@@ -23,7 +28,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 public class UserControllerImplTest extends CommonTestBase {
     @Test
     public void concern() throws Exception {
-
+        Circle circle = randomCircle();
+        mockMvc.perform(device.postApi("/user/concern").param("id", circle.getId() + "").build())
+                .andExpect(status().isOk()).andDo(print())
+                .andExpect(jsonPath("$.resultCode").value(AppCode.SUCCESS.getValue()));
+        assertEquals("用户关注数量", userCircleRepository.findByUserAndCircle(user, circle).size(), 1);
     }
 
     @Test

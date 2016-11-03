@@ -14,10 +14,13 @@ import com.huotu.huobanplus.sns.base.Device;
 import com.huotu.huobanplus.sns.base.DeviceType;
 import com.huotu.huobanplus.sns.entity.Article;
 import com.huotu.huobanplus.sns.entity.ArticleComment;
+import com.huotu.huobanplus.sns.entity.Circle;
 import com.huotu.huobanplus.sns.entity.User;
 import com.huotu.huobanplus.sns.mallservice.MallUserService;
 import com.huotu.huobanplus.sns.repository.ArticleCommentRepository;
 import com.huotu.huobanplus.sns.repository.ArticleRepository;
+import com.huotu.huobanplus.sns.repository.CircleRepository;
+import com.huotu.huobanplus.sns.repository.UserCircleRepository;
 import com.huotu.huobanplus.sns.service.AppSecurityService;
 import org.junit.Before;
 import org.junit.runner.RunWith;
@@ -42,17 +45,21 @@ import java.util.UUID;
 @Transactional
 public abstract class CommonTestBase extends BaseTest {
 
-    public User user;
     /**
      * 携带token的设备
      */
     public Device device;
     public Long mockUserId;
     public String mockMobile;
+    protected User user;
     @Autowired
-    private ArticleCommentRepository articleCommentRepository;
+    protected ArticleCommentRepository articleCommentRepository;
     @Autowired
-    private ArticleRepository articleRepository;
+    protected ArticleRepository articleRepository;
+    @Autowired
+    protected CircleRepository circleRepository;
+    @Autowired
+    protected UserCircleRepository userCircleRepository;
     @Autowired
     private MallUserService mallUserService;
     @Autowired
@@ -76,11 +83,19 @@ public abstract class CommonTestBase extends BaseTest {
         return null;
     }
 
-    public Article randomArticle() throws Exception {
+    protected Article randomArticle() throws Exception {
         Article article = new Article();
         article.setContent(UUID.randomUUID().toString());
         article.setPublisher(user);
         articleRepository.saveAndFlush(article);
         return article;
+    }
+
+    protected Circle randomCircle() throws Exception {
+        Circle circle = new Circle();
+        circle.setCustomerId(user.getCustomerId());
+        circle.setName(UUID.randomUUID().toString().substring(0, 9));
+        circleRepository.saveAndFlush(circle);
+        return circle;
     }
 }

@@ -33,6 +33,7 @@ public interface CircleRepository extends JpaRepository<Circle, Long>, JpaSpecif
     @Query("update Circle c set c.articleAmount=c.articleAmount+1 where c.id = :id")
     void addArticleAmount(@Param("id") Long id);
 
+    @Modifying
     @Query("update Circle c set c.userAmount=c.userAmount+1 where c.id = :id")
     void addUserAmount(@Param("id") Long id);
 
