@@ -13,6 +13,10 @@ import com.huotu.huobanplus.sns.CommonTestBase;
 import com.huotu.huobanplus.sns.entity.Article;
 import org.junit.Test;
 
+import java.util.UUID;
+
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+
 /**
  * Created by Administrator on 2016/11/1.
  */
@@ -75,7 +79,8 @@ public class UserControllerImplTest extends CommonTestBase {
     @Test
     public void replyComment() throws Exception {
         Article article = randomArticle();
-        System.out.println(article);
-    }
 
+        mockMvc.perform(device.postApi("/user/commentArticle").param("id", article.getId() + "")
+                .param("content", UUID.randomUUID().toString()).build()).andDo(print());
+    }
 }

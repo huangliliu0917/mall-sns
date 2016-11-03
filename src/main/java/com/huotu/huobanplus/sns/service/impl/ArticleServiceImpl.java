@@ -71,7 +71,7 @@ public class ArticleServiceImpl implements ArticleService {
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
     @Autowired
-    private RedisTemplate<String, ArticleComment> articleCommentRedisTemplate;
+    private RedisTemplate<String, AppArticleCommentModel> articleCommentRedisTemplate;
 
     @Autowired
     private RedisTemplate<String, AppArticleCommentModel> articleReplyCommentRedisTemplate;
@@ -313,7 +313,7 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public void commentArticle(Long id, String content, User user) throws IOException {
+    public ArticleComment commentArticle(Long id, String content, User user) throws IOException {
         Article article = articleRepository.getOne(id);
         ArticleComment articleComment = new ArticleComment();
         articleComment.setUser(user);
@@ -325,7 +325,7 @@ public class ArticleServiceImpl implements ArticleService {
         Optional<Long> maxFloor = articleCommentRepository.getMaxFloorByArticleId(id);
         synchronized (maxFloor) {
             articleComment.setFloor(maxFloor.orElse(0L) + 1L);
-            articleComment = articleCommentRepository.save(articleComment);
+            articleComment = articleCommentRepository.saveAndFlush(articleComment);
         }
 //        articleRepository.addComments(id);
         BoundHashOperations<String, String, Long> articleOperations = redisTemplate
@@ -336,9 +336,10 @@ public class ArticleServiceImpl implements ArticleService {
             articleOperations.put("comments", comments + 1L);
         }
 
-        BoundListOperations<String, ArticleComment> articleCommentBoundListOperations =
+        BoundListOperations<String, AppArticleCommentModel> articleCommentBoundListOperations =
                 articleCommentRedisTemplate.boundListOps(ContractHelper.articleCommentFlag + id);
-        articleCommentBoundListOperations.set(0L, articleComment);
+        articleCommentBoundListOperations.leftPush(changeModel(articleComment));
+        return articleComment;
     }
 
     /**
@@ -450,9 +451,9 @@ public class ArticleServiceImpl implements ArticleService {
         replyArticleComment.setFloor(maxFloor.orElse(0L) + 1L);
 
         //评论列表+1
-        BoundListOperations<String, ArticleComment> articleCommentBoundListOperations =
+        BoundListOperations<String, AppArticleCommentModel> articleCommentBoundListOperations =
                 articleCommentRedisTemplate.boundListOps(ContractHelper.articleCommentFlag + articleId);
-        articleCommentBoundListOperations.set(0L, articleComment);
+        articleCommentBoundListOperations.set(0L, changeModel(articleComment));
 
         //取出上一条评论的冗余列表
         BoundListOperations<String, AppArticleCommentModel> lastArticleReplyCommentBoundListOperations =

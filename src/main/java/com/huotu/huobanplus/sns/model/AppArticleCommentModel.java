@@ -12,13 +12,15 @@ package com.huotu.huobanplus.sns.model;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 /**
  * Created by jin on 2016/11/2.
  * 评论中的冗余评论
  */
 @Getter
 @Setter
-public class AppArticleCommentModel {
+public class AppArticleCommentModel implements Serializable {
 
     /**
      * 评论id

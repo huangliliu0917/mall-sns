@@ -43,18 +43,18 @@ import java.util.UUID;
 public abstract class CommonTestBase extends BaseTest {
 
     public User user;
+    /**
+     * 携带token的设备
+     */
+    public Device device;
+    public Long mockUserId;
+    public String mockMobile;
     @Autowired
     private ArticleCommentRepository articleCommentRepository;
     @Autowired
     private ArticleRepository articleRepository;
-    /**
-     * 携带token的设备
-     */
-    private Device device;
     @Autowired
     private MallUserService mallUserService;
-    private Long mockUserId;
-    private String mockMobile;
     @Autowired
     private AppSecurityService appSecurityService;
 
@@ -80,7 +80,7 @@ public abstract class CommonTestBase extends BaseTest {
         Article article = new Article();
         article.setContent(UUID.randomUUID().toString());
         article.setPublisher(user);
-        articleRepository.save(article);
+        articleRepository.saveAndFlush(article);
         return article;
     }
 }

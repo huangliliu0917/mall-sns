@@ -116,7 +116,7 @@ public interface UserController {
      * @throws ContentException   30201 评论包含敏感词汇
      */
     @RequestMapping(value = "/commentArticle", method = RequestMethod.POST)
-    ApiResult commentArticle(@RequestParam(value = "id") Long id
+    ApiResult commentArticle(Output<Long> commentId, @RequestParam(value = "id") Long id
             , @RequestParam(value = "content") String content) throws NeedLoginException, IOException, ContentException;
 
 

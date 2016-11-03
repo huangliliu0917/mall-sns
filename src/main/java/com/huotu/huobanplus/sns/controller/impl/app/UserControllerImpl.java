@@ -94,7 +94,7 @@ public class UserControllerImpl implements UserController {
     @Override
     public ApiResult publishArticle(Long id, String name, String content, String pictureUrl, Long circleId)
             throws ContentException, IOException, NeedLoginException, InterruptedException {
-        if (sensitiveService.ContainSensitiveWords(content)) {
+        if (!sensitiveService.ContainSensitiveWords(content)) {
             throw new ContentException(AppCode.ERROR_SENSITIVE_CONTENT.getValue(), AppCode.ERROR_SENSITIVE_CONTENT.getName());
         }
         User user = UserHelper.getUser();
@@ -117,12 +117,14 @@ public class UserControllerImpl implements UserController {
     }
 
     @Override
-    public ApiResult commentArticle(Long id, String content) throws NeedLoginException, IOException, ContentException {
-        if (sensitiveService.ContainSensitiveWords(content)) {
+    public ApiResult commentArticle(Output<Long> commentId, Long id, String content)
+            throws NeedLoginException, IOException, ContentException {
+        if (!sensitiveService.ContainSensitiveWords(content)) {
             throw new ContentException(AppCode.ERROR_SENSITIVE_CONTENT.getValue(), AppCode.ERROR_SENSITIVE_CONTENT.getName());
         }
         User user = UserHelper.getUser();
-        articleService.commentArticle(id, content, user);
+        ArticleComment comment = articleService.commentArticle(id, content, user);
+        commentId.outputData(comment.getId());
         return ApiResult.resultWith(AppCode.SUCCESS);
     }
 
@@ -196,7 +198,7 @@ public class UserControllerImpl implements UserController {
     @Override
     public ApiResult replyComment(@RequestParam(value = "id") Long id, @RequestParam(value = "content") String content)
             throws NeedLoginException, IOException, ContentException {
-        if (sensitiveService.ContainSensitiveWords(content)) {
+        if (!sensitiveService.ContainSensitiveWords(content)) {
             throw new ContentException(AppCode.ERROR_SENSITIVE_CONTENT.getValue(), AppCode.ERROR_SENSITIVE_CONTENT.getName());
         }
         ArticleComment articleComment = articleCommentRepository.getOne(id);

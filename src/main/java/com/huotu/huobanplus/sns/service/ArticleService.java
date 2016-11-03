@@ -76,7 +76,7 @@ public interface ArticleService {
      * @param user    评论者
      * @throws IOException
      */
-    void commentArticle(Long id, String content, User user) throws IOException;
+    ArticleComment commentArticle(Long id, String content, User user) throws IOException;
 
     /**
      * 获得用户文章列表

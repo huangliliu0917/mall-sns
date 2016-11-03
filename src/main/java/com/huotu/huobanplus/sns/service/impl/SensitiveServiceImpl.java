@@ -37,9 +37,9 @@ public class SensitiveServiceImpl implements SensitiveService {
     @Override
     public boolean ContainSensitiveWords(String content) throws IOException {
 
-        Boolean flag=checkFirstWay(content);
+        Boolean flag = checkSecondWay(content);
         if(flag==null){
-            flag=checkSecondWay(content);
+            flag = checkFirstWay(content);
             if(flag==null){
                 return true;
             }
@@ -82,10 +82,7 @@ public class SensitiveServiceImpl implements SensitiveService {
             String json=getString(entity);
             JSONObject object=JSONObject.parseObject(json);
             Object o=object.get("data");
-            if(new Integer(0).equals(o)){
-                return true;
-            }
-            return false;
+            return new Integer(0).equals(o);
         } catch (Exception e) {
             e.printStackTrace();
             return false;
