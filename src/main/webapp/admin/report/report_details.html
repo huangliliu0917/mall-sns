@@ -28,7 +28,7 @@
 
 </head>
 
-<body onclick="circleConfig.firstLoad()" class="gray-bg">
+<body class="gray-bg">
 <div class="wrapper wrapper-content animated fadeInRight">
     <div class="row">
         <div class="col-sm-12">
@@ -108,12 +108,26 @@
                         <div class="hr-line-dashed"></div>
                         <div class="form-group">
                             <div class="col-sm-4 col-sm-offset-2">
-                                <button class="btn btn-primary" type="button" onclick="">查看用户</button>
-                                <button th:if="*{reportTargetType.value==1}" class="btn btn-primary" type="button" onclick="">查看帖子</button>
-                                <button th:if="*{reportTargetType.value==2}" class="btn btn-primary" type="button" onclick="">查看评论</button>
-                                <button class="btn btn-white" type="button">禁言用户</button>
-                                <button th:if="*{reportTargetType.value==1}" class="btn btn-white" type="button">删除帖子</button>
-                                <button  th:if="*{reportTargetType.value==2}" class="btn btn-white" type="button">删除评论</button>
+                                <button class="btn btn-primary" type="button"
+                                        th:onclick="'reportConfig.showUser('+*{reportedId}+')'">查看用户</button>
+
+                                <button th:text="*{Posting}?'禁止用户发帖':'恢复用户发帖'"
+                                        th:onclick="'reportConfig.configPosting(this,'+*{reportedId}+')'"
+                                        class="btn btn-white" type="button">禁止用户发帖</button>
+
+                                <button th:text="*{speak}?'禁止用户发言':'恢复用户发言'"
+                                        th:onclick="'reportConfig.configSpeak(this,'+*{reportedId}+')'"
+                                        class="btn btn-white" type="button">禁止用户发言</button>
+
+                                <button th:onclick="'reportConfig.editDel(this,'+*{invitationId}+')'"
+                                        th:text="*{invitationEnabled}?'禁用帖子':'已禁用帖子'"
+                                        th:if="*{reportTargetType.value==1}"
+                                        class="btn btn-white" type="button">禁用帖子</button>
+
+                                <button th:onclick="'reportConfig.modifyCommentStatus(this,'+*{commentId}+')'"
+                                        th:if="*{reportTargetType.value==2}"
+                                        th:text="*{commentStatus}==0?'禁用评论':'已禁用评论'"
+                                        class="btn btn-white" type="button">禁用评论</button>
                             </div>
                         </div>
 
@@ -135,6 +149,136 @@
 <script type="text/javascript" src="http://tajs.qq.com/stats?sId=9051096" charset="UTF-8"></script>
 <script type="text/javascript" th:inline="javascript">
     /*<![CDATA[*/
+
+    var reportConfig={};
+
+    reportConfig.showUser=function(id){
+        var userId=layer.open({
+            type: 2,
+            title: '查看用户',
+            area: ['60%', '70%'],
+            content:"/top/user/edit?userId="+id,
+            end:function(){
+            }
+        });
+    };
+
+    //发言操作
+    reportConfig.configSpeak=function(obj,id){
+        var txt=$(obj).text();
+        var status;
+        var changeTxt;
+        if(txt=='禁止用户发言'){
+            status=0;
+            changeTxt="恢复用户发言";
+
+        }else {
+            status=1;
+            changeTxt="禁止用户发言";
+        }
+        reportConfig.forbidOperation(obj,id,1,status,changeTxt);
+
+
+    };
+    //发帖操作
+    reportConfig.configPosting=function(obj,id){
+        var txt=$(obj).text();
+        var status;
+        var changeTxt;
+        if(txt=='禁止用户发帖'){
+            status=0;
+            changeTxt="恢复用户发帖";
+
+        }else {
+            status=1;
+            changeTxt="禁止用户发帖";
+        }
+        reportConfig.forbidOperation(obj,id,0,status,changeTxt);
+    };
+
+    //禁止回复
+    reportConfig.modifyCommentStatus=function(obj,id){
+        var txt=$(obj).text();
+        if(txt=='禁用评论'){
+            layer.confirm('确定操作嘛？', {
+                btn: ['确定','取消'] //按钮
+            }, function(){
+                var ld=layer.load(5, {shade: false});
+                $.ajax({
+                    type:'GET',
+                    url: '/top/article/modifyCommentStatus',
+                    dataType: 'json',
+                    data:{id:id},
+                    success:function(result){
+                        layer.close(ld);
+                        $(obj).text("已禁用评论");
+                        layer.msg("修改成功");
+                    },
+                    error:function(e){
+                        layer.close(ld);
+                        layer.msg("修改失败！");
+                    }
+                });
+            });
+        }
+
+    };
+
+
+    //禁用帖子
+    reportConfig.editDel = function (obj,id) {
+        var txt=$(obj).text();
+        var enabled=txt=='禁用帖子';
+        if(!enabled){
+            return;
+        }
+        layer.confirm('确定修改帖子嘛？', {
+            btn: ['确定','取消'] //按钮
+        }, function(){
+            var ld=layer.load(5, {shade: false});
+            $.ajax({
+                type:'GET',
+                url: '/top/article/deleteArticle',
+                dataType: 'json',
+                data: {id:id,enabled:!enabled},
+                success:function(result){
+                    layer.close(ld);
+                    layer.msg("操作成功!");
+                    $(obj).text(enabled?'已禁用帖子':'禁用帖子');
+                },
+                error:function(e){
+                    layer.close(ld);
+                    layer.msg("操作失败!");
+                }
+            });
+        });
+    }
+
+
+
+    reportConfig.forbidOperation=function(obj,id,type,status,txt){
+
+        layer.confirm('确定操作嘛？', {
+            btn: ['确定','取消'] //按钮
+        }, function(){
+            var ld=layer.load(5, {shade: false});
+            $.ajax({
+                type:'GET',
+                url: '/top/report/forbidOperation',
+                dataType: 'json',
+                data: {userId:id,type:type,status:status},
+                success:function(result){
+                    layer.close(ld);
+                    layer.msg(result.message);
+                    $(obj).text(txt);
+                },
+                error:function(e){
+                    layer.close(ld);
+                    layer.msg("操作失败!");
+                }
+            });
+        });
+    };
 
     /*]]>*/
 

@@ -60,5 +60,12 @@ public interface ReportService {
      */
     ReportDetailsModel getReportDetails(Report report);
 
+    /**
+     * 用户权限格式化，将不符合格式的power，变成符合的
+     * @param power 权限字符串
+     * @return
+     */
+    String formatUserPower(String power);
+
 
 }

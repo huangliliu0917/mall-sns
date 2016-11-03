@@ -30,12 +30,15 @@ public interface CircleRepository extends JpaRepository<Circle, Long>, JpaSpecif
     @Query("update Circle c set c.suggested=:suggested where c.id = :id")
     void updateSuggest(@Param("suggested") boolean suggested, @Param("id") Long id) throws IOException;
 
+    @Modifying(clearAutomatically = true)
     @Query("update Circle c set c.articleAmount=c.articleAmount+1 where c.id = :id")
     void addArticleAmount(@Param("id") Long id);
 
+    @Modifying(clearAutomatically = true)
     @Query("update Circle c set c.userAmount=c.userAmount+1 where c.id = :id")
     void addUserAmount(@Param("id") Long id);
 
+    @Modifying(clearAutomatically = true)
     @Query("update Circle c set c.userAmount=c.userAmount-1 where c.id = :id")
     void reduceUserAmount(@Param("id") Long id);
 }

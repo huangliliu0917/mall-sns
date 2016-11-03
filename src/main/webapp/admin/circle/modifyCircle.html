@@ -25,7 +25,7 @@
     <link href="http://resali.huobanplus.com/cdn/hotui/css/plugins/iCheck/custom.css" rel="stylesheet"/>
     <link href="http://resali.huobanplus.com/cdn/hotui/css/animate.min.css" rel="stylesheet"/>
     <link href="../../css/style.min.css" rel="stylesheet"/>
-    <link href="../../css/layer.css" rel="stylesheet"/>
+    <!--<link href="../../css/layer.css" rel="stylesheet"/>-->
 
 </head>
 
@@ -235,8 +235,8 @@
             if($(obj).attr("class")=="btn btn-primary disabled"){
                 return;
             }
-            var ld=layer.load(5, {shade: false});
-            $(obj).attr("class","btn btn-primary disabled");
+
+
             var circleModel={};
             circleModel.circleId=$("input[name='circleId']").val();
             circleModel.circleName=$("input[name='circleName']").val();
@@ -246,6 +246,17 @@
             circleModel.suggested=$("input[name='suggested']:checked").val();
             circleModel.enabled=$("input[name='enabled']:checked").val();
             circleModel.leaderId=$("input[name='leaderId']").val();
+
+            if(circleModel.leaderId<1){
+                layer.msg("请选择组长");
+                return;
+            }
+            if(circleModel.categoryId<1){
+                layer.msg("请选择分类");
+                return;
+            }
+            var ld=layer.load(5, {shade: false});
+            $(obj).attr("class","btn btn-primary disabled");
             var tags=[];
             $("#tags label").each(function(index,val){
                 var tag={};
@@ -271,6 +282,7 @@
                     layer.close(ld);
 //                    $(obj).attr("class","btn btn-primary");
                     layer.msg("保存圈子失败！");
+                    $(obj).attr("class","btn btn-primary");
                 }
             });
         };
@@ -311,11 +323,17 @@
 
         //设置分类的ID和名称
         circleConfig.setCategoryIdAndName=function(data){
+            if(data.id==-1){
+                return;
+            }
             $("#showCategoryName").text("当前分类:"+data.name);
             $("input[name='categoryId']").val(data.id);
         };
 
         circleConfig.setUserIdAndName=function(data){
+            if(data.id==-1){
+                return;
+            }
             $("#leaderName").text("当前组长:"+data.name);
             $("input[name='leaderId']").val(data.id);
         };

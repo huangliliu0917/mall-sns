@@ -18,4 +18,5 @@ public class AdminArticleModel {
     private Long click;
     private Long view;
     private boolean top;
+    private boolean enabled;
 }

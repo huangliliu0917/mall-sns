@@ -94,9 +94,9 @@ public class CircleServiceImpl implements CircleService {
         model.setEnabled(circle.isEnabled());
         model.setCircleName(circle.getName());
         model.setPictureUrl(circle.getPictureUrl());
-        model.setCategoryId(circle.getCategory()==null?-1:circle.getCategory().getId());
+        model.setCategoryId(circle.getCategory()==null?0:circle.getCategory().getId());
         model.setCategoryName(circle.getCategory()==null?"":circle.getCategory().getName());
-        model.setLeaderId(circle.getLeader()==null?-1:circle.getLeader().getId());
+        model.setLeaderId(circle.getLeader()==null?0:circle.getLeader().getId());
         model.setLeaderName(circle.getLeader()==null?"":circle.getLeader().getNickName());
         model.setSuggested(circle.isSuggested());
         model.setTags(circle.getTags());

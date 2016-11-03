@@ -42,9 +42,24 @@ public class ReportDetailsModel {
     private String invitationTitle;
 
     /**
+     * 帖子ID
+     */
+    private Long invitationId;
+
+    /**
      * 帖子内容
      */
     private String invitationContent;
+
+    /**
+     * 帖子是否可用
+     */
+    private boolean invitationEnabled;
+
+    /**
+     * 评论ID
+     */
+    private Long commentId;
 
     /**
      * 评论内容
@@ -52,8 +67,23 @@ public class ReportDetailsModel {
     private String comment;
 
     /**
-     * 类型
+     * 评论状态，0：正常，1：删除
+     */
+    private Integer commentStatus;
+
+    /**
+     * 举报类型
      */
     private ReportTargetType reportTargetType;
+
+    /**
+     * 是否拥有发帖权限
+     */
+    private boolean Posting;
+
+    /**
+     * 是否拥有发言权限
+     */
+    private boolean speak;
 
 }
