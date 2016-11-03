@@ -7,7 +7,7 @@
     <link href="http://resali.huobanplus.com/cdn/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet"/>
     <link href="http://resali.huobanplus.com/cdn/hotui/css/animate.min.css" rel="stylesheet"/>
     <link href="http://resali.huobanplus.com/cdn/hotui/css/style.min-1.0.2.css" rel="stylesheet"/>
-    <link href="../../css/layer.css" rel="stylesheet"/>
+    <!--<link href="/css/layer.css" rel="stylesheet"/>-->
 
     <script src="http://resali.huobanplus.com/cdn/jquery/2.2.4/jquery.min.js"></script>
     <script src="http://resali.huobanplus.com/cdn/bootstrap/3.3.5/bootstrap.min.js"></script>
@@ -58,6 +58,7 @@
                                     <td>时间</td>
                                     <td>点赞量</td>
                                     <td>浏览量</td>
+                                    <td>是否禁用</td>
                                     <td>操作</td>
                                 </tr>
                                 </thead>
@@ -104,8 +105,8 @@
 //                alert(data.list.length);
                 var html = "";
                 for (var i = 0; data.list.length > i; i++) {
-
                     var row = data.list[i];
+                    var txt=row.enabled?"禁用":"解禁";
                     var isTopStr=row.top?"取消置顶":"置顶";
                     html += '<tr><td>' + row.id + '</td>' +
                             '<td>' + row.name + '</td>' +
@@ -113,10 +114,12 @@
                             '<td>' + (UtcToDateString(row.date, "yyyy-MM-dd")) + '</td>' +
                             '<td>' + row.click + '</td>' +
                             '<td>' + row.view + '</td>' +
+                            '<td>' + row.enabled + '</td>' +
                             '<td>' +
+                            '<button style="padding: 0px 5px;margin-left: 5px;" class="btn btn-primary tooltips" type="button" onclick="page.commentsView(this,' + row.id + ')">查看评论</button>' +
                             '<button style="padding: 0px 5px;margin-left: 5px;" data-placement="top" data-toggle="tooltip" class="btn btn-primary tooltips" type="button" data-original-title="编辑" onclick="page.edit(' + row.id + ')">编辑</button>' +
                             '<button style="padding: 0px 5px;margin-left: 5px;" class="btn btn-primary tooltips" type="button" onclick="page.editTop(this,' + row.id + ')">'+isTopStr+'</button>' +
-                            '<button style="padding: 0px 5px;margin-left: 5px;" class="btn btn-primary tooltips" type="button" onclick="page.edit(' + row.id + ')">删除</button>' +
+                            '<button style="padding: 0px 5px;margin-left: 5px;" class="btn btn-primary tooltips" type="button" onclick="page.editDel(this,' + row.id + ')">'+txt+'</button>' +
                             '</td></tr>';
                 }
 
@@ -173,8 +176,51 @@
 //        window.location.href = '/top/circle/setTop/' + articleType + '/edit/' + id;
     }
 
-    page.editDel = function (id) {
-        window.location.href = '/top/circle/articleEdit/' + articleType + '/edit/' + id;
+
+    /**
+     * 查看帖子评论
+     */
+    page.commentsView=function(obj,id){
+
+        var openId=layer.open({
+            type: 2,
+            title: '查看评论',
+            area: ['60%', '70%'],
+            content:"/top/article/viewComments?articleId="+id,
+            end:function(){
+            }
+        });
+
+
+    }
+
+    page.editDel = function (obj,id) {
+        var txt=$(obj).text();
+        var enabled=txt=='禁用';
+        if(!enabled){
+            return;
+        }
+        layer.confirm('确定修改帖子嘛？', {
+            btn: ['确定','取消'] //按钮
+        }, function(){
+
+            var ld=layer.load(5, {shade: false});
+            $.ajax({
+                type:'GET',
+                url: '/top/article/deleteArticle',
+                dataType: 'json',
+                data: {id:id,enabled:!enabled},
+                success:function(result){
+                    layer.close(ld);
+                    layer.msg("操作成功!");
+                    $(obj).text(enabled?'解禁':'禁用');
+                },
+                error:function(e){
+                    layer.close(ld);
+                    layer.msg("操作失败!");
+                }
+            });
+        });
     }
 
     function UtcToDateString(utcTime, format) {

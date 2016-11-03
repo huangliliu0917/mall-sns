@@ -32,6 +32,7 @@ public class User {
      * 商家
      */
     private Long customerId;
+
     /**
      * 手机号
      */

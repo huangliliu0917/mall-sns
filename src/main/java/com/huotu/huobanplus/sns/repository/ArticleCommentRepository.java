@@ -10,6 +10,8 @@
 package com.huotu.huobanplus.sns.repository;
 
 import com.huotu.huobanplus.sns.entity.ArticleComment;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -26,4 +28,9 @@ public interface ArticleCommentRepository extends JpaRepository<ArticleComment, 
 
     @Query("select max(a.floor) from ArticleComment a where a.article.id=?1")
     Optional<Long> getMaxFloorByArticleId(@Param("articleId") Long articleId);
+
+//    @Query("select ac from ArticleComment as ac where ac.article.id=?1 and ac.customerId=?2")
+    Page<ArticleComment> findByArticle_IdAndCustomerId( Long articleId,Long customerId, Pageable pageable);
+
+
 }

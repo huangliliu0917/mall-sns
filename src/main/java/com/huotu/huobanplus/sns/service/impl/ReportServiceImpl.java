@@ -128,6 +128,7 @@ public class ReportServiceImpl implements ReportService {
         ReportTargetType type=report.getReportTargetType();
         reportDetailsModel.setContent(report.getContent());
         if(report.getTargetId()!=null){
+            //被举报者
             User reported=null;
             switch (type){
                 case User:
@@ -136,16 +137,21 @@ public class ReportServiceImpl implements ReportService {
                 case Article:
                     Article article=articleRepository.findOne(report.getTargetId());
 
+
                     if(article!=null){
                         reported=article.getPublisher();
+                        reportDetailsModel.setInvitationId(article.getId());
                         reportDetailsModel.setInvitationTitle(article.getName());
                         reportDetailsModel.setInvitationContent(article.getContent());
+                        reportDetailsModel.setInvitationEnabled(article.getEnabled());
                     }
                     break;
                 case Comment:
                     ArticleComment comment=articleCommentRepository.findOne(report.getTargetId());
                     if(comment!=null){
                         reported=comment.getUser();
+                        reportDetailsModel.setCommentId(comment.getId());
+                        reportDetailsModel.setCommentStatus(comment.getCommentStatus().getValue());
                         reportDetailsModel.setComment(comment.getContent());
                     }
                     break;
@@ -153,9 +159,23 @@ public class ReportServiceImpl implements ReportService {
             if(reported!=null){
                 reportDetailsModel.setReportedId(reported.getId());
                 reportDetailsModel.setReportedName(reported.getNickName());
+                String power=formatUserPower(reported.getPower());
+                reportDetailsModel.setPosting('1'==power.charAt(0));
+                reportDetailsModel.setSpeak('1'==power.charAt(1));
             }
         }
         reportDetailsModel.setReportTargetType(report.getReportTargetType());
         return reportDetailsModel;
+    }
+
+    @Override
+    public String formatUserPower(String power) {
+        if(StringUtils.isEmpty(power)){
+            return "11";
+        }
+        if(power.length()<2){
+            power=power+"1";
+        }
+        return power;
     }
 }

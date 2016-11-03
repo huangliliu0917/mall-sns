@@ -4,8 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.Date;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -75,5 +73,10 @@ public class Article extends AbstractArticle {
      */
     @OneToMany(cascade = {CascadeType.REFRESH})
     private Set<Tag> tags;
+
+    /**
+     * 是否可用(前端看不到禁用文章)
+     */
+    private Boolean enabled=true;
 
 }

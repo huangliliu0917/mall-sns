@@ -182,6 +182,7 @@ public class ArticleServiceImpl implements ArticleService {
             adminArticleModel.setId(x.getId());
             adminArticleModel.setName(x.getName());
             adminArticleModel.setDate(x.getDate());
+            adminArticleModel.setEnabled(x.getEnabled());
             if (x.getPublisher() != null)
                 adminArticleModel.setPublisher(x.getPublisher().getNickName());
             adminArticleModel.setClick(x.getClick());
@@ -266,7 +267,7 @@ public class ArticleServiceImpl implements ArticleService {
 
         article.setArticleType(articleType.equals(1) ? ArticleType.Wiki : ArticleType.Normal);
         article.setName(name);
-        article.setPublisher(userRepository.findOne(userId));
+        article.setPublisher(userId==null?null:userRepository.findOne(userId));
         article.setPictureUrl(pictureUrl);
         article.setContent(content);
         article.setSummary(summary);

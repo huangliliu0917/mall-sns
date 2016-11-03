@@ -11,10 +11,12 @@ package com.huotu.huobanplus.sns.controller.admin;
 
 import com.huotu.huobanplus.sns.annotation.CustomerId;
 import com.huotu.huobanplus.sns.entity.Report;
+import com.huotu.huobanplus.sns.entity.User;
 import com.huotu.huobanplus.sns.model.admin.ReportDetailsModel;
 import com.huotu.huobanplus.sns.model.admin.ReportListModel;
 import com.huotu.huobanplus.sns.model.admin.ReportSearchModel;
 import com.huotu.huobanplus.sns.repository.ReportRepository;
+import com.huotu.huobanplus.sns.repository.UserRepository;
 import com.huotu.huobanplus.sns.service.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -37,6 +39,9 @@ public class AdminReportController {
 
     @Autowired
     private ReportRepository reportRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
 
     /**
@@ -79,5 +84,48 @@ public class AdminReportController {
 
         model.addAttribute("model",reportDetailsModel);
         return view;
+    }
+
+    /**
+     * 禁止用户操作，type,0：操作发帖，1：操作发言
+     * status,0:禁止，1：允许
+     * @param userId
+     * @param type
+     * @param status
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/forbidOperation")
+    @ResponseBody
+    public ModelMap forbidOperation(@RequestParam(required = true) Long userId,
+                                    @RequestParam(required = true) Integer type,
+                                    @RequestParam(required = true) String status) throws Exception{
+        ModelMap modelMap=new ModelMap();
+
+        User user=userRepository.findOne(userId);
+        if(user==null){
+            modelMap.addAttribute("status",500);
+            modelMap.addAttribute("message","无法找到用户");
+            return modelMap;
+        }
+        if(type!=1&&type!=0){
+            modelMap.addAttribute("status",500);
+            modelMap.addAttribute("message","修改类型错误");
+            return modelMap;
+
+        }
+
+        if(!"1".equals(status)&&!"0".equals(status)){
+            modelMap.addAttribute("status",500);
+            modelMap.addAttribute("message","修改状态错误");
+            return modelMap;
+        }
+        StringBuilder power=new StringBuilder(reportService.formatUserPower(user.getPower()));
+        power.replace(type,type+1,status);
+        user.setPower(power.toString());
+        userRepository.save(user);
+        modelMap.addAttribute("status",200);
+        modelMap.addAttribute("message","修改成功");
+        return modelMap;
     }
 }
