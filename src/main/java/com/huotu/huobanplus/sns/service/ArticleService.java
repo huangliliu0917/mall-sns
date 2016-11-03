@@ -27,18 +27,19 @@ import java.util.List;
  * Created by Administrator on 2016/10/12.
  */
 public interface ArticleService {
-    List<AppWikiListModel> getAppWikiList(Integer catalogId, Long lastId);
+    List<AppWikiListModel> getAppWikiList(Long customerId, Integer catalogId, Long lastId);
 
     AppWikiModel getAppWiki(Long id);
 
-    AdminArticlePageModel getAdminArticleList(Integer articleType, String name, Integer pageNo, Integer pageSize);
+    AdminArticlePageModel getAdminArticleList(Long customerId,Integer articleType, String name, Integer pageNo, Integer pageSize);
 
     AdminArticleEditModel getAdminArticle(String type, Integer articleType, Long id) throws URISyntaxException;
 
 
     /**
+     * @param  customerId
      * @param articleType
-     * @param id
+     * @param id 文章Id
      * @param name
      * @param userId
      * @param pictureUrl
@@ -48,7 +49,7 @@ public interface ArticleService {
      * @param circleId
      * @param adConent
      */
-    Article save(Integer articleType, Long id
+    Article save(Long customerId,Integer articleType, Long id
             , String name, Long userId, String pictureUrl, String content
             , String summary, Integer categoryId, Long circleId, String adConent, String tags);
 

@@ -14,13 +14,13 @@ import java.util.List;
 
 public interface CategoryService {
 
-    List<AppCategoryModel> getAppWikiCatalogList(Integer parentId);
+    List<AppCategoryModel> getAppWikiCatalogList(Long customerId,Integer parentId);
 
-    AdminCategoryPageModel getAdminCategoryList(Integer categoryType, String name, Integer pageNo, Integer pageSize);
+    AdminCategoryPageModel getAdminCategoryList(Long customerId,Integer categoryType, String name, Integer pageNo, Integer pageSize);
 
     AdminCategoryModel getAdminCategory(Integer id);
 
-    void save(Integer categoryType, Integer id, String name, Integer parent, Integer sort);
+    void save(Long customerId,Integer categoryType, Integer id, String name, Integer parent, Integer sort);
 
-    List<AdminBaseCategoryModel> getAdminParentCategory(Integer categoryType);
+    List<AdminBaseCategoryModel> getAdminParentCategory(Long customerId,Integer categoryType);
 }

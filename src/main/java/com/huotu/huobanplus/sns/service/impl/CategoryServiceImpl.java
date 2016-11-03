@@ -31,8 +31,8 @@ public class CategoryServiceImpl implements CategoryService {
     @Autowired
     private CategoryRepository categoryRepository;
 
-    public List<AppCategoryModel> getAppWikiCatalogList(Integer parentId) {
-        return toAppCategory(getCategoryList(parentId, CategoryType.Wiki));
+    public List<AppCategoryModel> getAppWikiCatalogList(Long customerId, Integer parentId) {
+        return toAppCategory(getCategoryList(customerId, parentId, CategoryType.Wiki));
     }
 
 
@@ -43,12 +43,12 @@ public class CategoryServiceImpl implements CategoryService {
      * @param categoryType 分类类型
      * @return
      */
-    private List<Category> getCategoryList(Integer parentId, CategoryType categoryType) {
+    private List<Category> getCategoryList(Long customerId, Integer parentId, CategoryType categoryType) {
         Category category = null;
         if (parentId != null && parentId > 0) {
             category = categoryRepository.findOne(parentId);
         }
-        return categoryRepository.findByParentAndCategoryType(category, categoryType);
+        return categoryRepository.findByCustomerIdAndParentAndCategoryType(customerId, category, categoryType);
     }
 
     private List<AppCategoryModel> toAppCategory(List<Category> categories) {
@@ -63,7 +63,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
 
-    public AdminCategoryPageModel getAdminCategoryList(Integer categoryType, String name, Integer pageNo, Integer pageSize) {
+    public AdminCategoryPageModel getAdminCategoryList(Long customerId, Integer categoryType, String name, Integer pageNo, Integer pageSize) {
         AdminCategoryPageModel adminCategoryPageModel = new AdminCategoryPageModel();
 
         Pageable pageable = new PageRequest(pageNo - 1, pageSize, new Sort(Sort.Direction.ASC, "sort"));
@@ -74,9 +74,9 @@ public class CategoryServiceImpl implements CategoryService {
 //        }
         Page<Category> categories = null;
         if (!StringUtils.isEmpty(name)) {
-            categories = categoryRepository.findByCategoryTypeAndNameLike(categoryType.equals(1) ? CategoryType.Wiki : CategoryType.Normal, name, pageable);
+            categories = categoryRepository.findByCustomerIdCategoryTypeAndNameLike(customerId, categoryType.equals(1) ? CategoryType.Wiki : CategoryType.Normal, "%" + name + "%", pageable);
         } else {
-            categories = categoryRepository.findByCategoryType(categoryType.equals(1) ? CategoryType.Wiki : CategoryType.Normal, pageable);
+            categories = categoryRepository.findByCustomerIdAndCategoryType(customerId, categoryType.equals(1) ? CategoryType.Wiki : CategoryType.Normal, pageable);
         }
 
         adminCategoryPageModel.setPage(new PagingModel(pageNo, pageSize, categories.getTotalPages(), categories.getTotalElements()));
@@ -115,8 +115,8 @@ public class CategoryServiceImpl implements CategoryService {
         return null;
     }
 
-    public void save(Integer categoryType, Integer id, String name, Integer parent, Integer sort) {
-        Category category = null;
+    public void save(Long customerId, Integer categoryType, Integer id, String name, Integer parent, Integer sort) {
+        Category category;
         if (id != null && id > 0)
             category = categoryRepository.findOne(id);
         else {
@@ -130,14 +130,15 @@ public class CategoryServiceImpl implements CategoryService {
 
         category.setName(name);
         category.setSort(sort);
+        category.setCustomerId(customerId);
         category.setCategoryType(categoryType.equals(1) ? CategoryType.Wiki : CategoryType.Normal);
         categoryRepository.save(category);
     }
 
 
-    public List<AdminBaseCategoryModel> getAdminParentCategory(Integer categoryType) {
+    public List<AdminBaseCategoryModel> getAdminParentCategory(Long customerId, Integer categoryType) {
         List<AdminBaseCategoryModel> adminBaseCategoryModels = new ArrayList<>();
-        List<Category> categories = categoryRepository.findByParentAndCategoryType(null, categoryType.equals(1) ? CategoryType.Wiki : CategoryType.Normal);
+        List<Category> categories = categoryRepository.findByCustomerIdAndCategoryType(customerId, categoryType.equals(1) ? CategoryType.Wiki : CategoryType.Normal);
         categories.forEach(x -> {
             adminBaseCategoryModels.add(new AdminBaseCategoryModel(x.getId(), x.getName()));
         });

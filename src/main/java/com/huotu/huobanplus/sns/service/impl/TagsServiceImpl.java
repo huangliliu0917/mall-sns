@@ -31,16 +31,16 @@ public class TagsServiceImpl implements TagsService {
     @Autowired
     private TagRespository tagRespository;
 
-    public AdminTagsPageModel getAdminTagsList(String name, Integer pageNo, Integer pageSize) {
+    public AdminTagsPageModel getAdminTagsList(Long customerId, String name, Integer pageNo, Integer pageSize) {
         AdminTagsPageModel adminTagsPageModel = new AdminTagsPageModel();
 
         Pageable pageable = new PageRequest(pageNo - 1, pageSize, new Sort(Sort.Direction.ASC, "id"));
 
         Page<Tag> tags = null;
         if (!StringUtils.isEmpty(name)) {
-            tags = tagRespository.findByNameLike(name, pageable);
+            tags = tagRespository.findByCustomerIdAndNameLike(customerId, "%" + name + "%", pageable);
         } else {
-            tags = tagRespository.findAll(pageable);
+            tags = tagRespository.findByCustomerId(customerId, pageable);
         }
 
         adminTagsPageModel.setPage(new PagingModel(pageNo, pageSize, tags.getTotalPages(), tags.getTotalElements()));
@@ -78,18 +78,19 @@ public class TagsServiceImpl implements TagsService {
         return null;
     }
 
-    public void save(Integer id, String name) {
-        Tag tag = null;
+    public void save(Long customerId, Integer id, String name) {
+        Tag tag;
         if (id != null && id > 0) {
             tag = tagRespository.findOne(id);
         } else {
             tag = new Tag();
         }
         tag.setName(name);
+        tag.setCustomerId(customerId);
         tagRespository.save(tag);
     }
 
-    public List<AdminTagsModel> addTags(Integer tagsType, Long id, String tagsIds) {
+    public List<AdminTagsModel> addTags(Long customerId, Integer tagsType, Long id, String tagsIds) {
         List<AdminTagsModel> result = null;
         switch (tagsType) {
             case 0:

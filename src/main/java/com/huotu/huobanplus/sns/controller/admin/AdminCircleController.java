@@ -49,9 +49,10 @@ public class AdminCircleController {
 
     /**
      * 根据查询model返回圈子列表
+     *
      * @param customerId        商户ID
      * @param circleSearchModel 查询model
-     * @return  分页信息
+     * @return 分页信息
      * @throws Exception
      */
     @RequestMapping(value = "/getCircleList", method = RequestMethod.POST)
@@ -74,38 +75,39 @@ public class AdminCircleController {
      *
      * @param id    圈子ID
      * @param model 返回的model
-     * @return      修改圈子的视图模板
+     * @return 修改圈子的视图模板
      * @throws Exception
      */
-    @RequestMapping(value = "/editCircle",method = RequestMethod.GET)
-    public String editCircle(Long id, Model model) throws Exception{
-        String view="/admin/circle/modifyCircle";
-        Circle circle=null;
-        if(id!=null){
-            circle=circleRepository.findOne(id);
+    @RequestMapping(value = "/editCircle", method = RequestMethod.GET)
+    public String editCircle(Long id, Model model) throws Exception {
+        String view = "/admin/circle/modifyCircle";
+        Circle circle = null;
+        if (id != null) {
+            circle = circleRepository.findOne(id);
         }
-        if(circle==null){
-            circle=new Circle();
+        if (circle == null) {
+            circle = new Circle();
         }
-        CircleListModel circleListModel=circleService.circleToDetailsCircleModel(circle);
-        model.addAttribute("circleListModel",circleListModel);
+        CircleListModel circleListModel = circleService.circleToDetailsCircleModel(circle);
+        model.addAttribute("circleListModel", circleListModel);
         return view;
     }
 
     /**
      * 保存圈子
-     * @param circleListModel   圈子的model
-     * @return      只要正常返回就说明保存成功
+     *
+     * @param circleListModel 圈子的model
+     * @return 只要正常返回就说明保存成功
      * @throws Exception
      */
-    @RequestMapping(value = "saveCircle",method = RequestMethod.POST)
+    @RequestMapping(value = "saveCircle", method = RequestMethod.POST)
     @ResponseBody
-    public ModelMap saveCircle(@CustomerId Long customerId,@RequestBody CircleListModel circleListModel) throws Exception{
-        ModelMap modelMap=new ModelMap();
+    public ModelMap saveCircle(@CustomerId Long customerId, @RequestBody CircleListModel circleListModel) throws Exception {
+        ModelMap modelMap = new ModelMap();
         circleListModel.setCustomerId(customerId);
-        if(circleListModel.getCircleId()==null){
+        if (circleListModel.getCircleId() == null) {
             circleService.addCircle(circleListModel);
-        }else {
+        } else {
             circleService.updateCircle(circleListModel);
         }
         return modelMap;
@@ -114,8 +116,8 @@ public class AdminCircleController {
     /**
      * 推荐圈子首页
      *
-     * @param model     返回的数据model
-     * @return          视图模板
+     * @param model 返回的数据model
+     * @return 视图模板
      * @throws IOException
      */
     @RequestMapping(value = "/commandIndex", method = RequestMethod.GET)
@@ -147,8 +149,8 @@ public class AdminCircleController {
 
     @RequestMapping("/articleList.do")
     @ResponseBody
-    public AdminArticlePageModel list(Integer articleType, String name, Integer pageNo, Integer pageSize) {
-        return articleService.getAdminArticleList(articleType, name, pageNo, pageSize);
+    public AdminArticlePageModel list(@CustomerId Long customerId, Integer articleType, String name, Integer pageNo, Integer pageSize) {
+        return articleService.getAdminArticleList(customerId, articleType, name, pageNo, pageSize);
     }
 
     @RequestMapping("/articleEdit/{articleType}/{type}/{id}")
@@ -161,11 +163,11 @@ public class AdminCircleController {
     }
 
     @RequestMapping("/articleEdit.save")
-    public String articleEditSave(Integer articleType, Long id
+    public String articleEditSave(@CustomerId Long customerId, Integer articleType, Long id
             , String name, Long userId, String pictureUrl, String content
-            , String summary, Integer categoryId, Long circleId, String adConent,String tags) throws Exception {
+            , String summary, Integer categoryId, Long circleId, String adConent, String tags) throws Exception {
 
-        articleService.save(articleType, id, name, userId, pictureUrl, content, summary, categoryId, circleId, adConent, tags);
+        articleService.save(customerId, articleType, id, name, userId, pictureUrl, content, summary, categoryId, circleId, adConent, tags);
         return "redirect:/top/circle/articleList/" + articleType;
     }
 }

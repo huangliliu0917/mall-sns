@@ -36,7 +36,7 @@ import java.util.UUID;
  */
 @SuppressWarnings("SpringJavaAutowiringInspection")
 @WebAppConfiguration
-@ActiveProfiles({"test", "develop", "development"})
+@ActiveProfiles({ "develop", "development"})
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {SpringTestConfig.class})
 @Transactional

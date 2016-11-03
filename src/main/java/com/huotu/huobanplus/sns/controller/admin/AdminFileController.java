@@ -95,7 +95,7 @@ public class AdminFileController {
         URI uri = staticResourceService.uploadResource(fileName, shareImage.getInputStream());
         response.setHeader("X-frame-Options", "SAMEORIGIN");
         resultModel.setCode(1);
-        resultModel.setMessage(fileName);
+        resultModel.setMessage(uri.toString());
         resultModel.setUrl(uri.toString());
         return resultModel;
     }

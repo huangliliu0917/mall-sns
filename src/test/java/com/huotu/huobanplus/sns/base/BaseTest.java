@@ -1,11 +1,21 @@
 package com.huotu.huobanplus.sns.base;
 
 
+import com.huotu.huobanplus.sns.entity.Article;
+import com.huotu.huobanplus.sns.entity.Category;
+import com.huotu.huobanplus.sns.entity.Level;
 import com.huotu.huobanplus.sns.entity.User;
+import com.huotu.huobanplus.sns.model.common.ArticleType;
+import com.huotu.huobanplus.sns.model.common.CategoryType;
+import com.huotu.huobanplus.sns.repository.CategoryRepository;
+import com.huotu.huobanplus.sns.repository.LevelRepository;
 import com.huotu.huobanplus.sns.repository.UserRepository;
+import com.huotu.huobanplus.sns.service.ArticleService;
+import com.huotu.huobanplus.sns.service.UserService;
 import com.huotu.huobanplus.sns.utils.StringHelper;
 import org.junit.Before;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.util.DigestUtils;
@@ -28,6 +38,9 @@ public class BaseTest {
     private WebApplicationContext webApplicationContext;
 
     protected Long customerId = 3447L;
+    @Autowired
+    private CategoryRepository categoryRepository;
+
 
     @Before
     public void createMockMvc() {
@@ -103,24 +116,56 @@ public class BaseTest {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private LevelRepository levelRepository;
+
+    @Autowired
+    private UserService userService;
+
     public User createUser(Long customerId
             , Long userId
             , String mobile
             , String openId
             , String nickName
             , String imageUrl) {
-        User user = new User();
-        user.setId(userId);
-        user.setCustomerId(customerId);
-        user.setMobile(mobile);
-        user.setOpenId(openId);
-        user.setNickName(nickName);
-        user.setImgURL(imageUrl);
-        user.setCreateDate(new Date());
-//            user.setLevel();//todo 获取最低级别
-        user.setRank(100000000L);
-//            user.setTags();
-        user = userRepository.save(user);
-        return user;
+        return userService.register(customerId, userId, mobile, openId, nickName, imageUrl);
+    }
+
+
+    public Category createCategory() {
+        return createCategory(CategoryType.Normal, null);
+    }
+
+
+    public Category createCategory(CategoryType categoryType, Category parent) {
+        Category category = new Category();
+        category.setCustomerId(customerId);
+        category.setName(UUID.randomUUID().toString().substring(0, 9));
+        category.setSort(1);
+        category.setCategoryType(categoryType);
+        category.setParent(parent);
+        category = categoryRepository.saveAndFlush(category);
+        return category;
+    }
+
+
+    @Autowired
+    private ArticleService articleService;
+
+    public Article createArticle(Integer articleType, Long id
+            , String name, Long userId, String pictureUrl, String content
+            , String summary, Integer categoryId, Long circleId, String adConent, String tags) {
+        return articleService.save(customerId, articleType, id, name, userId, pictureUrl, content, summary, categoryId, circleId, adConent, tags);
+    }
+
+    public Article createArticle(ArticleType articleType, Long userId, Integer categoryId, Long circleId) {
+        Long id = 0L;
+        String name = UUID.randomUUID().toString();
+        String pictureUrl = "";
+        String content = "";
+        String summary = "";
+        String adConent = "";
+        String tags = "";
+        return articleService.save(customerId, articleType.getValue(), id, name, userId, pictureUrl, content, summary, categoryId, circleId, adConent, tags);
     }
 }

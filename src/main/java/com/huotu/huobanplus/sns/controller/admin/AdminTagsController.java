@@ -1,5 +1,7 @@
 package com.huotu.huobanplus.sns.controller.admin;
 
+import com.huotu.huobanplus.sns.annotation.CustomerId;
+import com.huotu.huobanplus.sns.boot.PublicParameterHolder;
 import com.huotu.huobanplus.sns.model.admin.AdminTagsModel;
 import com.huotu.huobanplus.sns.model.admin.AdminTagsPageModel;
 import com.huotu.huobanplus.sns.model.common.TagsType;
@@ -32,8 +34,8 @@ public class AdminTagsController {
 
     @RequestMapping("list")
     @ResponseBody
-    public AdminTagsPageModel list(String name, Integer pageNo, Integer pageSize) {
-        return tagsService.getAdminTagsList(name, pageNo, pageSize);
+    public AdminTagsPageModel list(@CustomerId Long customerId, String name, Integer pageNo, Integer pageSize) {
+        return tagsService.getAdminTagsList(customerId, name, pageNo, pageSize);
     }
 
 
@@ -50,16 +52,16 @@ public class AdminTagsController {
     }
 
     @RequestMapping("/tagsEdit.save")
-    public String tagsEditSave(Integer id, String name, String extend) throws Exception {
-        tagsService.save(id, name);
+    public String tagsEditSave(@CustomerId Long customerId, Integer id, String name, String extend) throws Exception {
+        tagsService.save(customerId, id, name);
         return "redirect:/top/tags/tagsList?extend=" + extend;
     }
 
 
     @RequestMapping("/addTags")
     @ResponseBody
-    public List<AdminTagsModel> addTags(Integer tagsType, Long id, String tagsIds) {
-        return tagsService.addTags(tagsType, id, tagsIds);
+    public List<AdminTagsModel> addTags(@CustomerId Long customerId, Integer tagsType, Long id, String tagsIds) {
+        return tagsService.addTags(customerId, tagsType, id, tagsIds);
     }
 
     @RequestMapping("/deleteTags")

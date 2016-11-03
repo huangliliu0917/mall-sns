@@ -19,6 +19,7 @@ public enum AppCode implements ICommonEnum {
     SUCCESS(1, "操作成功"),
     PARAMETER_ERROR(10001, "参数错误"),
     INTERNAL_SERVER_ERROR(10002, "内部服务器错误"),
+ 
 
     /**
      * 用户登录注册提示 以2开头

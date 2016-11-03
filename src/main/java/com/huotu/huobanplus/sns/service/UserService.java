@@ -10,6 +10,7 @@
 package com.huotu.huobanplus.sns.service;
 
 import com.huotu.huobanplus.sns.entity.Article;
+import com.huotu.huobanplus.sns.entity.Level;
 import com.huotu.huobanplus.sns.entity.User;
 import com.huotu.huobanplus.sns.entity.UserArticle;
 import com.huotu.huobanplus.sns.exception.VerificationCodeDuedException;
@@ -87,6 +88,23 @@ public interface UserService {
             , String imageUrl) throws VerificationCodeInvoidException, VerificationCodeDuedException, UnsupportedEncodingException;
 
     /**
+     * 注册一个用户
+     * @param customerId
+     * @param userId
+     * @param mobile
+     * @param openId
+     * @param nickName
+     * @param imageUrl
+     * @return
+     */
+    User register(Long customerId
+            , Long userId
+            , String mobile
+            , String openId
+            , String nickName
+            , String imageUrl);
+
+    /**
      * 微信登录
      *
      * @param customerId
@@ -100,6 +118,13 @@ public interface UserService {
             , String nickName
             , String imageUrl) throws WeixinLoginFailException;
 
+
+    /**
+     * 创建缺省的用户等级
+     * @param customerId
+     * @return
+     */
+    Level createDefaultLevel(Long customerId);
 //    /**
 //     * 注册用户
 //     *

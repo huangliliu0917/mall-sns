@@ -2,6 +2,7 @@ package com.huotu.huobanplus.sns.controller.impl.app;
 
 import com.huotu.common.api.ApiResult;
 import com.huotu.common.api.Output;
+import com.huotu.huobanplus.sns.boot.PublicParameterHolder;
 import com.huotu.huobanplus.sns.controller.app.WikiController;
 import com.huotu.huobanplus.sns.model.AppCategoryModel;
 import com.huotu.huobanplus.sns.model.AppWikiListModel;
@@ -16,7 +17,7 @@ import java.util.List;
 
 /**
  * Created by Administrator on 2016/10/8.
-         */
+ */
 @Controller
 public class WikiControllerImpl implements WikiController {
 
@@ -29,14 +30,15 @@ public class WikiControllerImpl implements WikiController {
 
     @Override
     public ApiResult getCatalogList(Output<AppCategoryModel[]> catalogList, Integer id) {
-        List<AppCategoryModel> appCategoryModels = categoryService.getAppWikiCatalogList(id);
+        Long customerId = PublicParameterHolder.getParameters().getCustomerId();
+        List<AppCategoryModel> appCategoryModels = categoryService.getAppWikiCatalogList(customerId, id);
         catalogList.outputData(appCategoryModels.toArray(new AppCategoryModel[appCategoryModels.size()]));
         return ApiResult.resultWith(AppCode.SUCCESS);
     }
 
     @Override
     public ApiResult wikiList(Output<AppWikiListModel[]> wikilist, Integer catalogId, Long lastId) throws Exception {
-        List<AppWikiListModel> appWikiListModels = articleService.getAppWikiList(catalogId, lastId);
+        List<AppWikiListModel> appWikiListModels = articleService.getAppWikiList(PublicParameterHolder.getParameters().getCustomerId(), catalogId, lastId);
         wikilist.outputData(appWikiListModels.toArray(new AppWikiListModel[appWikiListModels.size()]));
         return ApiResult.resultWith(AppCode.SUCCESS);
     }

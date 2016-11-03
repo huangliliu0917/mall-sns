@@ -1,13 +1,21 @@
 package com.huotu.huobanplus.sns.controller.impl.app;
 
+import com.alibaba.fastjson.JSON;
 import com.huotu.huobanplus.sns.base.BaseTest;
 import com.huotu.huobanplus.sns.base.Device;
 import com.huotu.huobanplus.sns.base.DeviceType;
 import com.huotu.huobanplus.sns.boot.*;
+import com.huotu.huobanplus.sns.entity.Article;
+import com.huotu.huobanplus.sns.entity.Category;
 import com.huotu.huobanplus.sns.mallservice.MallUserService;
+import com.huotu.huobanplus.sns.model.AppCategoryModel;
+import com.huotu.huobanplus.sns.model.common.CategoryType;
+import com.huotu.huobanplus.sns.repository.ArticleRepository;
 import com.huotu.huobanplus.sns.service.AppSecurityService;
+import com.jayway.jsonpath.JsonPath;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,6 +28,8 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import javax.transaction.Transactional;
 
 import java.io.UnsupportedEncodingException;
+import java.util.List;
+import java.util.UUID;
 
 import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -71,13 +81,24 @@ public class WikiControllerImplTest extends BaseTest {
 
     @Test
     public void getCatalogList() throws Exception {
-        mockMvc.perform(device.getApi("/wiki/getCatalogList")
-                .param("id", "10").build())
-                .andDo(print());
+        Category category = createCategory();
+
+        int i = 0;
+        while (i < 10) {
+            createCategory(CategoryType.Wiki, category);
+            i++;
+        }
+        String contentAsString = mockMvc.perform(device.getApi("/wiki/getCatalogList")
+                .param("id", category.getId().toString()).build())
+                .andDo(print()).andReturn().getResponse().getContentAsString();
+        List<AppCategoryModel> list = JsonPath.read(contentAsString, "$.resultData.catalogList");
+        Assert.assertEquals("记录数相同", 10, list.size());
     }
+
 
     @Test
     public void wikiList() throws Exception {
+
 
     }
 
@@ -85,5 +106,6 @@ public class WikiControllerImplTest extends BaseTest {
     public void wiki() throws Exception {
 
     }
+
 
 }

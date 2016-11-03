@@ -9,10 +9,7 @@
 
 package com.huotu.huobanplus.sns.service.impl;
 
-import com.huotu.huobanplus.sns.entity.Article;
-import com.huotu.huobanplus.sns.entity.User;
-import com.huotu.huobanplus.sns.entity.UserArticle;
-import com.huotu.huobanplus.sns.entity.VerificationCode;
+import com.huotu.huobanplus.sns.entity.*;
 import com.huotu.huobanplus.sns.exception.VerificationCodeDuedException;
 import com.huotu.huobanplus.sns.exception.VerificationCodeInvoidException;
 import com.huotu.huobanplus.sns.exception.WeixinLoginFailException;
@@ -24,6 +21,7 @@ import com.huotu.huobanplus.sns.model.AppUserModel;
 import com.huotu.huobanplus.sns.model.common.AppCode;
 import com.huotu.huobanplus.sns.model.common.CodeType;
 import com.huotu.huobanplus.sns.model.common.VerificationType;
+import com.huotu.huobanplus.sns.repository.LevelRepository;
 import com.huotu.huobanplus.sns.repository.UserArticleRepository;
 import com.huotu.huobanplus.sns.repository.UserRepository;
 import com.huotu.huobanplus.sns.repository.VerificationCodeRepository;
@@ -36,6 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.BoundHashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -255,7 +254,6 @@ public class UserServiceImpl implements UserService {
         return token;
     }
 
-
     public User register(Long customerId
             , Long userId
             , String mobile
@@ -270,10 +268,28 @@ public class UserServiceImpl implements UserService {
         user.setNickName(nickName);
         user.setImgURL(imageUrl);
         user.setCreateDate(new Date());
-//            user.setLevel();//todo 获取最低级别
+        user.setLevel(createDefaultLevel(customerId));
         user.setRank(100000000L);
-//            user.setTags();
         user = userRepository.save(user);
         return user;
+    }
+
+    @Autowired
+    private LevelRepository levelRepository;
+
+
+    public Level createDefaultLevel(Long customerId) {
+        Sort sort = new Sort(Sort.Direction.ASC, "experience");
+        List<Level> levels = levelRepository.findAllByCustomerId(customerId, sort);
+        if (levels.size() > 0) {
+            return levels.get(0);
+        } else {
+            Level level = new Level();
+            level.setName("系统默认等级");
+            level.setExperience(0L);
+            level.setCustomerId(customerId);
+            level = levelRepository.save(level);
+            return level;
+        }
     }
 }

@@ -83,7 +83,7 @@ public class ArticleServiceImpl implements ArticleService {
     private EntityManager entityManager;
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    public List<AppWikiListModel> getAppWikiList(Integer catalogId, Long lastId) {
+    public List<AppWikiListModel> getAppWikiList(Long customerId, Integer catalogId, Long lastId) {
         List<AppWikiListModel> appWikiListModels;
 
         Pageable pageable = new PageRequest(0, 10, new Sort(Sort.Direction.DESC, "id"));
@@ -95,10 +95,10 @@ public class ArticleServiceImpl implements ArticleService {
 
         if (category == null) {
             if (lastId == null || lastId <= 0) {
-                Page<Article> articles = articleRepository.findByArticleType(ArticleType.Wiki, pageable);
+                Page<Article> articles = articleRepository.findByCustomerIdAndArticleType(customerId, ArticleType.Wiki, pageable);
                 appWikiListModels = toAppWikiList(articles.getContent());
             } else {
-                List<Article> articles = articleRepository.findByArticleType(ArticleType.Wiki, lastId);
+                List<Article> articles = articleRepository.findByCustomerIdAndArticleType(ArticleType.Wiki, lastId);
                 appWikiListModels = toAppWikiList(articles);
             }
         } else {
@@ -158,15 +158,15 @@ public class ArticleServiceImpl implements ArticleService {
         return appWikiListModels;
     }
 
-    public AdminArticlePageModel getAdminArticleList(Integer articleType, String name, Integer pageNo, Integer pageSize) {
+    public AdminArticlePageModel getAdminArticleList(Long customerId, Integer articleType, String name, Integer pageNo, Integer pageSize) {
         AdminArticlePageModel adminArticlePageModel = new AdminArticlePageModel();
 
         Pageable pageable = new PageRequest(pageNo - 1, pageSize, new Sort(Sort.Direction.DESC, "id"));
         Page<Article> articles;
         if (!StringUtils.isEmpty(name)) {
-            articles = articleRepository.findByArticleTypeAndNameLike(articleType.equals(1) ? ArticleType.Wiki : ArticleType.Normal, name, pageable);
+            articles = articleRepository.findByCustomerIdAndArticleTypeAndNameLike(customerId, articleType.equals(1) ? ArticleType.Wiki : ArticleType.Normal, "%" + name + "%", pageable);
         } else {
-            articles = articleRepository.findByArticleType(articleType.equals(1) ? ArticleType.Wiki : ArticleType.Normal, pageable);
+            articles = articleRepository.findByCustomerIdAndArticleType(customerId, articleType.equals(1) ? ArticleType.Wiki : ArticleType.Normal, pageable);
         }
 
         adminArticlePageModel.setPage(new PagingModel(pageNo, pageSize, articles.getTotalPages(), articles.getTotalElements()));
@@ -248,7 +248,7 @@ public class ArticleServiceImpl implements ArticleService {
         return adminArticleEditModel;
     }
 
-    public Article save(Integer articleType, Long id
+    public Article save(Long customerId, Integer articleType, Long id
             , String name, Long userId, String pictureUrl, String content
             , String summary, Integer categoryId, Long circleId, String adConent, String tags) {
 
@@ -264,6 +264,7 @@ public class ArticleServiceImpl implements ArticleService {
             article.setTop(false);
         }
 
+        article.setCustomerId(customerId);
         article.setArticleType(articleType.equals(1) ? ArticleType.Wiki : ArticleType.Normal);
         article.setName(name);
         article.setPublisher(userRepository.findOne(userId));

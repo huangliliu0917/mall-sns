@@ -11,6 +11,7 @@ package com.huotu.huobanplus.sns.controller.impl.app;
 
 import com.huotu.common.api.ApiResult;
 import com.huotu.common.api.Output;
+import com.huotu.huobanplus.sns.boot.PublicParameterHolder;
 import com.huotu.huobanplus.sns.controller.app.UserController;
 import com.huotu.huobanplus.sns.entity.*;
 import com.huotu.huobanplus.sns.exception.ClickException;
@@ -98,6 +99,8 @@ public class UserControllerImpl implements UserController {
             throw new ContentException(AppCode.ERROR_SENSITIVE_CONTENT.getValue(), AppCode.ERROR_SENSITIVE_CONTENT.getName());
         }
         User user = UserHelper.getUser();
+
+        Long customerId = PublicParameterHolder.getParameters().getCustomerId();
         //文章内容截取成为简介,暂定为80个字
         String summary;
         if (content.length() < 80) {
@@ -106,7 +109,7 @@ public class UserControllerImpl implements UserController {
             summary = content.substring(0, 80) + "...";
         }
         //保存文章
-        Article article = articleService.save(ArticleType.Normal.getValue(), id, name, user.getId(),
+        Article article = articleService.save(customerId, ArticleType.Normal.getValue(), id, name, user.getId(),
                 pictureUrl, content, summary, null, circleId, null, null);
         if (Objects.isNull(id)) {
             //新增文章用户关联

@@ -1,6 +1,7 @@
 package com.huotu.huobanplus.sns.controller.admin;
 
 
+import com.huotu.huobanplus.sns.annotation.CustomerId;
 import com.huotu.huobanplus.sns.model.admin.AdminCategoryEditModel;
 import com.huotu.huobanplus.sns.model.admin.AdminCategoryModel;
 import com.huotu.huobanplus.sns.model.admin.AdminCategoryPageModel;
@@ -31,17 +32,17 @@ public class AdminCategoryController {
 
     @RequestMapping("/list")
     @ResponseBody
-    public AdminCategoryPageModel list(Integer categoryType, String name, Integer pageNo, Integer pageSize) {
-        return categoryService.getAdminCategoryList(categoryType, name, pageNo, pageSize);
+    public AdminCategoryPageModel list(@CustomerId Long customerId, Integer categoryType, String name, Integer pageNo, Integer pageSize) {
+        return categoryService.getAdminCategoryList(customerId, categoryType, name, pageNo, pageSize);
     }
 
     @RequestMapping("/categoryEdit/{categoryType}/{id}")
-    public String categoryEdit(@PathVariable("categoryType") Integer categoryType
+    public String categoryEdit(@CustomerId Long customerId, @PathVariable("categoryType") Integer categoryType
             , @PathVariable("id") Integer id, String extend, Model model) {
         if (id != null && id > 0) {
             AdminCategoryEditModel adminCategoryEditModel = new AdminCategoryEditModel();
             adminCategoryEditModel.setData(categoryService.getAdminCategory(id));
-            adminCategoryEditModel.setCategoryList(categoryService.getAdminParentCategory(categoryType));
+            adminCategoryEditModel.setCategoryList(categoryService.getAdminParentCategory(customerId, categoryType));
             model.addAttribute("data", adminCategoryEditModel);
         } else {
             AdminCategoryModel adminCategoryModel = new AdminCategoryModel();
@@ -53,7 +54,7 @@ public class AdminCategoryController {
 
             AdminCategoryEditModel adminCategoryEditModel = new AdminCategoryEditModel();
             adminCategoryEditModel.setData(adminCategoryModel);
-            adminCategoryEditModel.setCategoryList(categoryService.getAdminParentCategory(categoryType));
+            adminCategoryEditModel.setCategoryList(categoryService.getAdminParentCategory(customerId, categoryType));
             model.addAttribute("data", adminCategoryEditModel);
         }
         model.addAttribute("extend", extend);
@@ -61,12 +62,12 @@ public class AdminCategoryController {
     }
 
     @RequestMapping("/categoryEdit.save")
-    public String categoryEditSave(Integer categoryType, Integer id, String name, Integer parent, Integer sort, String extend) throws Exception {
+    public String categoryEditSave(@CustomerId Long customerId,Integer categoryType, Integer id, String name, Integer parent, Integer sort, String extend) throws Exception {
         if (id != null && parent != null && id > 0 && id.equals(parent)) {
             throw new Exception("父级不能设置为自己");
         }
 
-        categoryService.save(categoryType, id, name, parent, sort);
+        categoryService.save(customerId,categoryType, id, name, parent, sort);
         return "redirect:/top/category/categoryList/" + categoryType + "?extend=" + extend;
     }
 }
