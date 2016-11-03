@@ -30,14 +30,23 @@ public class UserControllerImplTest extends CommonTestBase {
     public void concern() throws Exception {
         Circle circle = randomCircle();
         mockMvc.perform(device.postApi("/user/concern").param("id", circle.getId() + "").build())
-                .andExpect(status().isOk()).andDo(print())
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.resultCode").value(AppCode.SUCCESS.getValue()));
         assertEquals("用户关注数量", userCircleRepository.findByUserAndCircle(user, circle).size(), 1);
     }
 
     @Test
     public void cancelConcern() throws Exception {
-
+        Circle circle = randomCircle();
+        mockMvc.perform(device.postApi("/user/concern").param("id", circle.getId() + "").build())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.resultCode").value(AppCode.SUCCESS.getValue()));
+        Circle otherCircle = circleRepository.getOne(circle.getId());
+        assertEquals("圈子关注量", otherCircle.getUserAmount(), 1);
+        mockMvc.perform(device.postApi("/user/cancelConcern").param("id", circle.getId() + "").build())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.resultCode").value(AppCode.SUCCESS.getValue()));
+        assertEquals("用户关注数量", userCircleRepository.findByUserAndCircle(user, circle).size(), 0);
     }
 
     @Test
