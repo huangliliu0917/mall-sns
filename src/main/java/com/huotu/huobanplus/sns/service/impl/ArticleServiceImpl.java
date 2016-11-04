@@ -291,10 +291,21 @@ public class ArticleServiceImpl implements ArticleService {
 
     }
 
+    @Transactional
     @Override
-    public void addArticleResult(Integer articleType, Long id, String name, User user, String pictureUrl,
-                                 String summary, Long circleId) throws IOException, InterruptedException {
-        addUserArticle(articleType, id, name, user, pictureUrl, summary);
+    public Long addArticleResult(Integer articleType, String name, User user, String pictureUrl,
+                                 String content, Long circleId) throws IOException, InterruptedException {
+        //文章内容截取成为简介,暂定为80个字
+        String summary;
+        if (content.length() < 80) {
+            summary = content;
+        } else {
+            summary = content.substring(0, 80) + "...";
+        }
+        Article article = save(user.getCustomerId(), ArticleType.Normal.getValue(), null, name, user.getId(),
+                pictureUrl, content, summary, null, circleId, null, null);
+
+        addUserArticle(articleType, article.getId(), name, user, pictureUrl, summary);
         //用户的文章数增加
         userRepository.addArticleAmount(user.getId());
 //        BoundHashOperations<String, String, Long> userOperations = redisTemplate
@@ -305,7 +316,7 @@ public class ArticleServiceImpl implements ArticleService {
 //            userOperations.put("articleAmount", articleAmount + 1L);
 //        }
         //圈子的文章数增加
-        circleRepository.addArticleAmount(id);
+        circleRepository.addArticleAmount(circleId);
 //        BoundHashOperations<String, String, Long> circleOperations = redisTemplate
 //                .boundHashOps(ContractHelper.circleFlag + id);
 //        circleOperations.putIfAbsent("articleAmount", 0L);
@@ -313,6 +324,7 @@ public class ArticleServiceImpl implements ArticleService {
 //            Long articleAmount = circleOperations.get("articleAmount");
 //            circleOperations.put("articleAmount", articleAmount + 1L);
 //        }
+        return article.getId();
     }
 
     @Override
@@ -362,25 +374,32 @@ public class ArticleServiceImpl implements ArticleService {
         List<Concern> list = concernRepository.findByToUser(user);
         int size = list.size();
         Date date = new Date();
+        saveUserArticle(articleType, id, name, user, pictureUrl, summary, date, user.getId());
         for (int i = 0; i < size; i++) {
-            UserArticle userArticle = new UserArticle();
-            userArticle.setCustomerId(user.getCustomerId());
-            userArticle.setArticleType(articleType.equals(1) ? ArticleType.Wiki : ArticleType.Normal);
-            userArticle.setName(name);
-            userArticle.setPictureUrl(pictureUrl);
-            userArticle.setPublisherId(user.getId());
-            userArticle.setPublisherNickname(user.getNickName());
-            userArticle.setPublisherHeaderImageUrl(user.getImgURL());
-            userArticle.setPublisherLevelId(user.getLevel().getId());
-            userArticle.setPublisherAuthenticationId(user.getAuthenticationType());
-            userArticle.setSummary(summary);
-            userArticle.setDate(date);
-            userArticle.setOwnerId(list.get(i).getUser().getId());
-            userArticle.setArticleId(id);
-            userArticleRepository.save(userArticle);
+            saveUserArticle(articleType, id, name, user, pictureUrl, summary, date, list.get(i).getToUser().getId());
             if (i > 0 && i % 10 == 0)
                 Thread.sleep(500);
         }
+    }
+
+    private void saveUserArticle(Integer articleType, Long id, String name, User user, String pictureUrl,
+                                 String summary, Date date, Long ownerId) throws IOException {
+        UserArticle userArticle = new UserArticle();
+        userArticle.setCustomerId(user.getCustomerId());
+        userArticle.setArticleType(articleType.equals(1) ? ArticleType.Wiki : ArticleType.Normal);
+        userArticle.setName(name);
+        userArticle.setPictureUrl(pictureUrl);
+        userArticle.setPublisherId(user.getId());
+        userArticle.setPublisherNickname(user.getNickName());
+        userArticle.setPublisherHeaderImageUrl(user.getImgURL());
+        if (Objects.nonNull(user.getLevel()))
+            userArticle.setPublisherLevelId(user.getLevel().getId());
+        userArticle.setPublisherAuthenticationId(user.getAuthenticationType());
+        userArticle.setSummary(summary);
+        userArticle.setDate(date);
+        userArticle.setOwnerId(ownerId);
+        userArticle.setArticleId(id);
+        userArticleRepository.save(userArticle);
     }
 
     public List<AppCircleArticleModel> getUserArticleList(Long userId, Long lastId) {

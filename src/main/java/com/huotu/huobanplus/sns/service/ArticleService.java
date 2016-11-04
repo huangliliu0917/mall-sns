@@ -61,16 +61,15 @@ public interface ArticleService {
      * 暂时保存在{@link com.huotu.huobanplus.sns.entity.UserArticle}中，后期考虑用redis
      *
      * @param articleType 文章类型
-     * @param id          文章id
      * @param name        文章名字
      * @param user        作者
      * @param pictureUrl  文章图片
-     * @param summary     简介
+     * @param content     简介
      * @param circleId    圈子id
      */
-    void addArticleResult(Integer articleType, Long id
+    Long addArticleResult(Integer articleType
             , String name, User user, String pictureUrl
-            , String summary, Long circleId) throws IOException, InterruptedException;
+            , String content, Long circleId) throws IOException, InterruptedException;
 
     /**
      * 评论文章

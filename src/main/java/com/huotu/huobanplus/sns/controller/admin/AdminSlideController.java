@@ -47,7 +47,7 @@ public class AdminSlideController {
     @RequestMapping("/getSlideList")
     public String getSlideList(@CustomerId Long customerId, Model model) throws Exception{
         String view="/admin/circle/bannerArticle";
-        List<Slide> slides=slideService.findSlideList(customerId);
+        List<Slide> slides=slideService.findSlideList(customerId,null);
         model.addAttribute("slides",slides);
         return view;
     }

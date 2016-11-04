@@ -10,6 +10,8 @@
 package com.huotu.huobanplus.sns.service;
 
 import com.huotu.huobanplus.sns.entity.Slide;
+import com.huotu.huobanplus.sns.model.AppCircleIndexSlideModel;
+import org.springframework.data.domain.Pageable;
 
 import java.io.IOException;
 import java.util.List;
@@ -23,10 +25,25 @@ public interface SlideService {
     /**
      * 根据商户ID，查询圈子banner列表
      * @param customerId    商户ID
+     * @param pageable      分页信息
      * @return              banner列表
      * @throws IOException
      */
-    List<Slide> findSlideList(Long customerId) throws IOException;
+    List<Slide> findSlideList(Long customerId, Pageable pageable) throws IOException;
+
+    /**
+     * 根据banner实体列表获取model
+     * @param slides    banner实体列表
+     * @return  banner实体列表
+     */
+    AppCircleIndexSlideModel[] getSlideModelList(List<Slide> slides);
+
+    /**
+     * 将banner实体转换为banner model
+     * @param slide 实体
+     * @return  model
+     */
+    AppCircleIndexSlideModel getSlideModel(Slide slide);
 
 
 }

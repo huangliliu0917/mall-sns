@@ -11,7 +11,6 @@ package com.huotu.huobanplus.sns.controller.impl.app;
 
 import com.huotu.common.api.ApiResult;
 import com.huotu.common.api.Output;
-import com.huotu.huobanplus.sns.boot.PublicParameterHolder;
 import com.huotu.huobanplus.sns.controller.app.UserController;
 import com.huotu.huobanplus.sns.entity.*;
 import com.huotu.huobanplus.sns.exception.ClickException;
@@ -31,7 +30,6 @@ import com.huotu.huobanplus.sns.service.*;
 import com.huotu.huobanplus.sns.utils.UserHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
@@ -91,31 +89,32 @@ public class UserControllerImpl implements UserController {
         return ApiResult.resultWith(AppCode.SUCCESS);
     }
 
-    @Transactional
     @Override
-    public ApiResult publishArticle(Long id, String name, String content, String pictureUrl, Long circleId)
+    public ApiResult publishArticle(Output<Long> data, Long id, String name, String content, String pictureUrl, Long circleId)
             throws ContentException, IOException, NeedLoginException, InterruptedException {
         if (!sensitiveService.ContainSensitiveWords(content)) {
             throw new ContentException(AppCode.ERROR_SENSITIVE_CONTENT.getValue(), AppCode.ERROR_SENSITIVE_CONTENT.getName());
         }
         User user = UserHelper.getUser();
-
-        Long customerId = PublicParameterHolder.getParameters().getCustomerId();
         //文章内容截取成为简介,暂定为80个字
-        String summary;
-        if (content.length() < 80) {
-            summary = content;
-        } else {
-            summary = content.substring(0, 80) + "...";
-        }
-        //保存文章
-        Article article = articleService.save(customerId, ArticleType.Normal.getValue(), id, name, user.getId(),
-                pictureUrl, content, summary, null, circleId, null, null);
-        if (Objects.isNull(id)) {
-            //新增文章用户关联
-            articleService.addArticleResult(ArticleType.Normal.getValue(), article.getId(),
-                    name, user, pictureUrl, summary, circleId);
-        }
+//        String summary;
+//        if (content.length() < 80) {
+//            summary = content;
+//        } else {
+//            summary = content.substring(0, 80) + "...";
+//        }
+//        //保存文章
+//        Article article = articleService.save(ArticleType.Normal.getValue(), id, name, user.getId(),
+//                pictureUrl, content, summary, null, circleId, null, null);
+//        if (Objects.isNull(id)) {
+//            //新增文章用户关联
+//            articleService.addArticleResult(ArticleType.Normal.getValue(),
+//                    name, user, pictureUrl, content, circleId);
+//        }
+        //新增文章用户关联
+        Long articleId = articleService.addArticleResult(ArticleType.Normal.getValue(),
+                name, user, pictureUrl, content, circleId);
+        data.outputData(articleId);
         return ApiResult.resultWith(AppCode.SUCCESS);
     }
 
