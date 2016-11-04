@@ -12,6 +12,7 @@ package com.huotu.huobanplus.sns.service.impl;
 import com.huotu.huobanplus.sns.entity.Category;
 import com.huotu.huobanplus.sns.entity.Circle;
 import com.huotu.huobanplus.sns.entity.User;
+import com.huotu.huobanplus.sns.model.AppCircleIndexSuggestModel;
 import com.huotu.huobanplus.sns.model.admin.CircleListModel;
 import com.huotu.huobanplus.sns.model.admin.CircleSearchModel;
 import com.huotu.huobanplus.sns.repository.CategoryRepository;
@@ -107,7 +108,7 @@ public class CircleServiceImpl implements CircleService {
     public Page<Circle> findCircleList(CircleSearchModel searchModel) throws IOException {
         Sort sort;
         if (StringUtils.isEmpty(searchModel.getSortField())) {
-            sort = new Sort(Sort.Direction.DESC, "date", "suggested");
+            sort = new Sort(Sort.Direction.DESC, "suggested", "date");
         } else {
             Sort.Direction sd = searchModel.getAscOrdesc() == 0 ? Sort.Direction.DESC : Sort.Direction.ASC;
             sort = new Sort(sd, searchModel.getSortField());
@@ -167,6 +168,21 @@ public class CircleServiceImpl implements CircleService {
         circle.setPictureUrl(circleListModel.getPictureUrl());
         circle.setTags(circleListModel.getTags());
         circleRepository.save(circle);
+    }
+
+    @Override
+    public AppCircleIndexSuggestModel[] getCircleAppModel(List<Circle> circles) {
+
+        AppCircleIndexSuggestModel[] models=new AppCircleIndexSuggestModel[circles.size()];
+        for(int i=0,size=circles.size();i<size;i++){
+            Circle circle=circles.get(i);
+            if(!circle.isEnabled()){
+                continue;
+            }
+            String returnUrl=""+circle.getId();
+            models[i]=new AppCircleIndexSuggestModel(circle.getName(),circle.getPictureUrl(),returnUrl,circle.getUserAmount());
+        }
+        return models;
     }
 
     @Override

@@ -1,8 +1,6 @@
 package com.huotu.huobanplus.sns.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 /**
  * Created by Administrator on 2016/9/29.
@@ -10,6 +8,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
+@EqualsAndHashCode
 public class AppCircleIndexSlideModel {
     /**
      * 图片地址

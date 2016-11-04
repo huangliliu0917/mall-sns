@@ -10,6 +10,7 @@
 package com.huotu.huobanplus.sns.service;
 
 import com.huotu.huobanplus.sns.entity.Circle;
+import com.huotu.huobanplus.sns.model.AppCircleIndexSuggestModel;
 import com.huotu.huobanplus.sns.model.admin.CircleListModel;
 import com.huotu.huobanplus.sns.model.admin.CircleSearchModel;
 import org.springframework.data.domain.Page;
@@ -69,7 +70,12 @@ public interface CircleService {
      */
     void updateCircle(CircleListModel circleListModel) throws IOException;
 
-
+    /**
+     * 根据圈子实体获取前台首页圈子的model
+     * @param circles   圈子实体列表
+     * @return          model列表
+     */
+    AppCircleIndexSuggestModel[] getCircleAppModel(List<Circle> circles);
 
 
     /**

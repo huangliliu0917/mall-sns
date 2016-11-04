@@ -19,7 +19,7 @@ public enum AppCode implements ICommonEnum {
     SUCCESS(1, "操作成功"),
     PARAMETER_ERROR(10001, "参数错误"),
     INTERNAL_SERVER_ERROR(10002, "内部服务器错误"),
- 
+    NOCUSTOMERID_ERROR(10003,"未获取到商户ID"),
 
     /**
      * 用户登录注册提示 以2开头
@@ -50,6 +50,7 @@ public enum AppCode implements ICommonEnum {
     /**
      * 圈子，百科等以4开头
      */
+
 
 
     private int value;

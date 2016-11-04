@@ -10,9 +10,12 @@
 package com.huotu.huobanplus.sns.service.impl;
 
 import com.huotu.huobanplus.sns.entity.Slide;
+import com.huotu.huobanplus.sns.model.AppCircleIndexSlideModel;
 import com.huotu.huobanplus.sns.repository.SlideRepository;
+import com.huotu.huobanplus.sns.service.CommonConfigService;
 import com.huotu.huobanplus.sns.service.SlideService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -26,8 +29,32 @@ import java.util.List;
 public class SlideServiceImpl implements SlideService {
     @Autowired
     private SlideRepository slideRepository;
+    @Autowired
+    private CommonConfigService commonConfigService;
     @Override
-    public List<Slide> findSlideList(Long customerId) throws IOException {
-        return slideRepository.findByCustomerId(customerId);
+    public List<Slide> findSlideList(Long customerId, Pageable pageable) throws IOException {
+        if(pageable!=null){
+            return slideRepository.findByCustomerId(customerId,pageable);
+        }else {
+            return slideRepository.findByCustomerIdOrderByIdDesc(customerId);
+        }
+
     }
+
+    @Override
+    public AppCircleIndexSlideModel[] getSlideModelList(List<Slide> slides) {
+        AppCircleIndexSlideModel[] models=new AppCircleIndexSlideModel[slides.size()];
+        for(int i=0,size=slides.size();i<size;i++){
+            models[i]=getSlideModel(slides.get(i));
+        }
+        return models;
+    }
+
+    @Override
+    public AppCircleIndexSlideModel getSlideModel(Slide slide) {
+        String pictureUrl=commonConfigService.getResourcesUri()+slide.getPictureUrl();
+        String skipUrl=slide.getUrl();
+        return new AppCircleIndexSlideModel(pictureUrl,skipUrl);
+    }
+
 }

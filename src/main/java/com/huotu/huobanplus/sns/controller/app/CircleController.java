@@ -34,7 +34,8 @@ public interface CircleController {
      * @throws Exception
      */
     @RequestMapping(value = "/circleIndexSuggestList", method = RequestMethod.GET)
-    ApiResult circleIndexSuggestList(Output<AppCircleIndexSuggestModel[]> suggestList) throws Exception;
+    ApiResult circleIndexSuggestList(Output<AppCircleIndexSuggestModel[]> suggestList,
+                                     Integer pageNo,Integer pageSize) throws Exception;
 
     /**
      * 圈子首页 关注的圈子列表
