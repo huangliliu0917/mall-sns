@@ -1,16 +1,22 @@
+/*
+ * 版权所有:杭州火图科技有限公司
+ * 地址:浙江省杭州市滨江区西兴街道阡陌路智慧E谷B幢4楼
+ *
+ * (c) Copyright Hangzhou Hot Technology Co., Ltd.
+ * Floor 4,Block B,Wisdom E Valley,Qianmo Road,Binjiang District
+ * 2013-2016. All rights reserved.
+ */
+
 package com.huotu.huobanplus.sns.controller.impl.app;
 
-import com.alibaba.fastjson.JSON;
 import com.huotu.huobanplus.sns.base.BaseTest;
 import com.huotu.huobanplus.sns.base.Device;
 import com.huotu.huobanplus.sns.base.DeviceType;
 import com.huotu.huobanplus.sns.boot.*;
-import com.huotu.huobanplus.sns.entity.Article;
 import com.huotu.huobanplus.sns.entity.Category;
 import com.huotu.huobanplus.sns.mallservice.MallUserService;
 import com.huotu.huobanplus.sns.model.AppCategoryModel;
 import com.huotu.huobanplus.sns.model.common.CategoryType;
-import com.huotu.huobanplus.sns.repository.ArticleRepository;
 import com.huotu.huobanplus.sns.service.AppSecurityService;
 import com.jayway.jsonpath.JsonPath;
 import org.apache.commons.logging.Log;
@@ -26,12 +32,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import javax.transaction.Transactional;
-
 import java.io.UnsupportedEncodingException;
 import java.util.List;
-import java.util.UUID;
 
-import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 /**

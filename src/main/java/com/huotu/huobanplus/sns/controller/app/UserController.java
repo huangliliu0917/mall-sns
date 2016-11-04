@@ -96,7 +96,8 @@ public interface UserController {
      * @throws InterruptedException 线程异常
      */
     @RequestMapping(value = "/publishArticle", method = RequestMethod.POST)
-    ApiResult publishArticle(@RequestParam(value = "id") Long id
+    ApiResult publishArticle(Output<Long> data
+            , @RequestParam(value = "id", required = false) Long id
             , @RequestParam(value = "name") String name
             , @RequestParam(value = "content") String content
             , @RequestParam(value = "pictureUrl", required = false) String pictureUrl
