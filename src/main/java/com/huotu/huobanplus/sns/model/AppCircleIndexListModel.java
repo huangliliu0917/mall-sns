@@ -12,7 +12,16 @@ import java.util.List;
 @Setter
 public class AppCircleIndexListModel {
 
+    /**
+     * 关注圈子ID
+     */
     private Long pid;
+
+    /**
+     * 圈子ID
+     */
+    private Long circleId;
+
     /**
      * 圈子名称
      */

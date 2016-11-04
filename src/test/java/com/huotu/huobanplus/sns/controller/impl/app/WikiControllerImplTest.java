@@ -13,10 +13,10 @@ import com.huotu.huobanplus.sns.base.BaseTest;
 import com.huotu.huobanplus.sns.base.Device;
 import com.huotu.huobanplus.sns.base.DeviceType;
 import com.huotu.huobanplus.sns.boot.*;
+import com.huotu.huobanplus.sns.entity.Article;
 import com.huotu.huobanplus.sns.entity.Category;
 import com.huotu.huobanplus.sns.mallservice.MallUserService;
 import com.huotu.huobanplus.sns.model.AppCategoryModel;
-import com.huotu.huobanplus.sns.model.AppWikiListModel;
 import com.huotu.huobanplus.sns.model.common.ArticleType;
 import com.huotu.huobanplus.sns.model.common.CategoryType;
 import com.huotu.huobanplus.sns.service.AppSecurityService;
@@ -35,7 +35,6 @@ import org.springframework.test.context.web.WebAppConfiguration;
 
 import javax.transaction.Transactional;
 import java.io.UnsupportedEncodingException;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;

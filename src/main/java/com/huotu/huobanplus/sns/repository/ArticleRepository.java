@@ -60,4 +60,6 @@ public interface ArticleRepository extends JpaRepository<Article, Long>, JpaSpec
 
     @Query("select article from Article article where article.customerId=?1 and article.id<?2 and article.name like ?3")
     Page<Article> findByCustomerIdAndNameLike(Long customerId, String name, Long lastId, Pageable pageable);
+
+    List<Article> findTop3ByCircle_IdAndEnabledOrderByIdDesc(Long circleId,boolean enabled);
 }

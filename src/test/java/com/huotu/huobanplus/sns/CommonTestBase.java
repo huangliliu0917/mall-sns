@@ -19,6 +19,7 @@ import com.huotu.huobanplus.sns.repository.*;
 import com.huotu.huobanplus.sns.service.AppSecurityService;
 import com.huotu.huobanplus.sns.service.CircleService;
 import com.huotu.huobanplus.sns.service.SlideService;
+import com.huotu.huobanplus.sns.service.UserCircleService;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,6 +82,8 @@ public abstract class CommonTestBase extends BaseTest {
     private MallUserService mallUserService;
     @Autowired
     private AppSecurityService appSecurityService;
+    @Autowired
+    protected UserCircleService userCircleService;
 
     @Before
     public void prepareDevice() throws UnsupportedEncodingException {

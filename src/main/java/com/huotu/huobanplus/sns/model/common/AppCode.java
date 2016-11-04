@@ -20,6 +20,7 @@ public enum AppCode implements ICommonEnum {
     PARAMETER_ERROR(10001, "参数错误"),
     INTERNAL_SERVER_ERROR(10002, "内部服务器错误"),
     NOCUSTOMERID_ERROR(10003,"未获取到商户ID"),
+    NOUSER_ERROR(10004,"未找到当前用户"),
 
     /**
      * 用户登录注册提示 以2开头

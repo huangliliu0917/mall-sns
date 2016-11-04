@@ -70,4 +70,9 @@ public class AbstractComment {
      * 楼层
      */
     private Long floor;
+
+    /**
+     * 评论路径：如(“8”：表示评论文章，“8|7|9”：表示9评论7，7评论8，8评论文章)
+     */
+    private String path;
 }

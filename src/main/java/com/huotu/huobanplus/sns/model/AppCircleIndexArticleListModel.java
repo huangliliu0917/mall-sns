@@ -11,6 +11,10 @@ import lombok.Setter;
 public class AppCircleIndexArticleListModel {
     private Long id;
     /**
+     * 文章ID
+     */
+    private Long articleId;
+    /**
      * 文章标题
      */
     private String name;

@@ -38,21 +38,6 @@ public interface CircleController {
                                      Integer pageNo,Integer pageSize) throws Exception;
 
     /**
-     * 圈子首页 关注的圈子列表
-     * 按id进行倒序排列
-     * <p>
-     * 圈子的文章根据浏览量+时间取前2条
-     *
-     * @param circlelist 圈子列表
-     * @param lastId     上一个id
-     * @return
-     * @throws Exception
-     */
-    @RequestMapping(value = "/indexList", method = RequestMethod.GET)
-    ApiResult circleIndexList(Output<AppCircleIndexListModel[]> circlelist
-            , @RequestParam(value = "lastId",required = false) Long lastId) throws Exception;
-
-    /**
      * 圈子介绍
      *
      * @param data 圈子介绍

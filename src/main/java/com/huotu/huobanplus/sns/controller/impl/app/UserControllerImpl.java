@@ -11,6 +11,7 @@ package com.huotu.huobanplus.sns.controller.impl.app;
 
 import com.huotu.common.api.ApiResult;
 import com.huotu.common.api.Output;
+import com.huotu.huobanplus.sns.boot.PublicParameterHolder;
 import com.huotu.huobanplus.sns.controller.app.UserController;
 import com.huotu.huobanplus.sns.entity.*;
 import com.huotu.huobanplus.sns.exception.ClickException;
@@ -18,6 +19,7 @@ import com.huotu.huobanplus.sns.exception.ConcernException;
 import com.huotu.huobanplus.sns.exception.ContentException;
 import com.huotu.huobanplus.sns.exception.NeedLoginException;
 import com.huotu.huobanplus.sns.model.AppCircleArticleModel;
+import com.huotu.huobanplus.sns.model.AppCircleIndexListModel;
 import com.huotu.huobanplus.sns.model.AppUserConcermListModel;
 import com.huotu.huobanplus.sns.model.common.AppCode;
 import com.huotu.huobanplus.sns.model.common.ArticleType;
@@ -206,6 +208,26 @@ public class UserControllerImpl implements UserController {
         ArticleComment articleComment = articleCommentRepository.getOne(id);
         User user = UserHelper.getUser();
         articleService.replyComment(articleComment, user, content);
+        return ApiResult.resultWith(AppCode.SUCCESS);
+    }
+
+    @Override
+    public ApiResult circleIndexList(Output<AppCircleIndexListModel[]> circlelist, Long lastId) throws Exception {
+        Long customerId= PublicParameterHolder.getParameters().getCustomerId();
+        if(customerId==null){
+            return ApiResult.resultWith(AppCode.NOCUSTOMERID_ERROR);
+        }
+        User user=PublicParameterHolder.getParameters().getCurrentUser();
+        if(user==null){
+            return ApiResult.resultWith(AppCode.NOUSER_ERROR);
+        }
+
+        List<UserCircle> list=userCircleService.getUserCircleList(customerId,user.getId(),lastId);
+
+        AppCircleIndexListModel[] models=userCircleService.getCircleIndexListModelList(list);
+
+        circlelist.outputData(models);
+
         return ApiResult.resultWith(AppCode.SUCCESS);
     }
 }

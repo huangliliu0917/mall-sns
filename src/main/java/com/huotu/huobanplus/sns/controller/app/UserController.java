@@ -16,6 +16,7 @@ import com.huotu.huobanplus.sns.exception.ConcernException;
 import com.huotu.huobanplus.sns.exception.ContentException;
 import com.huotu.huobanplus.sns.exception.NeedLoginException;
 import com.huotu.huobanplus.sns.model.AppCircleArticleModel;
+import com.huotu.huobanplus.sns.model.AppCircleIndexListModel;
 import com.huotu.huobanplus.sns.model.AppUserConcermListModel;
 import com.huotu.huobanplus.sns.model.common.ReportTargetType;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -201,4 +202,21 @@ public interface UserController {
     @RequestMapping(value = "/replyComment", method = RequestMethod.POST)
     ApiResult replyComment(@RequestParam(value = "id") Long id
             , @RequestParam(value = "content") String content) throws NeedLoginException, IOException, ContentException;
+
+
+
+    /**
+     * 圈子首页 关注的圈子列表
+     * 按id进行倒序排列
+     * <p>
+     * 圈子的文章根据浏览量+时间取前2条
+     *
+     * @param circlelist 圈子列表
+     * @param lastId     上一个id
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/indexList", method = RequestMethod.GET)
+    ApiResult circleIndexList(Output<AppCircleIndexListModel[]> circlelist
+            , @RequestParam(value = "lastId",required = false) Long lastId) throws Exception;
 }

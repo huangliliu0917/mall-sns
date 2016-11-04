@@ -26,4 +26,8 @@ import java.util.List;
 public interface UserCircleRepository extends JpaRepository<UserCircle, Long>, JpaSpecificationExecutor<UserCircle> {
 
     List<UserCircle> findByUserAndCircle(@Param("user") User user, @Param("circle") Circle circle);
+
+    List<UserCircle> findTop5ByCustomerIdAndUser_IdAndIdLessThanOrderByIdDesc(Long customerId,Long userId,Long id);
+
+    List<UserCircle> findTop5ByCustomerIdAndUser_IdOrderByIdDesc(Long customerId,Long userId);
 }

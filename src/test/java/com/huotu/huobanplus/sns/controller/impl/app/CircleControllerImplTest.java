@@ -3,8 +3,9 @@ package com.huotu.huobanplus.sns.controller.impl.app;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.huotu.huobanplus.sns.CommonTestBase;
-import com.huotu.huobanplus.sns.entity.Circle;
-import com.huotu.huobanplus.sns.entity.Slide;
+import com.huotu.huobanplus.sns.entity.*;
+import com.huotu.huobanplus.sns.model.AppCircleIndexArticleListModel;
+import com.huotu.huobanplus.sns.model.AppCircleIndexListModel;
 import com.huotu.huobanplus.sns.model.AppCircleIndexSlideModel;
 import com.huotu.huobanplus.sns.model.AppCircleIndexSuggestModel;
 import com.huotu.huobanplus.sns.model.common.AppCode;
@@ -123,6 +124,84 @@ public class CircleControllerImplTest extends CommonTestBase {
 
     @Test
     public void circleIndexList() throws Exception {
+
+        //当前用户ID
+        User user=userRepository.findOne(mockUserId);
+
+
+        User puser=new User();
+        puser.setId(8888L);
+        puser.setCustomerId(3447L);
+        puser.setNickName("wy");
+        puser=userRepository.saveAndFlush(puser);
+
+        List<UserCircle> userCircles=new ArrayList<>();
+
+        AppCircleIndexListModel[] models=new AppCircleIndexListModel[9];
+
+        for(int i=0;i<9;i++){
+            UserCircle userCircle=new UserCircle();
+
+            Circle circle=new Circle();
+            circle.setEnabled(true);
+            circle=circleRepository.saveAndFlush(circle);
+
+            List<Article> articles=new ArrayList<>();
+            for(int j=0;j<4;j++){
+                Article article=new Article();
+                article.setEnabled(true);
+                article.setPublisher(puser);
+                article.setCustomerId(3447L);
+                article.setCircle(circle);
+                article.setName("圈子:"+i+" 文章:"+j);
+                article.setComments(j*100L);
+                article.setView(j*200L);
+                articles.add(articleRepository.saveAndFlush(article));
+            }
+
+            Collections.sort(articles, new Comparator<Article>() {
+                @Override
+                public int compare(Article o1, Article o2) {
+                    return o2.getId().intValue()-o1.getId().intValue();
+                }
+            });
+
+
+            userCircle.setCircle(circle);
+            userCircle.setUser(user);
+            userCircle.setDate(new Date());
+            userCircle.setCustomerId(3447L);
+            userCircles.add(userCircleRepository.saveAndFlush(userCircle));
+
+
+            List<AppCircleIndexArticleListModel> articleModels= userCircleService.getArticleModelList(articles);
+
+            AppCircleIndexListModel model=new AppCircleIndexListModel();
+            model.setList(articleModels);
+            model.setPid(userCircle.getId());
+            model.setCircleId(userCircle.getCircle().getId());
+            models[i]=model;
+        }
+
+        String result=mockMvc.perform(device.getApi("/user/indexList")
+                .build())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.resultCode").value(AppCode.SUCCESS.getValue()))
+                .andReturn().getResponse().getContentAsString();
+
+        JSONObject object=JSONObject.parseObject(result);
+        JSONObject data=(JSONObject) object.get("resultData");
+        JSONArray circlelist=(JSONArray) data.get("circlelist");
+        AppCircleIndexListModel[] newModels=JSONObject.toJavaObject(circlelist, AppCircleIndexListModel[].class);
+
+        for(int i=0;i<newModels.length;i++){
+            AppCircleIndexListModel newModel=newModels[i];
+            AppCircleIndexListModel oldModel=models[8-i];
+            assertEquals("article.length",3,newModel.getList().size());
+            assertEquals("userCircle",newModel.getPid(),oldModel.getPid());
+            assertEquals("article",newModel.getList().get(0).getArticleId(),oldModel.getList().get(0).getArticleId());
+        }
+
 
     }
 
