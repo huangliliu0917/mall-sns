@@ -11,12 +11,14 @@ package com.huotu.huobanplus.sns.boot;
 
 import com.huotu.common.api.ApiResultHandler;
 import com.huotu.common.api.OutputHandler;
+import com.huotu.huobanplus.sns.converter.ReportTargetTypeConverter;
 import com.huotu.huobanplus.sns.mvc.CustomerIdArgumentResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
+import org.springframework.format.FormatterRegistry;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -44,6 +46,9 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
     @Autowired
     private CustomerIdArgumentResolver customerIdArgumentResolver;
 
+    @Autowired
+    private ReportTargetTypeConverter reportTargetTypeConverter;
+
 
     @Autowired
     private AppCommonInterceptor appCommonInterceptor;
@@ -51,6 +56,10 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
     @Bean
     AppCommonInterceptor appCommonInterceptor() {
         return new AppCommonInterceptor();
+    }
+
+    public void addFormatters(FormatterRegistry registry) {
+        registry.addConverter(reportTargetTypeConverter);
     }
 
     public void addInterceptors(InterceptorRegistry registry) {

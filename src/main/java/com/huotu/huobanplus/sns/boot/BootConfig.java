@@ -23,7 +23,7 @@ import javax.persistence.EntityManagerFactory;
  */
 
 @Configuration
-@ComponentScan({"com.huotu.huobanplus.sns.service", "com.huotu.huobanplus.sns.mvc"})
+@ComponentScan({"com.huotu.huobanplus.sns.service", "com.huotu.huobanplus.sns.mvc", "com.huotu.huobanplus.sns.converter"})
 @EnableJpaRepositories(value = {"com.huotu.huobanplus.sns.repository"}, transactionManagerRef = "transactionManager", entityManagerFactoryRef = "entityManagerFactory")
 @ImportResource(value = {"classpath:spring-jpa.xml"})
 @Import({LoggingConfig.class})

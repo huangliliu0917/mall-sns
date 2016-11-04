@@ -119,14 +119,14 @@ public class UserControllerImpl implements UserController {
     }
 
     @Override
-    public ApiResult commentArticle(Output<Long> commentId, Long id, String content)
+    public ApiResult commentArticle(Output<Long> data, Long id, String content)
             throws NeedLoginException, IOException, ContentException {
         if (!sensitiveService.ContainSensitiveWords(content)) {
             throw new ContentException(AppCode.ERROR_SENSITIVE_CONTENT.getValue(), AppCode.ERROR_SENSITIVE_CONTENT.getName());
         }
         User user = UserHelper.getUser();
         ArticleComment comment = articleService.commentArticle(id, content, user);
-        commentId.outputData(comment.getId());
+        data.outputData(comment.getId());
         return ApiResult.resultWith(AppCode.SUCCESS);
     }
 

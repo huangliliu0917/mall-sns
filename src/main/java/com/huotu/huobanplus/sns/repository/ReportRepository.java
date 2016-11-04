@@ -10,13 +10,20 @@
 package com.huotu.huobanplus.sns.repository;
 
 import com.huotu.huobanplus.sns.entity.Report;
+import com.huotu.huobanplus.sns.model.common.ReportTargetType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * Created by jin on 2016/10/18.
  */
 @Repository
 public interface ReportRepository extends JpaRepository<Report, Long>, JpaSpecificationExecutor<Report> {
+
+    List<Report> findByTargetIdAndReportTargetType(@Param("targetId") Long targetId,
+                                                   @Param("reportTargetType") ReportTargetType type);
 }

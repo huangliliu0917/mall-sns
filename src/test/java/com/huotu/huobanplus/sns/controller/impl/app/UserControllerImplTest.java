@@ -12,8 +12,12 @@ package com.huotu.huobanplus.sns.controller.impl.app;
 import com.huotu.huobanplus.sns.CommonTestBase;
 import com.huotu.huobanplus.sns.entity.Article;
 import com.huotu.huobanplus.sns.entity.Circle;
+import com.huotu.huobanplus.sns.entity.Report;
 import com.huotu.huobanplus.sns.entity.User;
+import com.huotu.huobanplus.sns.model.AppArticleCommentModel;
 import com.huotu.huobanplus.sns.model.common.AppCode;
+import com.huotu.huobanplus.sns.model.common.ReportTargetType;
+import com.huotu.huobanplus.sns.utils.ContractHelper;
 import com.jayway.jsonpath.JsonPath;
 import org.junit.Test;
 
@@ -22,7 +26,6 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -109,12 +112,29 @@ public class UserControllerImplTest extends CommonTestBase {
 
     @Test
     public void commentArticle() throws Exception {
+        Article article = randomArticle();
+        String data = mockMvc.perform(device.postApi("/user/commentArticle").param("id", article.getId() + "")
+                .param("content", UUID.randomUUID().toString()).build())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.resultCode").value(AppCode.SUCCESS.getValue()))
+                .andReturn().getResponse().getContentAsString();
+        Long commentId = Long.parseLong(JsonPath.read(data, "$.resultData.data").toString());
+        List<AppArticleCommentModel> list = articleCommentRedisTemplate.opsForList()
+                .range(ContractHelper.articleCommentFlag + article.getId(), 0L, 0L);
+        assertEquals("评论id", list.get(0).getPid(), commentId);
 
     }
 
     @Test
     public void report() throws Exception {
-
+        Article article = randomArticle();
+        mockMvc.perform(device.postApi("/user/report").param("id", article.getId() + "")
+                .param("note", UUID.randomUUID().toString())
+                .param("type", "1").build())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.resultCode").value(AppCode.SUCCESS.getValue()));
+        List<Report> list = reportRepository.findByTargetIdAndReportTargetType(article.getId(), ReportTargetType.Article);
+        assertEquals("举报文章列表", list.get(0).getTargetId(), article.getId());
     }
 
     @Test
@@ -142,13 +162,6 @@ public class UserControllerImplTest extends CommonTestBase {
         Article article = randomArticle();
 
         mockMvc.perform(device.postApi("/user/commentArticle").param("id", article.getId() + "")
-                .param("content", UUID.randomUUID().toString()).build()).andDo(print());
-    }
-
-    @Test
-    public void test() throws Exception {
-        mockMvc.perform(device.postApi("/user/test").param("id", "1").build())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.resultCode").value(AppCode.SUCCESS.getValue()));
+                .param("content", UUID.randomUUID().toString()).build());
     }
 }

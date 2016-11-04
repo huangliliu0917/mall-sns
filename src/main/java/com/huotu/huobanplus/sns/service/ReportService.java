@@ -67,5 +67,7 @@ public interface ReportService {
      */
     String formatUserPower(String power);
 
+    void deleteRedisArticleComment(List<Long> ids, Long articleId) throws IOException;
+
 
 }

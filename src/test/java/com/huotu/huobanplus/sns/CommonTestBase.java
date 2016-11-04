@@ -14,6 +14,7 @@ import com.huotu.huobanplus.sns.base.Device;
 import com.huotu.huobanplus.sns.base.DeviceType;
 import com.huotu.huobanplus.sns.entity.*;
 import com.huotu.huobanplus.sns.mallservice.MallUserService;
+import com.huotu.huobanplus.sns.model.AppArticleCommentModel;
 import com.huotu.huobanplus.sns.repository.*;
 import com.huotu.huobanplus.sns.service.AppSecurityService;
 import com.huotu.huobanplus.sns.service.CircleService;
@@ -21,6 +22,7 @@ import com.huotu.huobanplus.sns.service.SlideService;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -66,15 +68,19 @@ public abstract class CommonTestBase extends BaseTest {
     @Autowired
     protected UserArticleRepository userArticleRepository;
     @Autowired
-    private MallUserService mallUserService;
-    @Autowired
-    private AppSecurityService appSecurityService;
-    @Autowired
     protected SlideRepository slideRepository;
     @Autowired
     protected SlideService slideService;
     @Autowired
     protected CircleService circleService;
+    @Autowired
+    protected RedisTemplate<String, AppArticleCommentModel> articleCommentRedisTemplate;
+    @Autowired
+    protected ReportRepository reportRepository;
+    @Autowired
+    private MallUserService mallUserService;
+    @Autowired
+    private AppSecurityService appSecurityService;
 
     @Before
     public void prepareDevice() throws UnsupportedEncodingException {

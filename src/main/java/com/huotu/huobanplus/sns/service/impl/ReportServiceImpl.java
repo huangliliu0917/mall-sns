@@ -14,6 +14,7 @@ import com.huotu.huobanplus.sns.entity.ArticleComment;
 import com.huotu.huobanplus.sns.entity.Report;
 import com.huotu.huobanplus.sns.entity.User;
 import com.huotu.huobanplus.sns.exception.NeedLoginException;
+import com.huotu.huobanplus.sns.model.AppArticleCommentModel;
 import com.huotu.huobanplus.sns.model.admin.ReportDetailsModel;
 import com.huotu.huobanplus.sns.model.admin.ReportListModel;
 import com.huotu.huobanplus.sns.model.admin.ReportSearchModel;
@@ -23,12 +24,15 @@ import com.huotu.huobanplus.sns.repository.ArticleRepository;
 import com.huotu.huobanplus.sns.repository.ReportRepository;
 import com.huotu.huobanplus.sns.repository.UserRepository;
 import com.huotu.huobanplus.sns.service.ReportService;
+import com.huotu.huobanplus.sns.utils.ContractHelper;
 import com.huotu.huobanplus.sns.utils.UserHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.redis.core.BoundListOperations;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -36,8 +40,10 @@ import javax.persistence.criteria.Predicate;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 举报服务实现
@@ -57,6 +63,8 @@ public class ReportServiceImpl implements ReportService {
 
     @Autowired
     private ArticleCommentRepository articleCommentRepository;
+    @Autowired
+    private RedisTemplate<String, AppArticleCommentModel> articleCommentRedisTemplate;
 
     @Override
     public void report(ReportTargetType type, Long id, String note) throws IOException, NeedLoginException {
@@ -82,13 +90,13 @@ public class ReportServiceImpl implements ReportService {
         }
         Specification<Report> specification = (root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
-            predicates.add(criteriaBuilder.equal(root.get("customerId").as(Long.class),searchModel.getCustomerId()));
+            predicates.add(criteriaBuilder.equal(root.get("customerId").as(Long.class), searchModel.getCustomerId()));
             if (!StringUtils.isEmpty(searchModel.getName())) {
                 predicates.add(criteriaBuilder.like(root.get("user").get("nickName").as(String.class), "%" + searchModel.getName() + "%"));
             }
             if (!StringUtils.isEmpty(searchModel.getReportTargetName())) {
                 String typeName = searchModel.getReportTargetName();
-                ReportTargetType reportTargetType=ReportTargetType.valueOf(typeName);
+                ReportTargetType reportTargetType = ReportTargetType.valueOf(typeName);
                 predicates.add(criteriaBuilder.equal(root.get("reportTargetType").as(ReportTargetType.class), reportTargetType));
             }
             return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
@@ -99,16 +107,16 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     public List<ReportListModel> getReportListModelList(List<Report> reports) {
-        List<ReportListModel> models=new ArrayList<>();
-        if(reports==null){
+        List<ReportListModel> models = new ArrayList<>();
+        if (reports == null) {
             return models;
         }
-        reports.forEach(report->{
-            ReportListModel model=new ReportListModel();
+        reports.forEach(report -> {
+            ReportListModel model = new ReportListModel();
             model.setReportId(report.getId());
-            model.setReportName(report.getUser()==null?"":report.getUser().getNickName());
+            model.setReportName(report.getUser() == null ? "" : report.getUser().getNickName());
             model.setTargetId(report.getTargetId());
-            model.setTypeName(report.getReportTargetType()==null?"":report.getReportTargetType().getName());
+            model.setTypeName(report.getReportTargetType() == null ? "" : report.getReportTargetType().getName());
             model.setContent(report.getContent());
             SimpleDateFormat dateFormat = new SimpleDateFormat("yy-MM-dd HH:mm:ss");
             model.setCreateDate(dateFormat.format(report.getDate()));
@@ -119,27 +127,27 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     public ReportDetailsModel getReportDetails(Report report) {
-        ReportDetailsModel reportDetailsModel=new ReportDetailsModel();
-        if(report==null){
+        ReportDetailsModel reportDetailsModel = new ReportDetailsModel();
+        if (report == null) {
             return reportDetailsModel;
         }
-        reportDetailsModel.setReportId(report.getUser()==null?0:report.getUser().getId());
-        reportDetailsModel.setReportName(report.getUser()==null?"":report.getUser().getNickName());
-        ReportTargetType type=report.getReportTargetType();
+        reportDetailsModel.setReportId(report.getUser() == null ? 0 : report.getUser().getId());
+        reportDetailsModel.setReportName(report.getUser() == null ? "" : report.getUser().getNickName());
+        ReportTargetType type = report.getReportTargetType();
         reportDetailsModel.setContent(report.getContent());
-        if(report.getTargetId()!=null){
+        if (report.getTargetId() != null) {
             //被举报者
-            User reported=null;
-            switch (type){
+            User reported = null;
+            switch (type) {
                 case User:
-                    reported=userRepository.findOne(report.getTargetId());
+                    reported = userRepository.findOne(report.getTargetId());
                     break;
                 case Article:
-                    Article article=articleRepository.findOne(report.getTargetId());
+                    Article article = articleRepository.findOne(report.getTargetId());
 
 
-                    if(article!=null){
-                        reported=article.getPublisher();
+                    if (article != null) {
+                        reported = article.getPublisher();
                         reportDetailsModel.setInvitationId(article.getId());
                         reportDetailsModel.setInvitationTitle(article.getName());
                         reportDetailsModel.setInvitationContent(article.getContent());
@@ -147,21 +155,21 @@ public class ReportServiceImpl implements ReportService {
                     }
                     break;
                 case Comment:
-                    ArticleComment comment=articleCommentRepository.findOne(report.getTargetId());
-                    if(comment!=null){
-                        reported=comment.getUser();
+                    ArticleComment comment = articleCommentRepository.findOne(report.getTargetId());
+                    if (comment != null) {
+                        reported = comment.getUser();
                         reportDetailsModel.setCommentId(comment.getId());
                         reportDetailsModel.setCommentStatus(comment.getCommentStatus().getValue());
                         reportDetailsModel.setComment(comment.getContent());
                     }
                     break;
             }
-            if(reported!=null){
+            if (reported != null) {
                 reportDetailsModel.setReportedId(reported.getId());
                 reportDetailsModel.setReportedName(reported.getNickName());
-                String power=formatUserPower(reported.getPower());
-                reportDetailsModel.setPosting('1'==power.charAt(0));
-                reportDetailsModel.setSpeak('1'==power.charAt(1));
+                String power = formatUserPower(reported.getPower());
+                reportDetailsModel.setPosting('1' == power.charAt(0));
+                reportDetailsModel.setSpeak('1' == power.charAt(1));
             }
         }
         reportDetailsModel.setReportTargetType(report.getReportTargetType());
@@ -170,12 +178,25 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     public String formatUserPower(String power) {
-        if(StringUtils.isEmpty(power)){
+        if (StringUtils.isEmpty(power)) {
             return "11";
         }
-        if(power.length()<2){
-            power=power+"1";
+        if (power.length() < 2) {
+            power = power + "1";
         }
         return power;
+    }
+
+    @Override
+    public void deleteRedisArticleComment(List<Long> ids, Long articleId) throws IOException {
+        BoundListOperations<String, AppArticleCommentModel> articleCommentBoundListOperations =
+                articleCommentRedisTemplate.boundListOps(ContractHelper.articleCommentFlag + articleId);
+        if (articleCommentBoundListOperations.size() != null && articleCommentBoundListOperations.size().intValue() > 0) {
+            List<AppArticleCommentModel> list = articleCommentBoundListOperations.range(0L, articleCommentBoundListOperations.size());
+            List<AppArticleCommentModel> newList = list.stream().filter(model -> !ids.contains(model.getPid())).collect(Collectors.toList());
+            articleCommentRedisTemplate.opsForList().remove(ContractHelper.articleCommentFlag + articleId, -1, null);
+            Collections.sort(newList, (o1, o2) -> o1.getPid().intValue() - o2.getPid().intValue());
+            newList.forEach(articleCommentBoundListOperations::leftPush);
+        }
     }
 }

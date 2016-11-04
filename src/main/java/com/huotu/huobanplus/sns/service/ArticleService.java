@@ -21,7 +21,6 @@ import com.huotu.huobanplus.sns.model.admin.AdminArticleEditModel;
 import com.huotu.huobanplus.sns.model.admin.AdminArticlePageModel;
 import org.springframework.transaction.annotation.Transactional;
 
-
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -34,15 +33,15 @@ public interface ArticleService {
 
     AppWikiModel getAppWiki(Long id);
 
-    AdminArticlePageModel getAdminArticleList(Long customerId,Integer articleType, String name, Integer pageNo, Integer pageSize);
+    AdminArticlePageModel getAdminArticleList(Long customerId, Integer articleType, String name, Integer pageNo, Integer pageSize);
 
     AdminArticleEditModel getAdminArticle(String type, Integer articleType, Long id) throws URISyntaxException;
 
 
     /**
-     * @param  customerId
+     * @param customerId
      * @param articleType
-     * @param id 文章Id
+     * @param id          文章Id
      * @param name
      * @param userId
      * @param pictureUrl
@@ -52,7 +51,7 @@ public interface ArticleService {
      * @param circleId
      * @param adConent
      */
-    Article save(Long customerId,Integer articleType, Long id
+    Article save(Long customerId, Integer articleType, Long id
             , String name, Long userId, String pictureUrl, String content
             , String summary, Integer categoryId, Long circleId, String adConent, String tags);
 
@@ -103,6 +102,8 @@ public interface ArticleService {
     void articleClick(Article article, User user) throws IOException, ClickException;
 
     /**
+     * 回复评论
+     *
      * @param articleComment 评论
      * @param user           评论用户
      * @param content        评论内容
