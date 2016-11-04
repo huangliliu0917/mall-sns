@@ -79,11 +79,11 @@ public abstract class CommonTestBase extends BaseTest {
     @Autowired
     protected ReportRepository reportRepository;
     @Autowired
+    protected UserCircleService userCircleService;
+    @Autowired
     private MallUserService mallUserService;
     @Autowired
     private AppSecurityService appSecurityService;
-    @Autowired
-    protected UserCircleService userCircleService;
 
     @Before
     public void prepareDevice() throws UnsupportedEncodingException {
@@ -130,11 +130,19 @@ public abstract class CommonTestBase extends BaseTest {
         return newUser;
     }
 
-    protected Concern randomConcern(User concernUser) throws Exception {
+    protected Concern randomConcernOwner(User concernUser) throws Exception {
+        return setUsers(user, concernUser);
+    }
+
+    protected Concern randomConcernOther(User concernUser) throws Exception {
+        return setUsers(concernUser, user);
+    }
+
+    private Concern setUsers(User concernUser, User toUser) throws Exception {
         Concern concern = new Concern();
         concern.setCustomerId(user.getCustomerId());
-        concern.setToUser(user);
         concern.setUser(concernUser);
+        concern.setToUser(toUser);
         concern.setDate(new Date());
         concernRepository.saveAndFlush(concern);
         return concern;

@@ -15,6 +15,7 @@ import com.huotu.huobanplus.sns.entity.Circle;
 import com.huotu.huobanplus.sns.entity.Report;
 import com.huotu.huobanplus.sns.entity.User;
 import com.huotu.huobanplus.sns.model.AppArticleCommentModel;
+import com.huotu.huobanplus.sns.model.AppUserConcermListModel;
 import com.huotu.huobanplus.sns.model.common.AppCode;
 import com.huotu.huobanplus.sns.model.common.ReportTargetType;
 import com.huotu.huobanplus.sns.utils.ContractHelper;
@@ -26,6 +27,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -92,7 +94,7 @@ public class UserControllerImplTest extends CommonTestBase {
         }
 
         for (User concernUser : list) {
-            randomConcern(concernUser);
+            randomConcernOwner(concernUser);
         }
         Circle circle = randomCircle();
         String data = mockMvc.perform(device.postApi("/user/publishArticle").param("name", UUID.randomUUID().toString())
@@ -139,12 +141,50 @@ public class UserControllerImplTest extends CommonTestBase {
 
     @Test
     public void myConcern() throws Exception {
+        int index = random.nextInt(20);
+        List<User> list = new ArrayList<>();
+        for (int i = 0; i < index; i++) {
+            User otherUser = randomUser();
+            list.add(otherUser);
+        }
 
+        for (User concernUser : list) {
+            randomConcernOwner(concernUser);
+        }
+        int length;
+        if (index > 10) length = 10;
+        else length = index;
+        String body = mockMvc.perform(device.getApi("/user/myConcern").build())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.resultCode").value(AppCode.SUCCESS.getValue())).andDo(print())
+                .andReturn().getResponse().getContentAsString();
+//                .andExpect(jsonPath("$.resultData.list.length()").value(length));
+        List<AppUserConcermListModel> models = JsonPath.read(body, "$.resultData.list");
+        assertEquals("关注列表长度", models.size(), length);
     }
 
     @Test
     public void myConcerned() throws Exception {
+        int index = random.nextInt(20);
+        List<User> list = new ArrayList<>();
+        for (int i = 0; i < index; i++) {
+            User otherUser = randomUser();
+            list.add(otherUser);
+        }
 
+        for (User concernUser : list) {
+            randomConcernOther(concernUser);
+        }
+        int length;
+        if (index > 10) length = 10;
+        else length = index;
+        String body = mockMvc.perform(device.getApi("/user/myConcerned").build())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.resultCode").value(AppCode.SUCCESS.getValue())).andDo(print())
+                .andReturn().getResponse().getContentAsString();
+//                .andExpect(jsonPath("$.resultData.list.length()").value(length));
+        List<AppUserConcermListModel> models = JsonPath.read(body, "$.resultData.list");
+        assertEquals("粉丝列表长度", models.size(), length);
     }
 
     @Test

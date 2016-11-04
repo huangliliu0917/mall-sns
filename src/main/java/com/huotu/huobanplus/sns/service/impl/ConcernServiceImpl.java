@@ -114,7 +114,8 @@ public class ConcernServiceImpl implements ConcernService {
         model.setPid(toUser.getId());
         model.setUserName(toUser.getNickName());
         model.setUserHeadUrl(toUser.getImgURL());
-        model.setUserLevelName(toUser.getLevel().getName());
+        if (Objects.nonNull(toUser.getLevel()))
+            model.setUserLevelName(toUser.getLevel().getName());
         model.setFansAmount(toUser.getFansAmount());
         model.setArticleAmount(toUser.getArticleAmount());
 //        BoundHashOperations<String, String, Long> toUserOperations = redisTemplate
