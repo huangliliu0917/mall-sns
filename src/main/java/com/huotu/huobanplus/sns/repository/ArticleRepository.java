@@ -54,4 +54,10 @@ public interface ArticleRepository extends JpaRepository<Article, Long>, JpaSpec
     void addClick(@Param("articleId") Long articleId);
 
     List<Article> findTop10ByPublisherOrderByIdDesc(@Param("publisher") User publisher);
+
+    @Query("select article from Article article where article.customerId=?1 and article.name like ?2")
+    Page<Article> findByCustomerIdAndNameLike(Long customerId, String name, Pageable pageable);
+
+    @Query("select article from Article article where article.customerId=?1 and article.id<?2 and article.name like ?3")
+    Page<Article> findByCustomerIdAndNameLike(Long customerId, String name, Long lastId, Pageable pageable);
 }

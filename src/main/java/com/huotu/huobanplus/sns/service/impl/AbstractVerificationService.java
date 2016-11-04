@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
-import java.util.List;
 
 /**
  * @author CJ
@@ -34,14 +33,14 @@ public abstract class AbstractVerificationService implements VerificationService
     public void sendCode(Long customerId, String mobile, VerificationProject project, String code, Date currentDate, VerificationType type, CodeType sentType)
             throws VericationCodeIntervalException, NotSupportVoiceException, WrongMobileException, MessageInternetException {
         if (!RegexHelper.IsValidMobileNo(mobile)) {
-            throw new WrongMobileException(AppCode.ERROR_WRONG_MOBILE.getValue(), AppCode.ERROR_WRONG_MOBILE.getName());
+            throw new WrongMobileException(AppCode.MOBILE_INVOID.getValue(), AppCode.MOBILE_INVOID.getName());
         }
         if (sentType == null) {
             sentType = CodeType.text;
         }
 
         if (!supportVoice() && sentType == CodeType.voice) {
-            throw new NotSupportVoiceException(AppCode.Not_Support_Voice.getValue(), AppCode.Not_Support_Voice.getName());
+            throw new NotSupportVoiceException(AppCode.NOT_SUPPORT_VOICE.getValue(), AppCode.NOT_SUPPORT_VOICE.getName());
         }
 
         VerificationCode verificationCode = verificationCodeRepository.findByCustomerIdAndMobileAndTypeAndCodeType(customerId, mobile, type, sentType);

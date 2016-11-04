@@ -2,6 +2,7 @@ package com.huotu.huobanplus.sns.controller.impl.app;
 
 import com.huotu.common.api.ApiResult;
 import com.huotu.common.api.Output;
+import com.huotu.huobanplus.sns.boot.PublicParameterHolder;
 import com.huotu.huobanplus.sns.controller.app.WebController;
 import com.huotu.huobanplus.sns.model.*;
 import com.huotu.huobanplus.sns.model.common.AppCode;
@@ -43,17 +44,16 @@ public class WebControllerImpl implements WebController {
     }
 
     @Override
-    public ApiResult search(Output<AppCircleIndexArticleListModel[]> articleList, @RequestParam("key") String key, @RequestParam(value = "lastId", required = false) Long lastId) throws Exception {
-        return null;
+    public ApiResult search(Output<AppCircleIndexArticleListModel[]> articleList, String key, Long lastId) throws Exception {
+        List<AppCircleIndexArticleListModel> listModels = articleService.search(PublicParameterHolder.getParameters().getCustomerId(), key, lastId);
+        articleList.outputData(listModels.toArray(new AppCircleIndexArticleListModel[listModels.size()]));
+        return ApiResult.resultWith(AppCode.SUCCESS);
     }
 
 //    @Override
 //    public ApiResult getWeixinInfo(Output<String> openId, Output<String> nickName, Output<String> imageUrl, @RequestParam("customerId") Long customerId) {
 //        return null;
 //    }
-
-
-
 
 
 //    @Override

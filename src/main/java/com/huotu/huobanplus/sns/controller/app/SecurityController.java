@@ -70,18 +70,20 @@ public interface SecurityController {
             throws VericationCodeIntervalException, WrongMobileException, NotSupportVoiceException, MessageInternetException;
 
     /***
-     * 用户手机注册/登录
+     * 用户手机登录
      * @param data token数据
      * @param customerId 商户id
      * @param phone 手机号
-     * @param code 验证码
+     * @param password 密码
      * @param openId     openid
      * @param nickName   用户昵称
      * @param imageUrl   用户头像
      * @return* token数据
      * <ul>
-     *     <li>20106, "验证码错误"</li>
-     *     <li>20107, "验证码到期了"</li>
+     *     <li>20004, "错误的用户名密码"</li>
+     *     <li>20005, "密码长度需要大于6"</li>
+     *     <li>20003, "不合法的手机号"</li>
+     *     <li>20007,"手机号不存在，请换用其他手机号"</li>
      * </ul>
      */
     @Deprecated
@@ -89,9 +91,42 @@ public interface SecurityController {
     ApiResult mobileLogin(Output<String> data
             , @RequestParam("customerId") Long customerId
             , @RequestParam("phone") String phone
-            , @RequestParam("code") String code
+            , @RequestParam("password") String password
             , @RequestParam(value = "openId", required = false) String openId
             , @RequestParam(value = "nickName", required = false) String nickName
-            , @RequestParam(value = "imageUrl", required = false) String imageUrl) throws UnsupportedEncodingException, VerificationCodeDuedException, VerificationCodeInvoidException;
+            , @RequestParam(value = "imageUrl", required = false) String imageUrl)
+            throws UnsupportedEncodingException, UserNamePasswordInvoidException, PasswordLengthLackException, MobileInvoidException, MobileNotExistException;
+
+
+    /**
+     * 用户手机注册
+     *
+     * @param data       token数据
+     * @param customerId 商户id
+     * @param phone      手机号
+     * @param code       验证码
+     * @param password   密码
+     * @param openId     openid
+     * @param nickName   用户昵称
+     * @param imageUrl   用户头像
+     * @return* token数据
+     * <ul>
+     * <li>20107, "验证码到期了"</li>
+     * <li>20106, "验证码错误"</li>
+     * <li>20005, "密码长度需要大于6"</li>
+     * <li>20003, "不合法的手机号"</li>
+     * <li>20006,"手机号已存在，请换用其他手机号"</li>
+     * </ul>
+     */
+    ApiResult mobileRegister(Output<String> data
+            , @RequestParam("customerId") Long customerId
+            , @RequestParam("phone") String phone
+            , @RequestParam("code") String code
+            , @RequestParam("password") String password
+            , @RequestParam(value = "openId", required = false) String openId
+            , @RequestParam(value = "nickName", required = false) String nickName
+            , @RequestParam(value = "imageUrl", required = false) String imageUrl)
+            throws VerificationCodeDuedException, VerificationCodeInvoidException
+            , PasswordLengthLackException, UnsupportedEncodingException, MobileInvoidException, MobileExistException;
 
 }

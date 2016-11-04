@@ -12,10 +12,7 @@ package com.huotu.huobanplus.sns.service.impl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.huotu.huobanplus.sns.entity.*;
 import com.huotu.huobanplus.sns.exception.ClickException;
-import com.huotu.huobanplus.sns.model.AppArticleCommentModel;
-import com.huotu.huobanplus.sns.model.AppCircleArticleModel;
-import com.huotu.huobanplus.sns.model.AppWikiListModel;
-import com.huotu.huobanplus.sns.model.AppWikiModel;
+import com.huotu.huobanplus.sns.model.*;
 import com.huotu.huobanplus.sns.model.admin.*;
 import com.huotu.huobanplus.sns.model.common.AppCode;
 import com.huotu.huobanplus.sns.model.common.ArticleType;
@@ -24,6 +21,8 @@ import com.huotu.huobanplus.sns.repository.*;
 import com.huotu.huobanplus.sns.service.ArticleService;
 import com.huotu.huobanplus.sns.service.resource.StaticResourceService;
 import com.huotu.huobanplus.sns.utils.ContractHelper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -48,6 +47,8 @@ import java.util.stream.Collectors;
  */
 @Service
 public class ArticleServiceImpl implements ArticleService {
+
+    private static Log log = LogFactory.getLog(ArticleServiceImpl.class);
 
     @Autowired
     private CategoryRepository categoryRepository;
@@ -268,7 +269,7 @@ public class ArticleServiceImpl implements ArticleService {
         article.setCustomerId(customerId);
         article.setArticleType(articleType.equals(1) ? ArticleType.Wiki : ArticleType.Normal);
         article.setName(name);
-        article.setPublisher(userId==null?null:userRepository.findOne(userId));
+        article.setPublisher(userId == null ? null : userRepository.findOne(userId));
         article.setPictureUrl(pictureUrl);
         article.setContent(content);
         article.setSummary(summary);
@@ -285,7 +286,7 @@ public class ArticleServiceImpl implements ArticleService {
             }
             article.setTags(tags1);
         }
-        article = articleRepository.save(article);
+        article = articleRepository.saveAndFlush(article);
         return article;
 
     }
@@ -386,7 +387,7 @@ public class ArticleServiceImpl implements ArticleService {
         List<AppCircleArticleModel> appCircleArticleModels = new ArrayList<>();
 
         StringBuilder hql = new StringBuilder();
-        hql.append("select article from Aritcle article where article.publisher.id=:userId");
+        hql.append("select article from Article article where article.publisher.id=:userId");//
         if (lastId != null && lastId > 0) {
             hql.append(" and article.id<:lastId");
         }
@@ -398,9 +399,26 @@ public class ArticleServiceImpl implements ArticleService {
         }
         query.setMaxResults(10);
         List list = query.getResultList();
+
+//        log.info("database amount:" + articleRepository.count());
+//
+//        StringBuilder hql = new StringBuilder();
+//        hql.append("select article from Article article");// where article.publisher.id=:userId
+////        if (lastId != null && lastId > 0) {
+////            hql.append(" and article.id<:lastId");
+////        }
+//
+//        Query query = entityManager.createQuery(hql.toString());
+////        query.setParameter("userId", userId);
+////        if (lastId != null && lastId > 0) {
+////            query.setParameter("lastId", lastId);
+////        }
+//        query.setMaxResults(100);
+//        List list = query.getResultList();
+//        log.info("query amount:" +list.size());
+
         list.forEach(object -> {
-            Object[] objects = (Object[]) object;
-            Article article = (Article) objects[0];
+            Article article = (Article) object;
             AppCircleArticleModel appCircleArticleModel = new AppCircleArticleModel();
             appCircleArticleModel.setName(article.getName());
             appCircleArticleModel.setTime(article.getDate().getTime());
@@ -501,5 +519,37 @@ public class ArticleServiceImpl implements ArticleService {
             return model;
         }
         return null;
+    }
+
+    public List<AppCircleIndexArticleListModel> search(Long customerId, String key, Long lastId) {
+        StringBuilder hql = new StringBuilder();
+        hql.append("select article from Article article where article.customerId=:customerId and article.name like :name");
+        if (lastId != null && lastId > 0) {
+            hql.append(" and article.id<:lastId");
+        }
+
+        Query query = entityManager.createQuery(hql.toString());
+        query.setParameter("customerId", customerId);
+        query.setParameter("name", "%" + key + "%");
+        if (lastId != null && lastId > 0) {
+            query.setParameter("lastId", lastId);
+        }
+        query.setMaxResults(10);
+        List list = query.getResultList();
+
+        List<AppCircleIndexArticleListModel> appCircleIndexArticleListModels = new ArrayList<>();
+        list.forEach(object -> {
+            Article article = (Article) object;
+            AppCircleIndexArticleListModel appCircleIndexArticleListModel = new AppCircleIndexArticleListModel();
+            appCircleIndexArticleListModel.setId(article.getId());
+            appCircleIndexArticleListModel.setName(article.getName());
+            appCircleIndexArticleListModel.setCommentsAmount(article.getComments());
+            appCircleIndexArticleListModel.setViewAmount(article.getView());
+            if (article.getPublisher() != null) {
+                appCircleIndexArticleListModel.setUserName(article.getPublisher().getNickName());
+            }
+            appCircleIndexArticleListModels.add(appCircleIndexArticleListModel);
+        });
+        return appCircleIndexArticleListModels;
     }
 }

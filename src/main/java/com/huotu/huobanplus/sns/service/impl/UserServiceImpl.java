@@ -10,9 +10,7 @@
 package com.huotu.huobanplus.sns.service.impl;
 
 import com.huotu.huobanplus.sns.entity.*;
-import com.huotu.huobanplus.sns.exception.VerificationCodeDuedException;
-import com.huotu.huobanplus.sns.exception.VerificationCodeInvoidException;
-import com.huotu.huobanplus.sns.exception.WeixinLoginFailException;
+import com.huotu.huobanplus.sns.exception.*;
 import com.huotu.huobanplus.sns.mallentity.MallUser;
 import com.huotu.huobanplus.sns.mallrepository.MallUserRepository;
 import com.huotu.huobanplus.sns.mallservice.MallUserService;
@@ -28,6 +26,7 @@ import com.huotu.huobanplus.sns.repository.VerificationCodeRepository;
 import com.huotu.huobanplus.sns.service.AppSecurityService;
 import com.huotu.huobanplus.sns.service.UserService;
 import com.huotu.huobanplus.sns.utils.ContractHelper;
+import com.huotu.huobanplus.sns.utils.RegexHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -206,11 +205,41 @@ public class UserServiceImpl implements UserService {
         return models;
     }
 
-    public String userLogin(Long customerId, String phone, String code
+    public String userLogin(Long customerId, String phone, String password
             , String openId
             , String nickName
-            , String imageUrl) throws VerificationCodeInvoidException, VerificationCodeDuedException, UnsupportedEncodingException {
-        //判断验证码是否有效
+            , String imageUrl) throws UnsupportedEncodingException, UserNamePasswordInvoidException, MobileInvoidException, PasswordLengthLackException, MobileNotExistException {
+
+        if (!RegexHelper.IsValidMobileNo(phone)) throw new MobileInvoidException(AppCode.MOBILE_INVOID.getValue(), AppCode.MOBILE_INVOID.getName());
+        if (password.length() < 6) throw new PasswordLengthLackException(AppCode.PASSWORD_LENGTH_LACK.getValue(), AppCode.PASSWORD_LENGTH_LACK.getName());
+
+        MallUser mallUser = mallUserRepository.findByCustomerIdAndLoginName(customerId, phone);
+
+        //商城中判断用户是否存在
+        if (mallUser == null) {
+            throw new MobileNotExistException(AppCode.MOBILE_NOT_EXIST.getValue(), AppCode.MOBILE_NOT_EXIST.getName());
+        } else {
+            if (!password.equals(mallUser.getPassword()))
+                throw new UserNamePasswordInvoidException(AppCode.USERNAME_PASSWORD_INVOID.getValue(), AppCode.USERNAME_PASSWORD_INVOID.getName());
+        }
+
+        //判断本地用户是否存在，不存在则创建本地用户
+        User user = userRepository.findOne(mallUser.getId());
+        if (user == null) {
+            register(mallUser.getId(), customerId, phone, openId, nickName, imageUrl);
+        }
+        //返回token
+        String token = appSecurityService.createJWT("sns", customerId + "," + mallUser.getId(), 1000 * 3600 * 24 * 30);
+
+        return token;
+    }
+
+    @Override
+    public String userRegister(Long customerId, String phone, String code, String password, String openId, String nickName, String imageUrl)
+            throws VerificationCodeInvoidException, VerificationCodeDuedException, UnsupportedEncodingException, MobileInvoidException, PasswordLengthLackException, MobileExistException {
+        if (!RegexHelper.IsValidMobileNo(phone)) throw new MobileInvoidException(AppCode.MOBILE_INVOID.getValue(), AppCode.MOBILE_INVOID.getName());
+        if (password.length() < 6) throw new PasswordLengthLackException(AppCode.PASSWORD_LENGTH_LACK.getValue(), AppCode.PASSWORD_LENGTH_LACK.getName());
+
         VerificationCode verificationCode = verificationCodeRepository.findByCustomerIdAndMobileAndTypeAndCodeType(customerId, phone, VerificationType.BIND_REGISTER, CodeType.text);
         if (verificationCode == null) throw new VerificationCodeInvoidException(AppCode.VERIFICATION_CODE_INVOID.getValue(), AppCode.VERIFICATION_CODE_INVOID.getName());
 
@@ -223,13 +252,12 @@ public class UserServiceImpl implements UserService {
             throw new VerificationCodeInvoidException(AppCode.VERIFICATION_CODE_INVOID.getValue(), AppCode.VERIFICATION_CODE_INVOID.getName());
 
         MallUser mallUser = mallUserRepository.findByCustomerIdAndLoginName(customerId, phone);
-        Long userId;
         //商城中判断用户是否存在
-        if (mallUser == null) {
-            userId = mallUserService.userRegister(customerId, phone, openId, nickName, imageUrl);
-        } else {
-            userId = mallUser.getId();
+        if (mallUser != null) {
+            throw new MobileExistException(AppCode.MOBILE_EXIST.getValue(), AppCode.MOBILE_EXIST.getName());
         }
+
+        Long userId = mallUserService.userRegister(customerId, phone, password, openId, nickName, imageUrl);
 
         //判断本地用户是否存在，不存在则创建本地用户
         User user = userRepository.findOne(userId);
@@ -241,6 +269,7 @@ public class UserServiceImpl implements UserService {
 
         return token;
     }
+
 
     @Override
     public String weixinLogin(Long customerId, String openId, String nickName, String imageUrl) throws WeixinLoginFailException {

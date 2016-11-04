@@ -1,15 +1,10 @@
 package com.huotu.huobanplus.sns.base;
 
 
-import com.huotu.huobanplus.sns.entity.Article;
-import com.huotu.huobanplus.sns.entity.Category;
-import com.huotu.huobanplus.sns.entity.Level;
-import com.huotu.huobanplus.sns.entity.User;
+import com.huotu.huobanplus.sns.entity.*;
 import com.huotu.huobanplus.sns.model.common.ArticleType;
 import com.huotu.huobanplus.sns.model.common.CategoryType;
-import com.huotu.huobanplus.sns.repository.CategoryRepository;
-import com.huotu.huobanplus.sns.repository.LevelRepository;
-import com.huotu.huobanplus.sns.repository.UserRepository;
+import com.huotu.huobanplus.sns.repository.*;
 import com.huotu.huobanplus.sns.service.ArticleService;
 import com.huotu.huobanplus.sns.service.UserService;
 import com.huotu.huobanplus.sns.utils.StringHelper;
@@ -19,8 +14,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.util.DigestUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.context.WebApplicationContext;
 
+import javax.persistence.EntityManager;
 import javax.validation.constraints.NotNull;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
@@ -168,4 +165,48 @@ public class BaseTest {
         String tags = "";
         return articleService.save(customerId, articleType.getValue(), id, name, userId, pictureUrl, content, summary, categoryId, circleId, adConent, tags);
     }
+
+    @Autowired
+    private CircleRepository circleRepository;
+
+    @Autowired
+    private ArticleRepository articleRepository;
+
+
+    public Article save(Long customerId, Integer articleType, Long id
+            , String name, Long userId, String pictureUrl, String content
+            , String summary, Integer categoryId, Long circleId, String adConent, String tags) {
+
+        Article article = new Article();
+        article.setClick(0L);
+        article.setView(0L);
+        article.setComments(0L);
+        article.setTop(false);
+
+        article.setCustomerId(customerId);
+        article.setArticleType(articleType.equals(1) ? ArticleType.Wiki : ArticleType.Normal);
+        article.setName(name);
+        article.setPublisher(userId == null ? null : userRepository.findOne(userId));
+        article.setPictureUrl(pictureUrl);
+        article.setContent(content);
+        article.setSummary(summary);
+        article.setDate(new Date());
+        if (categoryId != null && categoryId > 0)
+            article.setCategory(categoryRepository.findOne(categoryId));
+        if (circleId != null && circleId > 0)
+            article.setCircle(circleRepository.findOne(circleId));
+        article.setAdConent(adConent);
+//        if (!StringUtils.isEmpty(tags)) {
+//            Set<Tag> tags1 = new HashSet<>();
+//            for (String item : tags.split(",")) {
+//                tags1.add(tagRespository.findOne(Integer.parseInt(item)));
+//            }
+//            article.setTags(tags1);
+//        }
+        article = articleRepository.saveAndFlush(article);
+        return article;
+
+    }
+
+
 }

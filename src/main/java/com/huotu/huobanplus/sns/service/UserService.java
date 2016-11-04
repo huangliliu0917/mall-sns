@@ -13,9 +13,7 @@ import com.huotu.huobanplus.sns.entity.Article;
 import com.huotu.huobanplus.sns.entity.Level;
 import com.huotu.huobanplus.sns.entity.User;
 import com.huotu.huobanplus.sns.entity.UserArticle;
-import com.huotu.huobanplus.sns.exception.VerificationCodeDuedException;
-import com.huotu.huobanplus.sns.exception.VerificationCodeInvoidException;
-import com.huotu.huobanplus.sns.exception.WeixinLoginFailException;
+import com.huotu.huobanplus.sns.exception.*;
 import com.huotu.huobanplus.sns.model.AppCircleArticleModel;
 import com.huotu.huobanplus.sns.model.AppUserModel;
 import org.springframework.data.domain.Page;
@@ -75,20 +73,35 @@ public interface UserService {
     AppCircleArticleModel[] changeModelArrayByArticle(List<Article> articles) throws IOException;
 
     /**
-     * 用户登录注册
+     * 用户登录
      *
      * @param customerId
      * @param phone
-     * @param code
+     * @param password
+     * @param openId
+     * @param nickName
+     * @param imageUrl
      * @return
+     * @throws UnsupportedEncodingException
+     * @throws UserNamePasswordInvoidException
+     * @throws MobileInvoidException
+     * @throws PasswordLengthLackException
      */
-    String userLogin(Long customerId, String phone, String code
+    String userLogin(Long customerId, String phone, String password
             , String openId
             , String nickName
-            , String imageUrl) throws VerificationCodeInvoidException, VerificationCodeDuedException, UnsupportedEncodingException;
+            , String imageUrl) throws UnsupportedEncodingException, UserNamePasswordInvoidException, MobileInvoidException, PasswordLengthLackException, MobileNotExistException;
+
+
+    String userRegister(Long customerId, String phone, String code
+            , String password
+            , String openId
+            , String nickName
+            , String imageUrl) throws VerificationCodeInvoidException, VerificationCodeDuedException, UnsupportedEncodingException, MobileInvoidException, PasswordLengthLackException, MobileExistException;
 
     /**
      * 注册一个用户
+     *
      * @param customerId
      * @param userId
      * @param mobile
@@ -121,6 +134,7 @@ public interface UserService {
 
     /**
      * 创建缺省的用户等级
+     *
      * @param customerId
      * @return
      */

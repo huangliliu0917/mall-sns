@@ -7,7 +7,7 @@ import java.io.UnsupportedEncodingException;
  */
 public interface MallUserService {
 
-    Long userRegister(Long customerId, String phone
+    Long userRegister(Long customerId, String phone,String password
             , String openId
             , String nickName
             , String imageUrl) throws UnsupportedEncodingException;

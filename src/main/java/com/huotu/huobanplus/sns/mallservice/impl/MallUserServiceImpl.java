@@ -31,7 +31,7 @@ public class MallUserServiceImpl implements MallUserService {
     private MallUserLevelRepository mallUserLevelRepository;
 
     @Override
-    public Long userRegister(Long customerId, String phone
+    public Long userRegister(Long customerId, String phone, String password
             , String openId
             , String nickName
             , String imageUrl) throws UnsupportedEncodingException {
@@ -51,7 +51,7 @@ public class MallUserServiceImpl implements MallUserService {
         mallUser.setUserIntegral(0L);
         mallUser.setUserTempIntegral(0);
         mallUser.setLoginName(phone);
-        String password = phone.substring(phone.length() - 6, 6);
+//        String password = phone.substring(phone.length() - 6, 6);
         mallUser.setPassword(DigestUtils.md5DigestAsHex(password.getBytes("utf-8")));
 //        mallUser.setRealName();
 //        mallUser.setNickName();

@@ -66,7 +66,7 @@ public class SecurityControllerImplTest extends BaseTest {
     public void prepareDevice() throws UnsupportedEncodingException {
         device = Device.newDevice(DeviceType.Android);
         mockMobile = generateMobile();
-        mockUserId = mallUserService.userRegister(customerId, mockMobile, "", "", "");
+        mockUserId = mallUserService.userRegister(customerId, mockMobile, "", "", "", "");
     }
 
     @Test

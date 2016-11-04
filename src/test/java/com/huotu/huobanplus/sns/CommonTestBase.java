@@ -39,7 +39,7 @@ import java.util.UUID;
  */
 @SuppressWarnings("SpringJavaAutowiringInspection")
 @WebAppConfiguration
-@ActiveProfiles({ "develop", "development"})
+@ActiveProfiles({"develop", "development"})
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {SpringTestConfig.class})
 @Transactional
@@ -69,7 +69,7 @@ public abstract class CommonTestBase extends BaseTest {
     public void prepareDevice() throws UnsupportedEncodingException {
         device = Device.newDevice(DeviceType.Android);
         mockMobile = generateMobile();
-        mockUserId = mallUserService.userRegister(customerId, mockMobile, "", "", "");
+        mockUserId = mallUserService.userRegister(customerId, mockMobile, "", "", "", "");
         user = createUser(customerId, mockUserId, mockMobile, "", "", "");
         String token = appSecurityService.createJWT("sns", customerId + "," + mockUserId, 1000 * 3600 * 24 * 30);
         device.setToken(token);

@@ -19,6 +19,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
@@ -78,11 +79,24 @@ public class SecurityControllerImpl implements SecurityController {
     }
 
     @Override
-    public ApiResult mobileLogin(Output<String> data, Long customerId, String phone, String code
+    public ApiResult mobileLogin(Output<String> data, Long customerId, String phone, String password
             , String openId
             , String nickName
-            , String imageUrl) throws UnsupportedEncodingException, VerificationCodeDuedException, VerificationCodeInvoidException {
-        data.outputData(userService.userLogin(customerId, phone, code
+            , String imageUrl) throws UnsupportedEncodingException, UserNamePasswordInvoidException, PasswordLengthLackException, MobileInvoidException, MobileNotExistException {
+        data.outputData(userService.userLogin(customerId, phone, password
+                , openId
+                , nickName
+                , imageUrl));
+        return ApiResult.resultWith(AppCode.SUCCESS);
+    }
+
+    @Override
+    public ApiResult mobileRegister(Output<String> data, Long customerId
+            , String phone, String code
+            , String password, String openId
+            , String nickName, String imageUrl) throws PasswordLengthLackException, UnsupportedEncodingException
+            , VerificationCodeInvoidException, MobileInvoidException, MobileExistException, VerificationCodeDuedException {
+        data.outputData(userService.userRegister(customerId, phone, code, password
                 , openId
                 , nickName
                 , imageUrl));
