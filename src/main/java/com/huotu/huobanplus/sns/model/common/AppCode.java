@@ -53,11 +53,12 @@ public enum AppCode implements ICommonEnum {
 
     ERROR_SENSITIVE_CONTENT(30201, "您发表的内容包含敏感词汇"),
 
-    ERROR_CLICK_ALREADY(30301, "您已经点过赞了");
+    ERROR_CLICK_ALREADY(30301, "您已经点过赞了"),
 
     /**
      * 圈子，百科等以4开头
      */
+    ERROR_NO_CIRCLE(40001,"未找到圈子");
 
 
 

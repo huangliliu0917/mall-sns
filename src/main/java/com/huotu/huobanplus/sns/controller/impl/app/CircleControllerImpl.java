@@ -9,6 +9,7 @@ import com.huotu.huobanplus.sns.entity.Slide;
 import com.huotu.huobanplus.sns.model.*;
 import com.huotu.huobanplus.sns.model.admin.CircleSearchModel;
 import com.huotu.huobanplus.sns.model.common.AppCode;
+import com.huotu.huobanplus.sns.repository.CircleRepository;
 import com.huotu.huobanplus.sns.repository.UserCircleRepository;
 import com.huotu.huobanplus.sns.service.CircleService;
 import com.huotu.huobanplus.sns.service.SlideService;
@@ -29,6 +30,9 @@ public class CircleControllerImpl implements CircleController {
 
     @Autowired
     private CircleService circleService;
+
+    @Autowired
+    private CircleRepository circleRepository;
 
     @Autowired
     private UserCircleService userCircleService;
@@ -84,7 +88,16 @@ public class CircleControllerImpl implements CircleController {
 
     @Override
     public ApiResult introduce(Output<AppCircleIntroduceModel> data, Long id) throws Exception {
-        return null;
+        Circle circle=circleRepository.findOne(id);
+        if(circle==null){
+            return ApiResult.resultWith(AppCode.ERROR_NO_CIRCLE);
+        }
+
+        AppCircleIntroduceModel model=circleService.getCircleDetailsModel(circle);
+
+        data.outputData(model);
+
+        return ApiResult.resultWith(AppCode.SUCCESS);
     }
 
     @Override

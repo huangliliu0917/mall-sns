@@ -34,7 +34,7 @@ public class AppCircleIntroduceModel {
     /**
      * 组长等级
      */
-    private Integer leaderLevel;
+    private String leaderLevel;
 
     /**
      * 关注人数

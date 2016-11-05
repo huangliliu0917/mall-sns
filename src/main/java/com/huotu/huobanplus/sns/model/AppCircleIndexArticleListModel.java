@@ -9,19 +9,14 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AppCircleIndexArticleListModel {
-    private Long id;
     /**
      * 文章ID
      */
-    private Long articleId;
+    private Long id;
     /**
      * 文章标题
      */
     private String name;
-    /**
-     * 跳转地址
-     */
-//    private String url;
     /**
      * 用户名
      */

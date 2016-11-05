@@ -11,6 +11,7 @@ package com.huotu.huobanplus.sns.service;
 
 import com.huotu.huobanplus.sns.entity.Circle;
 import com.huotu.huobanplus.sns.model.AppCircleIndexSuggestModel;
+import com.huotu.huobanplus.sns.model.AppCircleIntroduceModel;
 import com.huotu.huobanplus.sns.model.admin.CircleListModel;
 import com.huotu.huobanplus.sns.model.admin.CircleSearchModel;
 import org.springframework.data.domain.Page;
@@ -86,5 +87,12 @@ public interface CircleService {
      * @throws IOException
      */
     List<Circle> findBySuggested(Boolean suggested) throws IOException;
+
+    /**
+     * 根据圈子实体返回圈子详情model
+     * @param circle    圈子实体
+     * @return          详情model
+     */
+    AppCircleIntroduceModel getCircleDetailsModel(Circle circle);
 
 }

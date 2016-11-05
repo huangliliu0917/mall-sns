@@ -47,7 +47,7 @@ public interface CircleController {
      */
     @RequestMapping("/introduce")
     ApiResult introduce(Output<AppCircleIntroduceModel> data
-            , @RequestParam("id") Long id) throws Exception;
+            , @RequestParam(value = "id",required = true) Long id) throws Exception;
 
     /**
      * 圈子公告及置顶

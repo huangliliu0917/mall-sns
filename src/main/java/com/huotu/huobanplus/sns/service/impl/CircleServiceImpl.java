@@ -13,12 +13,14 @@ import com.huotu.huobanplus.sns.entity.Category;
 import com.huotu.huobanplus.sns.entity.Circle;
 import com.huotu.huobanplus.sns.entity.User;
 import com.huotu.huobanplus.sns.model.AppCircleIndexSuggestModel;
+import com.huotu.huobanplus.sns.model.AppCircleIntroduceModel;
 import com.huotu.huobanplus.sns.model.admin.CircleListModel;
 import com.huotu.huobanplus.sns.model.admin.CircleSearchModel;
 import com.huotu.huobanplus.sns.repository.CategoryRepository;
 import com.huotu.huobanplus.sns.repository.CircleRepository;
 import com.huotu.huobanplus.sns.repository.UserRepository;
 import com.huotu.huobanplus.sns.service.CircleService;
+import com.huotu.huobanplus.sns.service.CommonConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -49,6 +51,9 @@ public class CircleServiceImpl implements CircleService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private CommonConfigService commonConfigService;
 
 
     @Override
@@ -193,5 +198,22 @@ public class CircleServiceImpl implements CircleService {
                 predicate = cb.and(predicate, cb.equal(root.get("suggested"), suggested));
             return predicate;
         }, new Sort(Sort.Direction.DESC, "date"));
+    }
+
+    @Override
+    public AppCircleIntroduceModel getCircleDetailsModel(Circle circle) {
+        AppCircleIntroduceModel model=new AppCircleIntroduceModel();
+        model.setName(circle.getName());
+        String pictureUrl=commonConfigService.getResourcesUri()+circle.getPictureUrl();
+        model.setPictureUrl(pictureUrl);
+        model.setCategoryName(circle.getCategory().getName());
+        model.setLeaderName(circle.getLeader().getNickName());
+        model.setLeaderHeadUrl(circle.getLeader().getImgURL());
+        model.setLeaderLevel(circle.getLeader().getLevel().getName());
+        model.setConcermAmount(circle.getUserAmount());
+        model.setArticleAmount(circle.getArticleAmount());
+        model.setSummary(circle.getSummary());
+        model.setDate(circle.getDate().getTime());
+        return model;
     }
 }
