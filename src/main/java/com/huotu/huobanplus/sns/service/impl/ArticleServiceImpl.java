@@ -560,7 +560,7 @@ public class ArticleServiceImpl implements ArticleService {
         list.forEach(object -> {
             Article article = (Article) object;
             AppCircleIndexArticleListModel appCircleIndexArticleListModel = new AppCircleIndexArticleListModel();
-            appCircleIndexArticleListModel.setId(article.getId());
+            appCircleIndexArticleListModel.setArticleId(article.getId());
             appCircleIndexArticleListModel.setName(article.getName());
             appCircleIndexArticleListModel.setCommentsAmount(article.getComments());
             appCircleIndexArticleListModel.setViewAmount(article.getView());

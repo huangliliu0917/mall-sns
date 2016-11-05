@@ -212,7 +212,7 @@ public class UserControllerImplTest extends CommonTestBase {
     @Test
     public void articleClick() throws Exception {
         Article article = randomArticle();
-        mockMvc.perform(device.postApi("/user/report").param("id", article.getId() + "").build())
+        mockMvc.perform(device.postApi("/user/articleClick").param("id", article.getId() + "").build())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.resultCode").value(AppCode.SUCCESS.getValue()));
         Article newArticle = articleRepository.getOne(article.getId());
