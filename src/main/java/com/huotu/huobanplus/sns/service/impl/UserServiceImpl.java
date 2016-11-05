@@ -107,6 +107,8 @@ public class UserServiceImpl implements UserService {
 //    }
     @Autowired
     private AppSecurityService appSecurityService;
+    @Autowired
+    private LevelRepository levelRepository;
 
     @Override
     public Page<User> findByNickNameAndAuthenticationIdAndLevelIdAndCustomerId(String nickName, Integer authenticationId,
@@ -181,7 +183,8 @@ public class UserServiceImpl implements UserService {
 //        model.setUrl("");
         model.setUserName(article.getPublisher().getNickName());
         model.setUserHeadUrl(article.getPublisher().getImgURL());
-        model.setUserLevel(article.getPublisher().getLevel().getId());
+        if (Objects.nonNull(article.getPublisher().getLevel()))
+            model.setUserLevel(article.getPublisher().getLevel().getId());
         model.setTime(article.getDate().getTime());
 //        model.setCommentsAmount(article.geta);
         BoundHashOperations<String, String, Long> articleOperations = redisTemplate
@@ -270,7 +273,6 @@ public class UserServiceImpl implements UserService {
         return token;
     }
 
-
     @Override
     public String weixinLogin(Long customerId, String openId, String nickName, String imageUrl) throws WeixinLoginFailException {
 
@@ -302,10 +304,6 @@ public class UserServiceImpl implements UserService {
         user = userRepository.save(user);
         return user;
     }
-
-    @Autowired
-    private LevelRepository levelRepository;
-
 
     public Level createDefaultLevel(Long customerId) {
         Sort sort = new Sort(Sort.Direction.ASC, "experience");

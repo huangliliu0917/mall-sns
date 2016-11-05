@@ -15,8 +15,10 @@ import com.huotu.huobanplus.sns.entity.Circle;
 import com.huotu.huobanplus.sns.entity.Report;
 import com.huotu.huobanplus.sns.entity.User;
 import com.huotu.huobanplus.sns.model.AppArticleCommentModel;
+import com.huotu.huobanplus.sns.model.AppCircleArticleModel;
 import com.huotu.huobanplus.sns.model.AppUserConcermListModel;
 import com.huotu.huobanplus.sns.model.common.AppCode;
+import com.huotu.huobanplus.sns.model.common.ArticleType;
 import com.huotu.huobanplus.sns.model.common.ReportTargetType;
 import com.huotu.huobanplus.sns.utils.ContractHelper;
 import com.jayway.jsonpath.JsonPath;
@@ -27,7 +29,6 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -156,7 +157,7 @@ public class UserControllerImplTest extends CommonTestBase {
         else length = index;
         String body = mockMvc.perform(device.getApi("/user/myConcern").build())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.resultCode").value(AppCode.SUCCESS.getValue())).andDo(print())
+                .andExpect(jsonPath("$.resultCode").value(AppCode.SUCCESS.getValue()))
                 .andReturn().getResponse().getContentAsString();
 //                .andExpect(jsonPath("$.resultData.list.length()").value(length));
         List<AppUserConcermListModel> models = JsonPath.read(body, "$.resultData.list");
@@ -180,7 +181,7 @@ public class UserControllerImplTest extends CommonTestBase {
         else length = index;
         String body = mockMvc.perform(device.getApi("/user/myConcerned").build())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.resultCode").value(AppCode.SUCCESS.getValue())).andDo(print())
+                .andExpect(jsonPath("$.resultCode").value(AppCode.SUCCESS.getValue()))
                 .andReturn().getResponse().getContentAsString();
 //                .andExpect(jsonPath("$.resultData.list.length()").value(length));
         List<AppUserConcermListModel> models = JsonPath.read(body, "$.resultData.list");
@@ -189,11 +190,33 @@ public class UserControllerImplTest extends CommonTestBase {
 
     @Test
     public void concernIndex() throws Exception {
+        int index = random.nextInt(20);
+        User anotherUser = randomUser();
+        randomConcernOwner(anotherUser);
+        Circle circle = randomCircle();
+        for (int i = 0; i < index; i++) {
+            String str = UUID.randomUUID().toString();
+            articleService.addArticleResult(ArticleType.Normal.getValue(),
+                    str, anotherUser, str, str, circle.getId());
+        }
+        int size = index > 10 ? 10 : index;
+        String body = mockMvc.perform(device.getApi("/user/concernIndex").build())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.resultCode").value(AppCode.SUCCESS.getValue()))
+                .andReturn().getResponse().getContentAsString();
+        List<AppCircleArticleModel> models = JsonPath.read(body, "$.resultData.articleList");
+        assertEquals("文章列表长度", models.size(), size);
 
     }
 
     @Test
     public void articleClick() throws Exception {
+        Article article = randomArticle();
+        mockMvc.perform(device.postApi("/user/report").param("id", article.getId() + "").build())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.resultCode").value(AppCode.SUCCESS.getValue()));
+        Article newArticle = articleRepository.getOne(article.getId());
+        assertEquals("点赞数", newArticle.getClick(), 1L);
 
     }
 

@@ -16,10 +16,7 @@ import com.huotu.huobanplus.sns.entity.*;
 import com.huotu.huobanplus.sns.mallservice.MallUserService;
 import com.huotu.huobanplus.sns.model.AppArticleCommentModel;
 import com.huotu.huobanplus.sns.repository.*;
-import com.huotu.huobanplus.sns.service.AppSecurityService;
-import com.huotu.huobanplus.sns.service.CircleService;
-import com.huotu.huobanplus.sns.service.SlideService;
-import com.huotu.huobanplus.sns.service.UserCircleService;
+import com.huotu.huobanplus.sns.service.*;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,6 +78,8 @@ public abstract class CommonTestBase extends BaseTest {
     @Autowired
     protected UserCircleService userCircleService;
     @Autowired
+    protected ArticleService articleService;
+    @Autowired
     private MallUserService mallUserService;
     @Autowired
     private AppSecurityService appSecurityService;
@@ -130,10 +129,23 @@ public abstract class CommonTestBase extends BaseTest {
         return newUser;
     }
 
+    /**
+     * 我关注别人
+     *
+     * @param concernUser
+     * @return
+     * @throws Exception
+     */
     protected Concern randomConcernOwner(User concernUser) throws Exception {
         return setUsers(user, concernUser);
     }
 
+    /**
+     * 别人关注我
+     * @param concernUser
+     * @return
+     * @throws Exception
+     */
     protected Concern randomConcernOther(User concernUser) throws Exception {
         return setUsers(concernUser, user);
     }
