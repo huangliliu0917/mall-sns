@@ -19,11 +19,11 @@ import java.io.IOException;
  */
 public interface NoticeService {
     /**
-     * 根据商户ID获取公告列表
-     * @param customerId
+     * 根据圈子ID获取公告列表
+     * @param circleId      圈子ID
      * @return
      * @throws IOException
      */
-    AppCircleNoticeModel[] getNoticeModels(Long customerId) throws IOException;
+    AppCircleNoticeModel[] getNoticeModels(Long circleId) throws IOException;
 
 }

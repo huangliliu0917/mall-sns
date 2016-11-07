@@ -4,12 +4,14 @@ import com.huotu.common.api.ApiResult;
 import com.huotu.common.api.Output;
 import com.huotu.huobanplus.sns.boot.PublicParameterHolder;
 import com.huotu.huobanplus.sns.controller.app.CircleController;
+import com.huotu.huobanplus.sns.entity.Article;
 import com.huotu.huobanplus.sns.entity.Circle;
 import com.huotu.huobanplus.sns.entity.Slide;
 import com.huotu.huobanplus.sns.entity.User;
 import com.huotu.huobanplus.sns.model.*;
 import com.huotu.huobanplus.sns.model.admin.CircleSearchModel;
 import com.huotu.huobanplus.sns.model.common.AppCode;
+import com.huotu.huobanplus.sns.repository.ArticleRepository;
 import com.huotu.huobanplus.sns.repository.CircleRepository;
 import com.huotu.huobanplus.sns.repository.UserCircleRepository;
 import com.huotu.huobanplus.sns.service.*;
@@ -44,6 +46,8 @@ public class CircleControllerImpl implements CircleController {
 
     @Autowired
     private ArticleService articleService;
+    @Autowired
+    private ArticleRepository articleRepository;
     @Override
     public ApiResult circleIndexTop(Output<AppCircleIndexSlideModel[]> slideList, Output<AppCircleIndexSuggestModel[]> suggestList) throws Exception {
         Long customerId=PublicParameterHolder.getParameters().getCustomerId();
@@ -126,7 +130,7 @@ public class CircleControllerImpl implements CircleController {
         AppCircleModel appCircleModel=circleService.getAppCircleModel(circle);
         data.outputData(appCircleModel);
 
-        AppCircleNoticeModel[] noticeModels=noticeService.getNoticeModels(customerId);
+        AppCircleNoticeModel[] noticeModels=noticeService.getNoticeModels(circle.getId());
         noticeList.outputData(noticeModels);
 
         AppCircleArticleModel[] articleModels=articleService.getTopArticleModels(user.getId(),customerId,circle.getId());
@@ -151,6 +155,8 @@ public class CircleControllerImpl implements CircleController {
         if(circle==null){
             return ApiResult.resultWith(AppCode.ERROR_NO_CIRCLE);
         }
+        type=type==null?0:type;
+
 
         AppCircleArticleModel[] articleModels=articleService.getArticleListModels(customerId,user.getId(),lastId,circle.getId(),type);
 
@@ -160,8 +166,17 @@ public class CircleControllerImpl implements CircleController {
     }
 
     @Override
-    public ApiResult article(Output<AppCircleArticleDetailModel> data, Output<AppCircleArticleCommentsModel[]> commentsList, Long id) throws Exception {
-        return null;
+    public ApiResult article(Output<AppCircleArticleDetailModel> data,
+                             Long id) throws Exception {
+        Article article=articleRepository.findOne(id);
+        if(article==null){
+            return ApiResult.resultWith(AppCode.ERROR_NO_ARTICLE);
+        }
+        AppCircleArticleDetailModel articleDetailModel=articleService.getArticleDetailModel(article);
+
+        data.outputData(articleDetailModel);
+
+        return ApiResult.resultWith(AppCode.SUCCESS);
     }
 
     @Override

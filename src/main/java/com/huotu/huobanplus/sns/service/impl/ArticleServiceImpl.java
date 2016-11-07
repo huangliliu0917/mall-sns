@@ -19,7 +19,6 @@ import com.huotu.huobanplus.sns.model.common.ArticleType;
 import com.huotu.huobanplus.sns.model.common.CommentStatus;
 import com.huotu.huobanplus.sns.repository.*;
 import com.huotu.huobanplus.sns.service.ArticleService;
-import com.huotu.huobanplus.sns.service.CommonConfigService;
 import com.huotu.huobanplus.sns.service.RedisService;
 import com.huotu.huobanplus.sns.service.resource.StaticResourceService;
 import com.huotu.huobanplus.sns.utils.ContractHelper;
@@ -44,6 +43,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
+ * 文章服务实现
  * Created by Administrator on 2016/10/12.
  */
 @Service
@@ -85,8 +85,6 @@ public class ArticleServiceImpl implements ArticleService {
     private ArticleClickRepository articleClickRepository;
     @Autowired
     private EntityManager entityManager;
-    @Autowired
-    private CommonConfigService commonConfigService;
     private ObjectMapper objectMapper = new ObjectMapper();
 
     public List<AppWikiListModel> getAppWikiList(Long customerId, Integer catalogId, Long lastId) {
@@ -584,19 +582,21 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public AppCircleArticleModel[] getTopArticleModels(Long userId, Long customerId, Long circleId) throws IOException {
+    public AppCircleArticleModel[] getTopArticleModels(Long userId,Long customerId,Long circleId) throws IOException {
+        List<Article> articles=articleRepository.findByTopAndCircle_IdAndEnabledOrderByIdDesc(true,circleId,true);
+        AppCircleArticleModel[] models=new AppCircleArticleModel[articles.size()];
+        if(articles.isEmpty()){
+            return models;
+        }
 
-        List<Article> articles = articleRepository.findByTopAndCircle_IdAndEnabledOrderByIdDesc(true, circleId, true);
+        Set<Long> toUserIds=null;
+        //获取当前用户对每一篇发布人的关注信息
+        if(userId!=null){
+            toUserIds=findAttentionUsersByArticles(articles,userId,customerId);
+        }
 
-        Set<Long> articleUserIds = getToUserIdsByArticles(articles);
-
-        List<Concern> concerns = concernRepository.findByUserAndToUsers(userId, customerId, articleUserIds);
-
-        Set<Long> toUserIds = getToUserIdsByConcerns(concerns);
-
-        AppCircleArticleModel[] models = new AppCircleArticleModel[articles.size()];
-        for (int i = 0; i < articles.size(); i++) {
-            models[i] = getAppCircleArticleModel(articles.get(i), toUserIds);
+        for(int i=0;i<articles.size();i++){
+            models[i]=getAppCircleArticleModel(articles.get(i),toUserIds);
         }
         return models;
     }
@@ -604,21 +604,37 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     public AppCircleArticleModel[] getArticleListModels(Long customerId, Long userId, Long lastId, Long circleId, Integer type) throws IOException {
         List<Article> articles;
-        if (type == 0) {
-            articles = articleRepository.findTop20ByCircle_IdAndEnabledAndIdLessThanOrderByIdDesc(circleId, true, lastId);
-        } else {
-            Article article = articleRepository.findOne(lastId);
-            articles = articleRepository.findTop20ByCircle_IdAndEnabledAndViewLessThanOrderByViewDesc(circleId, true, article.getView());
+        if(type==0){
+            if(lastId==null){
+                articles=articleRepository.findTop20ByCircle_IdOrderByIdDesc(circleId,new PageRequest(0,20));
+
+            }else {
+                articles=articleRepository.findTop20ByCircle_IdAndIdLessThanOrderByIdDesc(circleId,lastId,new PageRequest(0,20));
+            }
+
+        }else {
+            if(lastId==null){
+                articles=articleRepository.findTop20ByCircle_IdOrderByViewDesc(circleId,new PageRequest(0,20));
+            }else {
+                Article article=articleRepository.findOne(lastId);
+                articles=articleRepository.findTop20ByCircle_IdAndViewLessThanOrderByViewDesc(circleId,article.getView(),new PageRequest(0,20));
+
+            }
         }
-        Set<Long> articleUserIds = getToUserIdsByArticles(articles);
 
-        List<Concern> concerns = concernRepository.findByUserAndToUsers(userId, customerId, articleUserIds);
+        AppCircleArticleModel[] models=new AppCircleArticleModel[articles.size()];
+        if(articles.isEmpty()){
+            return models;
+        }
 
-        Set<Long> toUserIds = getToUserIdsByConcerns(concerns);
+        Set<Long> toUserIds=null;
+        //获取当前用户对每一篇发布人的关注信息
+        if(userId!=null){
+            toUserIds=findAttentionUsersByArticles(articles,userId,customerId);
+        }
 
-        AppCircleArticleModel[] models = new AppCircleArticleModel[articles.size()];
-        for (int i = 0; i < articles.size(); i++) {
-            models[i] = getAppCircleArticleModel(articles.get(i), toUserIds);
+        for(int i=0;i<articles.size();i++){
+            models[i]=getAppCircleArticleModel(articles.get(i),toUserIds);
         }
         return models;
     }
@@ -628,7 +644,7 @@ public class ArticleServiceImpl implements ArticleService {
         AppCircleArticleModel model = new AppCircleArticleModel();
         model.setPid(article.getId());
         model.setName(article.getName());
-        model.setPictureUrl(commonConfigService.getResourcesUri() + article.getPictureUrl());
+        model.setPictureUrl(article.getPictureUrl());
         model.setUserId(article.getPublisher().getId());
         model.setUserName(article.getPublisher().getNickName());
         model.setUserHeadUrl(article.getPublisher().getImgURL());
@@ -636,8 +652,9 @@ public class ArticleServiceImpl implements ArticleService {
         model.setTime(article.getDate().getTime());
         model.setViewAmount(article.getView());
         model.setCommentsAmount(article.getComments());
-        Long toUserId = article.getPublisher().getId();
-        model.setConcerned(toUserIds.contains(toUserId));
+        Long toUserId=article.getPublisher().getId();
+        //有用户列表，并且当前文章的发布人包含在用户列表中，才说明我是已经关注该文章的发布人
+        model.setConcerned(toUserIds!=null&&toUserIds.contains(toUserId));
         return model;
     }
 
@@ -660,5 +677,30 @@ public class ArticleServiceImpl implements ArticleService {
             toUserIds.add(concern.getToUser().getId());
         });
         return toUserIds;
+    }
+
+    @Override
+    public AppCircleArticleDetailModel getArticleDetailModel(Article article) {
+        AppCircleArticleDetailModel model=new AppCircleArticleDetailModel();
+        model.setPid(article.getId());
+        model.setName(article.getName());
+        model.setPictureUrl(article.getPictureUrl());
+        model.setUserName(article.getPublisher().getNickName());
+        model.setUserHeadUrl(article.getPublisher().getImgURL());
+        model.setClickAmount(article.getClick());
+        model.setTime(article.getDate().getTime());
+        return model;
+    }
+
+    @Override
+    public Set<Long> findAttentionUsersByArticles(List<Article> articles,Long userId,Long customerId) throws IOException {
+        //获取给定文章列表里面的发布用户列表
+        Set<Long> articleUserIds=getToUserIdsByArticles(articles);
+
+        //根据发布用户列表获取和我关注的信息
+        List<Concern> concerns=concernRepository.findByUserAndToUsers(userId,customerId,articleUserIds);
+
+        //获取我实际关注的发布用户列表
+        return getToUserIdsByConcerns(concerns);
     }
 }

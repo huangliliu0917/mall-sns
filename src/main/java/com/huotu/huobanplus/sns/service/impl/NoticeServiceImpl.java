@@ -29,14 +29,21 @@ public class NoticeServiceImpl implements NoticeService {
     private NoticeRepository noticeRepository;
 
     @Override
-    public AppCircleNoticeModel[] getNoticeModels(Long customerId) throws IOException {
-        List<Notice> notices=noticeRepository.findByCustomerIdOrderByIdDesc(customerId);
+    public AppCircleNoticeModel[] getNoticeModels(Long circleId) throws IOException {
+        List<Notice> notices=noticeRepository.findByCircle_IdAndEnabledOrderByIdDesc(circleId,true);
         AppCircleNoticeModel[] models=new AppCircleNoticeModel[notices.size()];
-        notices.forEach(notice -> {
+        for(int i=0,size=notices.size();i<size;i++){
             AppCircleNoticeModel model=new AppCircleNoticeModel();
+            Notice notice=notices.get(i);
             model.setName(notice.getName());
             model.setUrl(""+notice.getId());//todo 公告详情页面
-        });
+            models[i]=model;
+        }
+//        notices.forEach(notice -> {
+//            AppCircleNoticeModel model=new AppCircleNoticeModel();
+//            model.setName(notice.getName());
+//            model.setUrl(""+notice.getId());//todo 公告详情页面
+//        });
 
         return models;
     }

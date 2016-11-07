@@ -4,10 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.huotu.huobanplus.sns.CommonTestBase;
 import com.huotu.huobanplus.sns.entity.*;
-import com.huotu.huobanplus.sns.model.AppCircleIndexArticleListModel;
-import com.huotu.huobanplus.sns.model.AppCircleIndexListModel;
-import com.huotu.huobanplus.sns.model.AppCircleIndexSlideModel;
-import com.huotu.huobanplus.sns.model.AppCircleIndexSuggestModel;
+import com.huotu.huobanplus.sns.model.*;
 import com.huotu.huobanplus.sns.model.common.AppCode;
 import org.junit.Test;
 
@@ -212,12 +209,195 @@ public class CircleControllerImplTest extends CommonTestBase {
 
     @Test
     public void top() throws Exception {
+        Circle circle=new Circle();
+        circle.setEnabled(true);
+        circle.setDate(new Date());
+        circle.setName("sltCircle");
+        circle=circleRepository.saveAndFlush(circle);
+        AppCircleModel oldAppCircleModel=circleService.getAppCircleModel(circle);
+
+        User currentUser=userRepository.findOne(mockUserId);
+
+        List<Notice> notices=new ArrayList<>();
+        for(int i=0;i<5;i++){
+            Notice notice=new Notice();
+            notice.setCustomerId(customerId);
+            notice.setName("notice"+i);
+            notice.setDate(new Date());
+            notice.setEnabled(true);
+            notice.setCircle(circle);
+            notices.add(noticeRepository.saveAndFlush(notice));
+        }
+
+        List<AppCircleArticleModel> oldAppCircleArticleModels=new ArrayList<>();
+        for(int i=0;i<10;i++){
+            boolean flag=true;
+            Article article=new Article();
+            article.setCircle(circle);
+            article.setDate(new Date());
+
+            Level level=new Level();
+            level.setCustomerId(customerId);
+            level.setName("level"+i);
+            level.setExperience(20L*i);
+            level=levelRepository.saveAndFlush(level);
+
+
+            User user=new User();
+            user.setId(10000L+i);
+            user.setLevel(level);
+            user.setCustomerId(customerId);
+            user.setNickName("testuser"+i);
+            user=userRepository.saveAndFlush(user);
+            article.setPublisher(user);
+            if(i%4==0){
+                flag=false;
+            }
+            article.setEnabled(i%4!=0);
+            if(i%3==0){
+                flag=false;
+            }
+            article.setTop(i%3!=0);
+            article=articleRepository.saveAndFlush(article);
+
+            AppCircleArticleModel model=articleService.getAppCircleArticleModel(article,null);
+            if(i%2!=0){
+                Concern concern=new Concern();
+                concern.setCustomerId(customerId);
+                concern.setDate(new Date());
+                concern.setUser(currentUser);
+                concern.setToUser(user);
+                concern=concernRepository.saveAndFlush(concern);
+
+                model.setConcerned(true);
+            }
+            if(flag){
+                oldAppCircleArticleModels.add(model);
+            }
+
+        }
+        Collections.reverse(oldAppCircleArticleModels);
+        AppCircleNoticeModel[] oldAppCircleNoticeModels= noticeService.getNoticeModels(circle.getId());
+
+
+        String result=mockMvc.perform(device.getApi("/circle/top")
+                .param("id",""+circle.getId())
+                .build())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.resultCode").value(AppCode.SUCCESS.getValue()))
+                .andReturn().getResponse().getContentAsString();
+        JSONObject object=JSONObject.parseObject(result);
+        JSONObject data=(JSONObject) object.get("resultData");
+        JSONArray noticeList=(JSONArray) data.get("noticeList");
+        JSONObject appCircleModel=(JSONObject) data.get("data");
+        JSONArray top=(JSONArray) data.get("top");
+
+        AppCircleNoticeModel[] newAppCircleNoticeModels=JSONObject.toJavaObject(noticeList, AppCircleNoticeModel[].class);
+        AppCircleModel newappCircleModel=JSONObject.toJavaObject(appCircleModel, AppCircleModel.class);
+        AppCircleArticleModel[] newAppCircleArticleModels=JSONObject.toJavaObject(top,AppCircleArticleModel[].class);
+        assertEquals("appCircleModel",oldAppCircleModel,newappCircleModel);
+        assertEquals("noticeList",oldAppCircleNoticeModels,newAppCircleNoticeModels);
+        assertEquals("top",Arrays.asList(newAppCircleArticleModels),oldAppCircleArticleModels);
+
+
 
     }
 
     @Test
     public void list() throws Exception {
+        Circle circle=new Circle();
+        circle.setEnabled(true);
+        circle.setDate(new Date());
+        circle.setName("sltCircle");
+        circle=circleRepository.saveAndFlush(circle);
 
+        User user=new User();
+        user.setId(10000L);
+
+        Level level=new Level();
+        level.setCustomerId(customerId);
+        level.setName("level1");
+        level.setExperience(20L);
+        level=levelRepository.saveAndFlush(level);
+
+        user.setLevel(level);
+        user.setCustomerId(customerId);
+        user.setNickName("testuserslt");
+        user=userRepository.saveAndFlush(user);
+
+        List<Article> articles=new ArrayList<>();
+        Random random=new Random();
+        for(int i=0;i<20;i++){
+            Article article=new Article();
+            article.setEnabled(true);
+            article.setCircle(circle);
+            article.setPublisher(user);
+            article.setView(random.nextInt(i+1000));
+            article.setDate(new Date(System.currentTimeMillis()+10000));
+            articles.add(articleRepository.saveAndFlush(article));
+        }
+
+        Collections.sort(articles, new Comparator<Article>() {
+            @Override
+            public int compare(Article o1, Article o2) {
+                return o2.getId().intValue()-o1.getId().intValue();
+            }
+        });
+
+        List<Article> newArticles=articles;
+
+
+
+
+        String result=mockMvc.perform(device.getApi("/circle/list")
+                .param("id",""+circle.getId())
+                .param("type","0")
+                .build())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.resultCode").value(AppCode.SUCCESS.getValue()))
+                .andReturn().getResponse().getContentAsString();
+
+        JSONObject object=JSONObject.parseObject(result);
+        JSONObject data=(JSONObject) object.get("resultData");
+        JSONArray articleList=(JSONArray) data.get("articleList");
+        AppCircleArticleModel[] newArticleModels=JSONObject.toJavaObject(articleList,AppCircleArticleModel[].class);
+
+        AppCircleArticleModel[] oldArticleModels=new AppCircleArticleModel[newArticles.size()];
+        for(int i=0;i<newArticles.size();i++){
+            oldArticleModels[i]=articleService.getAppCircleArticleModel(newArticles.get(i),null);
+            oldArticleModels[i].setConcerned(false);
+        }
+
+        assertEquals("articleListNew",newArticleModels,oldArticleModels);
+
+        Collections.sort(articles, new Comparator<Article>() {
+            @Override
+            public int compare(Article o1, Article o2) {
+                return (int)(o2.getView()-o1.getView());
+            }
+        });
+
+        List<Article> hotArticles=articles;
+
+        result=mockMvc.perform(device.getApi("/circle/list")
+                .param("id",""+circle.getId())
+                .param("type","1")
+                .build())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.resultCode").value(AppCode.SUCCESS.getValue()))
+                .andReturn().getResponse().getContentAsString();
+
+        object=JSONObject.parseObject(result);
+        data=(JSONObject) object.get("resultData");
+        articleList=(JSONArray) data.get("articleList");
+        newArticleModels=JSONObject.toJavaObject(articleList,AppCircleArticleModel[].class);
+
+        oldArticleModels=new AppCircleArticleModel[hotArticles.size()];
+        for(int i=0;i<newArticles.size();i++){
+            oldArticleModels[i]=articleService.getAppCircleArticleModel(newArticles.get(i),null);
+            oldArticleModels[i].setConcerned(false);
+        }
+        assertEquals("articleListHot",newArticleModels,oldArticleModels);
     }
 
     @Test

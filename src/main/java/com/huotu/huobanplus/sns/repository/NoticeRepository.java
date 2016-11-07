@@ -12,6 +12,7 @@ package com.huotu.huobanplus.sns.repository;
 import com.huotu.huobanplus.sns.entity.Notice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -24,6 +25,7 @@ import java.util.List;
 @Repository
 public interface NoticeRepository extends JpaRepository<Notice, Long>, JpaSpecificationExecutor<Notice> {
 
-    List<Notice> findByCustomerIdOrderByIdDesc(Long customerId);
+    @Query("select n from Notice as n where n.circle.id=?1 and n.enabled=?2 order by n.id desc")
+    List<Notice> findByCircle_IdAndEnabledOrderByIdDesc(Long customerId,boolean enabled);
 
 }

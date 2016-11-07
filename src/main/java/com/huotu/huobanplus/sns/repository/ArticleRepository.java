@@ -63,11 +63,19 @@ public interface ArticleRepository extends JpaRepository<Article, Long>, JpaSpec
     @Query("select article from Article article where article.customerId=?1 and article.id<?2 and article.name like ?3")
     Page<Article> findByCustomerIdAndNameLike(Long customerId, String name, Long lastId, Pageable pageable);
 
-    List<Article> findTop3ByCircle_IdAndEnabledOrderByIdDesc(Long circleId,boolean enabled);
+    @Query("select a from Article as a where a.circle.id=?1 and a.enabled=?2 order by a.id desc")
+    List<Article> findTop3ByCircle_IdAndEnabledOrderByIdDesc(Long circleId,boolean enabled,Pageable pageable);
 
     List<Article> findByTopAndCircle_IdAndEnabledOrderByIdDesc(boolean isTop,Long circleId,boolean enabled);
 
-    List<Article> findTop20ByCircle_IdAndEnabledAndIdLessThanOrderByIdDesc(Long circleId,boolean enabled,Long lastId);
+    @Query("select a from Article as a where a.circle.id=?1 order by a.id desc ")
+    List<Article> findTop20ByCircle_IdOrderByIdDesc(Long circleId,Pageable pageable);
 
-    List<Article> findTop20ByCircle_IdAndEnabledAndViewLessThanOrderByViewDesc(Long circleId,boolean enabled,Long view);
+    @Query("select a from Article as a where a.circle.id=?1 and a.id<?2 order by a.id desc ")
+    List<Article> findTop20ByCircle_IdAndIdLessThanOrderByIdDesc(Long circleId,Long lastId,Pageable pageable);
+
+    @Query("select a from Article as a where a.circle.id=?1 order by a.view desc ")
+    List<Article> findTop20ByCircle_IdOrderByViewDesc(Long circleId,Pageable pageable);
+    @Query("select a from Article as a where a.circle.id=?1 and a.view<?2 order by a.view desc ")
+    List<Article> findTop20ByCircle_IdAndViewLessThanOrderByViewDesc(Long circleId,Long view,Pageable pageable);
 }

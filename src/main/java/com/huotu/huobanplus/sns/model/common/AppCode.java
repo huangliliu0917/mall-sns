@@ -58,7 +58,9 @@ public enum AppCode implements ICommonEnum {
     /**
      * 圈子，百科等以4开头
      */
-    ERROR_NO_CIRCLE(40001,"未找到圈子");
+    ERROR_NO_CIRCLE(40001,"未找到圈子"),
+
+    ERROR_NO_ARTICLE(40002,"未找到文章");
 
 
 

@@ -1,5 +1,6 @@
 package com.huotu.huobanplus.sns.model;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,6 +9,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@EqualsAndHashCode
 public class AppCircleArticleModel {
     /**
      * 文章id
@@ -44,7 +46,6 @@ public class AppCircleArticleModel {
      * 用户等级
      */
     private Long userLevel;
-    
 
     /**
      * 文章发表时间

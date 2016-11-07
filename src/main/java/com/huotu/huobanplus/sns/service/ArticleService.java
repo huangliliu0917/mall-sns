@@ -165,5 +165,23 @@ public interface ArticleService {
      */
     Set<Long> getToUserIdsByConcerns(List<Concern> concerns);
 
+    /**
+     * 根据文章(帖子)实体，转换为model
+     * @param article   实体
+     * @return          model
+     */
+    AppCircleArticleDetailModel getArticleDetailModel(Article article);
+
+
+    /**
+     * 从给定的文章列表中获取当前商家下的用户的关注其他用户的列表
+     * @param articles      文章列表
+     * @param userId        当前用户ID
+     * @param customerId    商户ID
+     * @return              关注用户的列表
+     * @throws IOException
+     */
+    Set<Long> findAttentionUsersByArticles(List<Article> articles,Long userId,Long customerId) throws IOException;
+
 
 }

@@ -205,7 +205,7 @@ public class CircleServiceImpl implements CircleService {
     public AppCircleIntroduceModel getCircleDetailsModel(Circle circle) {
         AppCircleIntroduceModel model=new AppCircleIntroduceModel();
         model.setName(circle.getName());
-        String pictureUrl=commonConfigService.getResourcesUri()+circle.getPictureUrl();
+        String pictureUrl=circle.getPictureUrl();
         model.setPictureUrl(pictureUrl);
         model.setCategoryName(circle.getCategory().getName());
         model.setLeaderName(circle.getLeader().getNickName());
@@ -227,7 +227,7 @@ public class CircleServiceImpl implements CircleService {
         }
         appCircleModel.setDate(circle.getDate().getTime());
         appCircleModel.setName(circle.getName());
-        appCircleModel.setPictureUrl(commonConfigService.getResourcesUri()+circle.getPictureUrl());
+        appCircleModel.setPictureUrl(circle.getPictureUrl());
         appCircleModel.setUrl(""+circle.getId());//todo 圈子appmodel地址
         return appCircleModel;
     }
