@@ -20,6 +20,7 @@ import com.huotu.huobanplus.sns.model.common.CommentStatus;
 import com.huotu.huobanplus.sns.repository.*;
 import com.huotu.huobanplus.sns.service.ArticleService;
 import com.huotu.huobanplus.sns.service.CommonConfigService;
+import com.huotu.huobanplus.sns.service.RedisService;
 import com.huotu.huobanplus.sns.service.resource.StaticResourceService;
 import com.huotu.huobanplus.sns.utils.ContractHelper;
 import org.apache.commons.logging.Log;
@@ -29,8 +30,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.redis.core.BoundHashOperations;
-import org.springframework.data.redis.core.BoundListOperations;
 import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -71,10 +70,12 @@ public class ArticleServiceImpl implements ArticleService {
     private CircleRepository circleRepository;
     @Autowired
     private ArticleCommentRepository articleCommentRepository;
-    @Autowired
-    private RedisTemplate<String, String> redisTemplate;
+    //    @Autowired
+//    private RedisTemplate<String, String> redisTemplate;
     @Autowired
     private RedisTemplate<String, AppArticleCommentModel> articleCommentRedisTemplate;
+    @Autowired
+    private RedisService redisService;
 
     //    @Autowired
 //    private RedisTemplate<String, AppArticleCommentModel> articleReplyCommentRedisTemplate;
@@ -347,17 +348,19 @@ public class ArticleServiceImpl implements ArticleService {
             articleComment = articleCommentRepository.saveAndFlush(articleComment);
         }
 //        articleRepository.addComments(id);
-        BoundHashOperations<String, String, Long> articleOperations = redisTemplate
-                .boundHashOps(ContractHelper.articleFlag + id);
-        Long comments = articleOperations.get("comments");
-        if (Objects.isNull(comments))
-            articleOperations.put("comments", 1L);
-        else
-            articleOperations.put("comments", comments + 1L);
+//        BoundHashOperations<String, String, Long> articleOperations = redisTemplate
+//                .boundHashOps(ContractHelper.articleFlag + id);
+//        Long comments = articleOperations.get("comments");
+//        if (Objects.isNull(comments))
+//            articleOperations.put("comments", 1L);
+//        else
+//            articleOperations.put("comments", comments + 1L);
+        redisService.addArticleCommentNum(id);
 
-        BoundListOperations<String, AppArticleCommentModel> articleCommentBoundListOperations =
-                articleCommentRedisTemplate.boundListOps(ContractHelper.articleCommentFlag + id);
-        articleCommentBoundListOperations.leftPush(changeModel(articleComment));
+//        BoundListOperations<String, AppArticleCommentModel> articleCommentBoundListOperations =
+//                articleCommentRedisTemplate.boundListOps(ContractHelper.articleCommentFlag + id);
+//        articleCommentBoundListOperations.leftPush(changeModel(articleComment));
+        redisService.addArticleComment(id, changeModel(articleComment));
         return articleComment;
     }
 
@@ -511,21 +514,25 @@ public class ArticleServiceImpl implements ArticleService {
         }
         replyArticleComment = articleCommentRepository.saveAndFlush(replyArticleComment);
         //评论列表+1
-        BoundListOperations<String, AppArticleCommentModel> articleCommentBoundListOperations =
-                articleCommentRedisTemplate.boundListOps(ContractHelper.articleCommentFlag + articleId);
-        articleCommentBoundListOperations.leftPush(changeModel(replyArticleComment));
+//        BoundListOperations<String, AppArticleCommentModel> articleCommentBoundListOperations =
+//                articleCommentRedisTemplate.boundListOps(ContractHelper.articleCommentFlag + articleId);
+//        articleCommentBoundListOperations.leftPush(changeModel(replyArticleComment));
+        redisService.addArticleComment(articleId, changeModel(replyArticleComment));
         //本次评论的redis缓存
-        BoundListOperations<String, AppArticleCommentModel> ArticleReplyCommentBoundListOperations =
-                articleCommentRedisTemplate.boundListOps(ContractHelper.articleReplyCommentFlag + replyArticleComment.getId());
-        for (int i = 0; i < models.size(); i++) {
-            ArticleReplyCommentBoundListOperations.rightPush(models.get(i));
-        }
+//        BoundListOperations<String, AppArticleCommentModel> ArticleReplyCommentBoundListOperations =
+//                articleCommentRedisTemplate.boundListOps(ContractHelper.articleReplyCommentFlag + replyArticleComment.getId());
+//        for (int i = 0; i < models.size(); i++) {
+//            ArticleReplyCommentBoundListOperations.rightPush(models.get(i));
+//        }
+        redisService.addArticleCommentByCommentId(replyArticleComment.getId(), models);
 
-        BoundHashOperations<String, String, Long> articleOperations = redisTemplate
-                .boundHashOps(ContractHelper.articleFlag + articleId);
-//        articleOperations.putIfAbsent("comments", 0L);
-        Long comments = articleOperations.get("comments");
-        articleOperations.put("comments", comments + 1L);
+        //评论数量+1
+        redisService.addArticleCommentNum(articleId);
+
+//        BoundHashOperations<String, String, Long> articleOperations = redisTemplate
+//                .boundHashOps(ContractHelper.articleFlag + articleId);
+//        Long comments = articleOperations.get("comments");
+//        articleOperations.put("comments", comments + 1L);
         return replyArticleComment;
         //        articleRepository.addComments(id);
     }
@@ -577,51 +584,51 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public AppCircleArticleModel[] getTopArticleModels(Long userId,Long customerId,Long circleId) throws IOException {
+    public AppCircleArticleModel[] getTopArticleModels(Long userId, Long customerId, Long circleId) throws IOException {
 
-        List<Article> articles=articleRepository.findByTopAndCircle_IdAndEnabledOrderByIdDesc(true,circleId,true);
+        List<Article> articles = articleRepository.findByTopAndCircle_IdAndEnabledOrderByIdDesc(true, circleId, true);
 
-        Set<Long> articleUserIds=getToUserIdsByArticles(articles);
+        Set<Long> articleUserIds = getToUserIdsByArticles(articles);
 
-        List<Concern> concerns=concernRepository.findByUserAndToUsers(userId,customerId,articleUserIds);
+        List<Concern> concerns = concernRepository.findByUserAndToUsers(userId, customerId, articleUserIds);
 
-        Set<Long> toUserIds=getToUserIdsByConcerns(concerns);
+        Set<Long> toUserIds = getToUserIdsByConcerns(concerns);
 
-        AppCircleArticleModel[] models=new AppCircleArticleModel[articles.size()];
-        for(int i=0;i<articles.size();i++){
-            models[i]=getAppCircleArticleModel(articles.get(i),toUserIds);
+        AppCircleArticleModel[] models = new AppCircleArticleModel[articles.size()];
+        for (int i = 0; i < articles.size(); i++) {
+            models[i] = getAppCircleArticleModel(articles.get(i), toUserIds);
         }
         return models;
     }
 
     @Override
-    public AppCircleArticleModel[] getArticleListModels(Long customerId,Long userId, Long lastId, Long circleId, Integer type) throws IOException {
+    public AppCircleArticleModel[] getArticleListModels(Long customerId, Long userId, Long lastId, Long circleId, Integer type) throws IOException {
         List<Article> articles;
-        if(type==0){
-            articles=articleRepository.findTop20ByCircle_IdAndEnabledAndIdLessThanOrderByIdDesc(circleId,true,lastId);
-        }else {
-            Article article=articleRepository.findOne(lastId);
-            articles=articleRepository.findTop20ByCircle_IdAndEnabledAndViewLessThanOrderByViewDesc(circleId,true,article.getView());
+        if (type == 0) {
+            articles = articleRepository.findTop20ByCircle_IdAndEnabledAndIdLessThanOrderByIdDesc(circleId, true, lastId);
+        } else {
+            Article article = articleRepository.findOne(lastId);
+            articles = articleRepository.findTop20ByCircle_IdAndEnabledAndViewLessThanOrderByViewDesc(circleId, true, article.getView());
         }
-        Set<Long> articleUserIds=getToUserIdsByArticles(articles);
+        Set<Long> articleUserIds = getToUserIdsByArticles(articles);
 
-        List<Concern> concerns=concernRepository.findByUserAndToUsers(userId,customerId,articleUserIds);
+        List<Concern> concerns = concernRepository.findByUserAndToUsers(userId, customerId, articleUserIds);
 
-        Set<Long> toUserIds=getToUserIdsByConcerns(concerns);
+        Set<Long> toUserIds = getToUserIdsByConcerns(concerns);
 
-        AppCircleArticleModel[] models=new AppCircleArticleModel[articles.size()];
-        for(int i=0;i<articles.size();i++){
-            models[i]=getAppCircleArticleModel(articles.get(i),toUserIds);
+        AppCircleArticleModel[] models = new AppCircleArticleModel[articles.size()];
+        for (int i = 0; i < articles.size(); i++) {
+            models[i] = getAppCircleArticleModel(articles.get(i), toUserIds);
         }
         return models;
     }
 
     @Override
-    public AppCircleArticleModel getAppCircleArticleModel(Article article,Set<Long> toUserIds) {
-        AppCircleArticleModel model=new AppCircleArticleModel();
+    public AppCircleArticleModel getAppCircleArticleModel(Article article, Set<Long> toUserIds) {
+        AppCircleArticleModel model = new AppCircleArticleModel();
         model.setPid(article.getId());
         model.setName(article.getName());
-        model.setPictureUrl(commonConfigService.getResourcesUri()+article.getPictureUrl());
+        model.setPictureUrl(commonConfigService.getResourcesUri() + article.getPictureUrl());
         model.setUserId(article.getPublisher().getId());
         model.setUserName(article.getPublisher().getNickName());
         model.setUserHeadUrl(article.getPublisher().getImgURL());
@@ -629,14 +636,14 @@ public class ArticleServiceImpl implements ArticleService {
         model.setTime(article.getDate().getTime());
         model.setViewAmount(article.getView());
         model.setCommentsAmount(article.getComments());
-        Long toUserId=article.getPublisher().getId();
+        Long toUserId = article.getPublisher().getId();
         model.setConcerned(toUserIds.contains(toUserId));
         return model;
     }
 
     @Override
     public Set<Long> getToUserIdsByArticles(List<Article> articles) {
-        Set<Long> toUserIds=new HashSet<>();
+        Set<Long> toUserIds = new HashSet<>();
 
         //获取发布文章的用户列表
         articles.forEach(a -> {
@@ -647,7 +654,7 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public Set<Long> getToUserIdsByConcerns(List<Concern> concerns) {
-        Set<Long> toUserIds=new HashSet<>();
+        Set<Long> toUserIds = new HashSet<>();
 
         concerns.forEach(concern -> {
             toUserIds.add(concern.getToUser().getId());

@@ -106,7 +106,7 @@ public class UserControllerImplTest extends CommonTestBase {
         User newUser = userRepository.getOne(user.getId());
         assertEquals("用户文章数量", newUser.getArticleAmount(), 1);
         Long articleId = Long.parseLong(JsonPath.read(data, "$.resultData.data").toString());
-
+        Thread.sleep(1000L);
 //        System.out.println(articleId);
         assertEquals("粉丝文章数量", userArticleRepository.countByArticleId(articleId).orElse(0L).intValue(), index + 1);
     }
