@@ -9,10 +9,21 @@
 
 package com.huotu.huobanplus.sns.service;
 
+import com.huotu.huobanplus.sns.model.AppCircleNoticeModel;
+
+import java.io.IOException;
+
 /**
  * 公告服务
  * Created by slt  on 2016/10/31.
  */
 public interface NoticeService {
+    /**
+     * 根据商户ID获取公告列表
+     * @param customerId
+     * @return
+     * @throws IOException
+     */
+    AppCircleNoticeModel[] getNoticeModels(Long customerId) throws IOException;
 
 }

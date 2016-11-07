@@ -62,8 +62,8 @@ public interface CircleController {
     @RequestMapping(value = "/top", method = RequestMethod.GET)
     ApiResult top(Output<AppCircleModel> data
             , Output<AppCircleNoticeModel[]> noticeList
-            , Output<AppCircleArticleModel> top
-            , @RequestParam("id") Long id) throws Exception;
+            , Output<AppCircleArticleModel[]> top
+            , @RequestParam(value = "id",required = true) Long id) throws Exception;
 
 
     /**

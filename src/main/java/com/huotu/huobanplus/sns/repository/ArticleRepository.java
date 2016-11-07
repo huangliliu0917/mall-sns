@@ -64,4 +64,10 @@ public interface ArticleRepository extends JpaRepository<Article, Long>, JpaSpec
     Page<Article> findByCustomerIdAndNameLike(Long customerId, String name, Long lastId, Pageable pageable);
 
     List<Article> findTop3ByCircle_IdAndEnabledOrderByIdDesc(Long circleId,boolean enabled);
+
+    List<Article> findByTopAndCircle_IdAndEnabledOrderByIdDesc(boolean isTop,Long circleId,boolean enabled);
+
+    List<Article> findTop20ByCircle_IdAndEnabledAndIdLessThanOrderByIdDesc(Long circleId,boolean enabled,Long lastId);
+
+    List<Article> findTop20ByCircle_IdAndEnabledAndViewLessThanOrderByViewDesc(Long circleId,boolean enabled,Long view);
 }

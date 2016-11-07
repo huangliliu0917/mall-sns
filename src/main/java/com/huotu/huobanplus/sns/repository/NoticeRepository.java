@@ -14,6 +14,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * 公告持久化
  * Created by slt on 2016/10/31.
@@ -21,5 +23,7 @@ import org.springframework.stereotype.Repository;
 @SuppressWarnings("JpaQlInspection")
 @Repository
 public interface NoticeRepository extends JpaRepository<Notice, Long>, JpaSpecificationExecutor<Notice> {
+
+    List<Notice> findByCustomerIdOrderByIdDesc(Long customerId);
 
 }

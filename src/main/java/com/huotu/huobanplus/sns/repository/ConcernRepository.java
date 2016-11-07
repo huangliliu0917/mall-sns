@@ -13,10 +13,12 @@ import com.huotu.huobanplus.sns.entity.Concern;
 import com.huotu.huobanplus.sns.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by jin on 2016/10/10.
@@ -83,4 +85,15 @@ public interface ConcernRepository extends JpaRepository<Concern, Long>, JpaSpec
     List<Concern> findTop10ByUserAndIdLessThanOrderByIdDesc(@Param("user") User user, @Param("id") Long id);
 
     List<Concern> findByUser(@Param("user") User user);
+
+
+    /**
+     * 根据给定的用户获取自己是否关注了这些用户
+     * @param userId        自己ID
+     * @param customerId    商户ID
+     * @param toUserIds     给定用户列表
+     * @return              关注列表
+     */
+    @Query("select c from Concern as c where c.user.id=?1 and c.customerId=?2 and c.toUser.id in ?3")
+    List<Concern> findByUserAndToUsers(Long userId,Long customerId, Set<Long> toUserIds);
 }

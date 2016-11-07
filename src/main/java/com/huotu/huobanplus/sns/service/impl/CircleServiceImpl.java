@@ -14,6 +14,7 @@ import com.huotu.huobanplus.sns.entity.Circle;
 import com.huotu.huobanplus.sns.entity.User;
 import com.huotu.huobanplus.sns.model.AppCircleIndexSuggestModel;
 import com.huotu.huobanplus.sns.model.AppCircleIntroduceModel;
+import com.huotu.huobanplus.sns.model.AppCircleModel;
 import com.huotu.huobanplus.sns.model.admin.CircleListModel;
 import com.huotu.huobanplus.sns.model.admin.CircleSearchModel;
 import com.huotu.huobanplus.sns.repository.CategoryRepository;
@@ -176,7 +177,7 @@ public class CircleServiceImpl implements CircleService {
     }
 
     @Override
-    public AppCircleIndexSuggestModel[] getCircleAppModel(List<Circle> circles) {
+    public AppCircleIndexSuggestModel[] getCircleAppModels(List<Circle> circles) {
 
         AppCircleIndexSuggestModel[] models=new AppCircleIndexSuggestModel[circles.size()];
         for(int i=0,size=circles.size();i<size;i++){
@@ -215,5 +216,19 @@ public class CircleServiceImpl implements CircleService {
         model.setSummary(circle.getSummary());
         model.setDate(circle.getDate().getTime());
         return model;
+    }
+
+    @Override
+    public AppCircleModel getAppCircleModel(Circle circle) {
+
+        AppCircleModel appCircleModel=new AppCircleModel();
+        if(circle==null){
+            return appCircleModel;
+        }
+        appCircleModel.setDate(circle.getDate().getTime());
+        appCircleModel.setName(circle.getName());
+        appCircleModel.setPictureUrl(commonConfigService.getResourcesUri()+circle.getPictureUrl());
+        appCircleModel.setUrl(""+circle.getId());//todo 圈子appmodel地址
+        return appCircleModel;
     }
 }

@@ -19,6 +19,7 @@ import com.huotu.huobanplus.sns.model.common.ArticleType;
 import com.huotu.huobanplus.sns.model.common.CommentStatus;
 import com.huotu.huobanplus.sns.repository.*;
 import com.huotu.huobanplus.sns.service.ArticleService;
+import com.huotu.huobanplus.sns.service.CommonConfigService;
 import com.huotu.huobanplus.sns.service.resource.StaticResourceService;
 import com.huotu.huobanplus.sns.utils.ContractHelper;
 import org.apache.commons.logging.Log;
@@ -83,6 +84,8 @@ public class ArticleServiceImpl implements ArticleService {
     private ArticleClickRepository articleClickRepository;
     @Autowired
     private EntityManager entityManager;
+    @Autowired
+    private CommonConfigService commonConfigService;
     private ObjectMapper objectMapper = new ObjectMapper();
 
     public List<AppWikiListModel> getAppWikiList(Long customerId, Integer catalogId, Long lastId) {
@@ -569,5 +572,84 @@ public class ArticleServiceImpl implements ArticleService {
             appCircleIndexArticleListModels.add(appCircleIndexArticleListModel);
         });
         return appCircleIndexArticleListModels;
+    }
+
+    @Override
+    public AppCircleArticleModel[] getTopArticleModels(Long userId,Long customerId,Long circleId) throws IOException {
+
+        List<Article> articles=articleRepository.findByTopAndCircle_IdAndEnabledOrderByIdDesc(true,circleId,true);
+
+        Set<Long> articleUserIds=getToUserIdsByArticles(articles);
+
+        List<Concern> concerns=concernRepository.findByUserAndToUsers(userId,customerId,articleUserIds);
+
+        Set<Long> toUserIds=getToUserIdsByConcerns(concerns);
+
+        AppCircleArticleModel[] models=new AppCircleArticleModel[articles.size()];
+        for(int i=0;i<articles.size();i++){
+            models[i]=getAppCircleArticleModel(articles.get(i),toUserIds);
+        }
+        return models;
+    }
+
+    @Override
+    public AppCircleArticleModel[] getArticleListModels(Long customerId,Long userId, Long lastId, Long circleId, Integer type) throws IOException {
+        List<Article> articles;
+        if(type==0){
+            articles=articleRepository.findTop20ByCircle_IdAndEnabledAndIdLessThanOrderByIdDesc(circleId,true,lastId);
+        }else {
+            Article article=articleRepository.findOne(lastId);
+            articles=articleRepository.findTop20ByCircle_IdAndEnabledAndViewLessThanOrderByViewDesc(circleId,true,article.getView());
+        }
+        Set<Long> articleUserIds=getToUserIdsByArticles(articles);
+
+        List<Concern> concerns=concernRepository.findByUserAndToUsers(userId,customerId,articleUserIds);
+
+        Set<Long> toUserIds=getToUserIdsByConcerns(concerns);
+
+        AppCircleArticleModel[] models=new AppCircleArticleModel[articles.size()];
+        for(int i=0;i<articles.size();i++){
+            models[i]=getAppCircleArticleModel(articles.get(i),toUserIds);
+        }
+        return models;
+    }
+
+    @Override
+    public AppCircleArticleModel getAppCircleArticleModel(Article article,Set<Long> toUserIds) {
+        AppCircleArticleModel model=new AppCircleArticleModel();
+        model.setPid(article.getId());
+        model.setName(article.getName());
+        model.setPictureUrl(commonConfigService.getResourcesUri()+article.getPictureUrl());
+        model.setUserId(article.getPublisher().getId());
+        model.setUserName(article.getPublisher().getNickName());
+        model.setUserHeadUrl(article.getPublisher().getImgURL());
+        model.setUserLevel(article.getPublisher().getLevel().getId());
+        model.setTime(article.getDate().getTime());
+        model.setViewAmount(article.getView());
+        model.setCommentsAmount(article.getComments());
+        Long toUserId=article.getPublisher().getId();
+        model.setConcerned(toUserIds.contains(toUserId));
+        return model;
+    }
+
+    @Override
+    public Set<Long> getToUserIdsByArticles(List<Article> articles) {
+        Set<Long> toUserIds=new HashSet<>();
+
+        //获取发布文章的用户列表
+        articles.forEach(a -> {
+            toUserIds.add(a.getPublisher().getId());
+        });
+        return toUserIds;
+    }
+
+    @Override
+    public Set<Long> getToUserIdsByConcerns(List<Concern> concerns) {
+        Set<Long> toUserIds=new HashSet<>();
+
+        concerns.forEach(concern -> {
+            toUserIds.add(concern.getToUser().getId());
+        });
+        return toUserIds;
     }
 }

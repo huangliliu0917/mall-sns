@@ -11,6 +11,7 @@ package com.huotu.huobanplus.sns.service;
 
 import com.huotu.huobanplus.sns.entity.Article;
 import com.huotu.huobanplus.sns.entity.ArticleComment;
+import com.huotu.huobanplus.sns.entity.Concern;
 import com.huotu.huobanplus.sns.entity.User;
 import com.huotu.huobanplus.sns.exception.ClickException;
 import com.huotu.huobanplus.sns.model.*;
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Administrator on 2016/10/12.
@@ -118,4 +120,50 @@ public interface ArticleService {
     List<AppCircleIndexArticleListModel> search(Long customerId, String key, Long lastId);
 
     AppArticleCommentModel changeModel(ArticleComment articleComment);
+
+    /**
+     * 根据圈子ID，获取该圈子下置顶的文章
+     * @param circleId      圈子ID
+     * @param userId        当前用户ID
+     * @param customerId    商户ID
+     * @return
+     * @throws IOException
+     */
+    AppCircleArticleModel[] getTopArticleModels(Long userId,Long customerId,Long circleId) throws IOException;
+
+    /**
+     * 获取某个圈子下的文章列表
+     * @param customerId 商户ID
+     * @param userId    用户ID
+     * @param lastId    最后一条文章ID
+     * @param circleId  圈子ID
+     * @param type      排序类型
+     * @return
+     * @throws IOException
+     */
+    AppCircleArticleModel[] getArticleListModels(Long customerId,Long userId,Long lastId,Long circleId,Integer type) throws IOException;
+
+    /**
+     * 根据文章获取model
+     * @param article   文章实体
+     * @param toUserIds 关注的用户列表
+     * @return          文章model
+     */
+    AppCircleArticleModel getAppCircleArticleModel(Article article,Set<Long> toUserIds);
+
+    /**
+     * 根据文章实体列表，获取发布用户列表
+     * @param articles      文章列表
+     * @return
+     */
+    Set<Long> getToUserIdsByArticles(List<Article> articles);
+
+    /**
+     * 根据关注列表，获取关注某人的用户列表
+     * @param concerns      关注列表
+     * @return
+     */
+    Set<Long> getToUserIdsByConcerns(List<Concern> concerns);
+
+
 }

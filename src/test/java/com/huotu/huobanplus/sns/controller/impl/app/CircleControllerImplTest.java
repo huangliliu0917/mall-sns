@@ -62,7 +62,7 @@ public class CircleControllerImplTest extends CommonTestBase {
 
 
         AppCircleIndexSlideModel[] oldModels=slideService.getSlideModelList(slides);
-        AppCircleIndexSuggestModel[] oldCircleModels=circleService.getCircleAppModel(circles);
+        AppCircleIndexSuggestModel[] oldCircleModels=circleService.getCircleAppModels(circles);
 
         String result=mockMvc.perform(device.getApi("/circle/indexTop").build())
                 .andExpect(status().isOk())
@@ -104,7 +104,7 @@ public class CircleControllerImplTest extends CommonTestBase {
                 return (int)o2.getUserAmount()-(int)o1.getUserAmount();
             }
         });
-        AppCircleIndexSuggestModel[] oldCircleModels=circleService.getCircleAppModel(circles);
+        AppCircleIndexSuggestModel[] oldCircleModels=circleService.getCircleAppModels(circles);
 
         String result=mockMvc.perform(device.getApi("/circle/circleIndexSuggestList")
                 .param("pageNo","0")

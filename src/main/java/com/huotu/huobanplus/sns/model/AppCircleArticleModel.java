@@ -37,7 +37,7 @@ public class AppCircleArticleModel {
     private String userHeadUrl;
 
     /**
-     * 关注过的
+     * 是否已关注该文章的发布者
      */
     private Boolean concerned;
     /**

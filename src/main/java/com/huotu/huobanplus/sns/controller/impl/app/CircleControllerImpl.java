@@ -6,14 +6,13 @@ import com.huotu.huobanplus.sns.boot.PublicParameterHolder;
 import com.huotu.huobanplus.sns.controller.app.CircleController;
 import com.huotu.huobanplus.sns.entity.Circle;
 import com.huotu.huobanplus.sns.entity.Slide;
+import com.huotu.huobanplus.sns.entity.User;
 import com.huotu.huobanplus.sns.model.*;
 import com.huotu.huobanplus.sns.model.admin.CircleSearchModel;
 import com.huotu.huobanplus.sns.model.common.AppCode;
 import com.huotu.huobanplus.sns.repository.CircleRepository;
 import com.huotu.huobanplus.sns.repository.UserCircleRepository;
-import com.huotu.huobanplus.sns.service.CircleService;
-import com.huotu.huobanplus.sns.service.SlideService;
-import com.huotu.huobanplus.sns.service.UserCircleService;
+import com.huotu.huobanplus.sns.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -39,6 +38,12 @@ public class CircleControllerImpl implements CircleController {
 
     @Autowired
     private UserCircleRepository userCircleRepository;
+
+    @Autowired
+    private NoticeService noticeService;
+
+    @Autowired
+    private ArticleService articleService;
     @Override
     public ApiResult circleIndexTop(Output<AppCircleIndexSlideModel[]> slideList, Output<AppCircleIndexSuggestModel[]> suggestList) throws Exception {
         Long customerId=PublicParameterHolder.getParameters().getCustomerId();
@@ -58,7 +63,7 @@ public class CircleControllerImpl implements CircleController {
         model.setSortField("userAmount");
         model.setAscOrdesc(0);
         List<Circle> circles=circleService.findCircleList(model).getContent();
-        AppCircleIndexSuggestModel[] circleModels= circleService.getCircleAppModel(circles);
+        AppCircleIndexSuggestModel[] circleModels= circleService.getCircleAppModels(circles);
         suggestList.outputData(circleModels);
 
         return ApiResult.resultWith(AppCode.SUCCESS);
@@ -79,7 +84,7 @@ public class CircleControllerImpl implements CircleController {
         model.setAscOrdesc(0);
         List<Circle> circles=circleService.findCircleList(model).getContent();
 
-        AppCircleIndexSuggestModel[] circleModels= circleService.getCircleAppModel(circles);
+        AppCircleIndexSuggestModel[] circleModels= circleService.getCircleAppModels(circles);
 
         suggestList.outputData(circleModels);
 
@@ -101,13 +106,57 @@ public class CircleControllerImpl implements CircleController {
     }
 
     @Override
-    public ApiResult top(Output<AppCircleModel> data, Output<AppCircleNoticeModel[]> noticeList, Output<AppCircleArticleModel> top, Long id) throws Exception {
-        return null;
+    public ApiResult top(Output<AppCircleModel> data, Output<AppCircleNoticeModel[]> noticeList, Output<AppCircleArticleModel[]> top, Long id) throws Exception {
+        Long customerId=PublicParameterHolder.getParameters().getCustomerId();
+        if(customerId==null){
+            return ApiResult.resultWith(AppCode.NOCUSTOMERID_ERROR);
+        }
+
+        User user=PublicParameterHolder.getParameters().getCurrentUser();
+        if(user==null){
+            return ApiResult.resultWith(AppCode.NOUSER_ERROR);
+        }
+
+        Circle circle=circleRepository.findOne(id);
+        if(circle==null){
+            return ApiResult.resultWith(AppCode.ERROR_NO_CIRCLE);
+        }
+
+
+        AppCircleModel appCircleModel=circleService.getAppCircleModel(circle);
+        data.outputData(appCircleModel);
+
+        AppCircleNoticeModel[] noticeModels=noticeService.getNoticeModels(customerId);
+        noticeList.outputData(noticeModels);
+
+        AppCircleArticleModel[] articleModels=articleService.getTopArticleModels(user.getId(),customerId,circle.getId());
+        top.outputData(articleModels);
+
+        return ApiResult.resultWith(AppCode.SUCCESS);
     }
 
     @Override
     public ApiResult list(Output<AppCircleArticleModel[]> articleList, Long id, Integer type, Long lastId) throws Exception {
-        return null;
+        Long customerId=PublicParameterHolder.getParameters().getCustomerId();
+        if(customerId==null){
+            return ApiResult.resultWith(AppCode.NOCUSTOMERID_ERROR);
+        }
+
+        User user=PublicParameterHolder.getParameters().getCurrentUser();
+        if(user==null){
+            return ApiResult.resultWith(AppCode.NOUSER_ERROR);
+        }
+
+        Circle circle=circleRepository.findOne(id);
+        if(circle==null){
+            return ApiResult.resultWith(AppCode.ERROR_NO_CIRCLE);
+        }
+
+        AppCircleArticleModel[] articleModels=articleService.getArticleListModels(customerId,user.getId(),lastId,circle.getId(),type);
+
+        articleList.outputData(articleModels);
+
+        return ApiResult.resultWith(AppCode.SUCCESS);
     }
 
     @Override
