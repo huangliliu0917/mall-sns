@@ -126,6 +126,11 @@ public class WebControllerImplTest extends BaseTest {
 
     @Test
     public void search() throws Exception {
+        String contentAsString = mockMvc.perform(device.getApi("/web/search")
+                .param("key", "无数据")
+                .param("lastId", "0")
+                .build())
+                .andDo(print()).andReturn().getResponse().getContentAsString();
 
     }
 }
