@@ -30,6 +30,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.BoundHashOperations;
 import org.springframework.data.redis.core.BoundListOperations;
+import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -74,8 +75,8 @@ public class ArticleServiceImpl implements ArticleService {
     @Autowired
     private RedisTemplate<String, AppArticleCommentModel> articleCommentRedisTemplate;
 
-    @Autowired
-    private RedisTemplate<String, AppArticleCommentModel> articleReplyCommentRedisTemplate;
+    //    @Autowired
+//    private RedisTemplate<String, AppArticleCommentModel> articleReplyCommentRedisTemplate;
     @Autowired
     private TagRespository tagRespository;
     @Autowired
@@ -346,10 +347,8 @@ public class ArticleServiceImpl implements ArticleService {
         BoundHashOperations<String, String, Long> articleOperations = redisTemplate
                 .boundHashOps(ContractHelper.articleFlag + id);
         articleOperations.putIfAbsent("comments", 0L);
-        synchronized (articleOperations.get("comments")) {
-            Long comments = articleOperations.get("comments");
-            articleOperations.put("comments", comments + 1L);
-        }
+        Long comments = articleOperations.get("comments");
+        articleOperations.put("comments", comments + 1L);
 
         BoundListOperations<String, AppArticleCommentModel> articleCommentBoundListOperations =
                 articleCommentRedisTemplate.boundListOps(ContractHelper.articleCommentFlag + id);
@@ -476,7 +475,7 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Transactional
     @Override
-    public void replyComment(ArticleComment articleComment, User user, String content) throws IOException {
+    public ArticleComment replyComment(ArticleComment articleComment, User user, String content) throws IOException {
         ArticleComment replyArticleComment = new ArticleComment();
         replyArticleComment.setUser(user);
         replyArticleComment.setCustomerId(user.getCustomerId());
@@ -489,44 +488,44 @@ public class ArticleServiceImpl implements ArticleService {
         Optional<Long> maxFloor = articleCommentRepository.getMaxFloorByArticleId(articleId);
         replyArticleComment.setFloor(maxFloor.orElse(0L) + 1L);
 
+
+        ListOperations<String, AppArticleCommentModel> listOperations = articleCommentRedisTemplate.opsForList();
+        //取出上一条评论的冗余列表
+        List<AppArticleCommentModel> models = listOperations
+                .range(ContractHelper.articleReplyCommentFlag + articleComment.getId(), 0L, -1);
+        //转化model
+        AppArticleCommentModel model = changeModel(articleComment);
+
+        models.add(model);
+        Collections.sort(models, (o1, o2) -> o1.getPid().intValue() - o2.getPid().intValue());
+        replyArticleComment.setExtend(objectMapper.writeValueAsString(models));
+        if (null == articleComment.getPath()) {
+            replyArticleComment.setPath("," + articleComment.getId() + ",");
+        } else {
+            replyArticleComment.setPath(articleComment.getPath() + articleComment.getId() + ",");
+        }
+        replyArticleComment = articleCommentRepository.saveAndFlush(replyArticleComment);
         //评论列表+1
         BoundListOperations<String, AppArticleCommentModel> articleCommentBoundListOperations =
                 articleCommentRedisTemplate.boundListOps(ContractHelper.articleCommentFlag + articleId);
-        articleCommentBoundListOperations.set(0L, changeModel(articleComment));
-
-        //取出上一条评论的冗余列表
-        BoundListOperations<String, AppArticleCommentModel> lastArticleReplyCommentBoundListOperations =
-                articleReplyCommentRedisTemplate.boundListOps(ContractHelper.articleReplyCommentFlag + articleComment.getId());
-        Long size = lastArticleReplyCommentBoundListOperations.size();
-        //转化model
-        AppArticleCommentModel model = changeModel(replyArticleComment);
-        List<AppArticleCommentModel> models;
-        if (Objects.isNull(size)) {
-            models = new ArrayList<>();
-        } else {
-            models = lastArticleReplyCommentBoundListOperations.range(0L, size - 1);
-        }
-        models.add(model);
-        replyArticleComment.setExtend(objectMapper.writeValueAsString(models));
-        replyArticleComment = articleCommentRepository.save(replyArticleComment);
+        articleCommentBoundListOperations.leftPush(changeModel(replyArticleComment));
         //本次评论的redis缓存
         BoundListOperations<String, AppArticleCommentModel> ArticleReplyCommentBoundListOperations =
-                articleReplyCommentRedisTemplate.boundListOps(ContractHelper.articleReplyCommentFlag + replyArticleComment.getId());
+                articleCommentRedisTemplate.boundListOps(ContractHelper.articleReplyCommentFlag + replyArticleComment.getId());
         for (int i = 0; i < models.size(); i++) {
-            ArticleReplyCommentBoundListOperations.set(i, models.get(i));
+            ArticleReplyCommentBoundListOperations.rightPush(models.get(i));
         }
 
         BoundHashOperations<String, String, Long> articleOperations = redisTemplate
                 .boundHashOps(ContractHelper.articleFlag + articleId);
-        articleOperations.putIfAbsent("comments", 0L);
-        synchronized (articleOperations.get("comments")) {
-            Long comments = articleOperations.get("comments");
-            articleOperations.put("comments", comments + 1L);
-        }
+//        articleOperations.putIfAbsent("comments", 0L);
+        Long comments = articleOperations.get("comments");
+        articleOperations.put("comments", comments + 1L);
+        return replyArticleComment;
         //        articleRepository.addComments(id);
     }
 
-    private AppArticleCommentModel changeModel(ArticleComment articleComment) {
+    public AppArticleCommentModel changeModel(ArticleComment articleComment) {
         if (Objects.nonNull(articleComment)) {
             AppArticleCommentModel model = new AppArticleCommentModel();
             model.setContent(articleComment.getContent());

@@ -10,10 +10,7 @@
 package com.huotu.huobanplus.sns.controller.impl.app;
 
 import com.huotu.huobanplus.sns.CommonTestBase;
-import com.huotu.huobanplus.sns.entity.Article;
-import com.huotu.huobanplus.sns.entity.Circle;
-import com.huotu.huobanplus.sns.entity.Report;
-import com.huotu.huobanplus.sns.entity.User;
+import com.huotu.huobanplus.sns.entity.*;
 import com.huotu.huobanplus.sns.model.AppArticleCommentModel;
 import com.huotu.huobanplus.sns.model.AppCircleArticleModel;
 import com.huotu.huobanplus.sns.model.AppUserConcermListModel;
@@ -23,6 +20,7 @@ import com.huotu.huobanplus.sns.model.common.ReportTargetType;
 import com.huotu.huobanplus.sns.utils.ContractHelper;
 import com.jayway.jsonpath.JsonPath;
 import org.junit.Test;
+import org.springframework.data.redis.core.ListOperations;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -223,8 +221,27 @@ public class UserControllerImplTest extends CommonTestBase {
     @Test
     public void replyComment() throws Exception {
         Article article = randomArticle();
-
-        mockMvc.perform(device.postApi("/user/commentArticle").param("id", article.getId() + "")
-                .param("content", UUID.randomUUID().toString()).build());
+        int index = random.nextInt(20);
+        ArticleComment comment = randomArticleComment(article, null, user);
+        List<String> idList = new ArrayList<>();
+        String replyId = comment.getId() + "";
+        idList.add(replyId);
+        for (int i = 0; i < index; i++) {
+            String body = mockMvc.perform(device.postApi("/user/replyComment")
+                    .param("id", replyId)
+                    .param("content", UUID.randomUUID().toString()).build())
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.resultCode").value(AppCode.SUCCESS.getValue()))
+                    .andReturn().getResponse().getContentAsString();
+            replyId = JsonPath.read(body, "$.resultData.data") + "";
+            idList.add(replyId);
+        }
+        ListOperations<String, AppArticleCommentModel> listOperations = articleCommentRedisTemplate.opsForList();
+        List<AppArticleCommentModel> list = listOperations.range(ContractHelper.articleCommentFlag + article.getId(), 0L, -1);
+        assertEquals("评论列表长度", list.size(), index + 1);
+        List<AppArticleCommentModel> replayList = listOperations.range(ContractHelper.articleReplyCommentFlag + replyId, 0L, -1);
+        assertEquals("冗余评论列表长度", replayList.size(), index);
+        ArticleComment newComment = articleCommentRepository.getOne(Long.parseLong(replyId));
+        System.out.println(newComment);
     }
 }

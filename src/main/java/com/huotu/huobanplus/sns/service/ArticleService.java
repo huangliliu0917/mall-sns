@@ -13,10 +13,7 @@ import com.huotu.huobanplus.sns.entity.Article;
 import com.huotu.huobanplus.sns.entity.ArticleComment;
 import com.huotu.huobanplus.sns.entity.User;
 import com.huotu.huobanplus.sns.exception.ClickException;
-import com.huotu.huobanplus.sns.model.AppCircleArticleModel;
-import com.huotu.huobanplus.sns.model.AppCircleIndexArticleListModel;
-import com.huotu.huobanplus.sns.model.AppWikiListModel;
-import com.huotu.huobanplus.sns.model.AppWikiModel;
+import com.huotu.huobanplus.sns.model.*;
 import com.huotu.huobanplus.sns.model.admin.AdminArticleEditModel;
 import com.huotu.huobanplus.sns.model.admin.AdminArticlePageModel;
 import org.springframework.transaction.annotation.Transactional;
@@ -109,7 +106,7 @@ public interface ArticleService {
      * @param content        评论内容
      * @throws IOException
      */
-    void replyComment(ArticleComment articleComment, User user, String content) throws IOException;
+    ArticleComment replyComment(ArticleComment articleComment, User user, String content) throws IOException;
 
     /**
      * 文章搜索
@@ -119,4 +116,6 @@ public interface ArticleService {
      * @return
      */
     List<AppCircleIndexArticleListModel> search(Long customerId, String key, Long lastId);
+
+    AppArticleCommentModel changeModel(ArticleComment articleComment);
 }

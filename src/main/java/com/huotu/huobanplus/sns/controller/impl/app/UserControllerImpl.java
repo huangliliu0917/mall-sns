@@ -200,31 +200,32 @@ public class UserControllerImpl implements UserController {
     }
 
     @Override
-    public ApiResult replyComment(@RequestParam(value = "id") Long id, @RequestParam(value = "content") String content)
+    public ApiResult replyComment(Output<Long> data, @RequestParam(value = "id") Long id, @RequestParam(value = "content") String content)
             throws NeedLoginException, IOException, ContentException {
         if (!sensitiveService.ContainSensitiveWords(content)) {
             throw new ContentException(AppCode.ERROR_SENSITIVE_CONTENT.getValue(), AppCode.ERROR_SENSITIVE_CONTENT.getName());
         }
         ArticleComment articleComment = articleCommentRepository.getOne(id);
         User user = UserHelper.getUser();
-        articleService.replyComment(articleComment, user, content);
+        ArticleComment comment = articleService.replyComment(articleComment, user, content);
+        data.outputData(comment.getId());
         return ApiResult.resultWith(AppCode.SUCCESS);
     }
 
     @Override
     public ApiResult circleIndexList(Output<AppCircleIndexListModel[]> circlelist, Long lastId) throws Exception {
-        Long customerId= PublicParameterHolder.getParameters().getCustomerId();
-        if(customerId==null){
+        Long customerId = PublicParameterHolder.getParameters().getCustomerId();
+        if (customerId == null) {
             return ApiResult.resultWith(AppCode.NOCUSTOMERID_ERROR);
         }
-        User user=PublicParameterHolder.getParameters().getCurrentUser();
-        if(user==null){
+        User user = PublicParameterHolder.getParameters().getCurrentUser();
+        if (user == null) {
             return ApiResult.resultWith(AppCode.NOUSER_ERROR);
         }
 
-        List<UserCircle> list=userCircleService.getUserCircleList(customerId,user.getId(),lastId);
+        List<UserCircle> list = userCircleService.getUserCircleList(customerId, user.getId(), lastId);
 
-        AppCircleIndexListModel[] models=userCircleService.getCircleIndexListModelList(list);
+        AppCircleIndexListModel[] models = userCircleService.getCircleIndexListModelList(list);
 
         circlelist.outputData(models);
 

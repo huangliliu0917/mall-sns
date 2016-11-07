@@ -200,7 +200,7 @@ public interface UserController {
      * @throws ContentException   评论涉及敏感词汇
      */
     @RequestMapping(value = "/replyComment", method = RequestMethod.POST)
-    ApiResult replyComment(@RequestParam(value = "id") Long id
+    ApiResult replyComment(Output<Long> data, @RequestParam(value = "id") Long id
             , @RequestParam(value = "content") String content) throws NeedLoginException, IOException, ContentException;
 
 

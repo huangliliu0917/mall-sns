@@ -15,11 +15,15 @@ import com.huotu.huobanplus.sns.base.DeviceType;
 import com.huotu.huobanplus.sns.entity.*;
 import com.huotu.huobanplus.sns.mallservice.MallUserService;
 import com.huotu.huobanplus.sns.model.AppArticleCommentModel;
+import com.huotu.huobanplus.sns.model.common.CommentStatus;
 import com.huotu.huobanplus.sns.repository.*;
 import com.huotu.huobanplus.sns.service.*;
+import com.huotu.huobanplus.sns.utils.ContractHelper;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.BoundHashOperations;
+import org.springframework.data.redis.core.BoundListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -28,9 +32,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.UnsupportedEncodingException;
-import java.util.Date;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Created by jin on 2016/11/2.
@@ -80,6 +82,8 @@ public abstract class CommonTestBase extends BaseTest {
     @Autowired
     protected ArticleService articleService;
     @Autowired
+    protected RedisTemplate<String, String> redisTemplate;
+    @Autowired
     private MallUserService mallUserService;
     @Autowired
     private AppSecurityService appSecurityService;
@@ -95,11 +99,30 @@ public abstract class CommonTestBase extends BaseTest {
         device.setCustomerId(customerId);
     }
 
-    public ArticleComment randomArticleComment(Article article, ArticleComment articleComment) throws Exception {
+    public ArticleComment randomArticleComment(Article article, ArticleComment articleComment, User commentUser) throws Exception {
         ArticleComment comment = new ArticleComment();
         comment.setArticle(article);
-//        comment.set
-        return null;
+        if (Objects.nonNull(articleComment))
+            comment.setArticleComment(articleComment);
+
+        comment.setCustomerId(user.getCustomerId());
+        comment.setUser(commentUser);
+        comment.setContent(UUID.randomUUID().toString());
+        comment.setDate(new Date());
+        comment.setCommentStatus(CommentStatus.Normal);
+        Optional<Long> maxFloor = articleCommentRepository.getMaxFloorByArticleId(article.getId());
+        comment.setFloor(maxFloor.orElse(0L) + 1L);
+        articleCommentRepository.saveAndFlush(comment);
+        BoundHashOperations<String, String, Long> articleOperations = redisTemplate
+                .boundHashOps(ContractHelper.articleFlag + article.getId());
+        articleOperations.putIfAbsent("comments", 0L);
+        Long comments = articleOperations.get("comments");
+        articleOperations.put("comments", comments + 1L);
+
+        BoundListOperations<String, AppArticleCommentModel> articleCommentBoundListOperations =
+                articleCommentRedisTemplate.boundListOps(ContractHelper.articleCommentFlag + article.getId());
+        articleCommentBoundListOperations.leftPush(articleService.changeModel(comment));
+        return comment;
     }
 
     protected Article randomArticle() throws Exception {
