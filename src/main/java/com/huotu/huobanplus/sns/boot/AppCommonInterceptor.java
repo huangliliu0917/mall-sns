@@ -2,7 +2,6 @@ package com.huotu.huobanplus.sns.boot;
 
 import com.huotu.huobanplus.sns.exception.NeedLoginException;
 import com.huotu.huobanplus.sns.exception.ParameterException;
-import com.huotu.huobanplus.sns.exception.UrlInvoidException;
 import com.huotu.huobanplus.sns.model.AppPublicModel;
 import com.huotu.huobanplus.sns.model.common.AppCode;
 import com.huotu.huobanplus.sns.repository.UserRepository;
@@ -55,23 +54,11 @@ public class AppCommonInterceptor implements HandlerInterceptor {
 
 
         if (requestURI.startsWith("/app/user/")) {
-            String merchantUserId = appSecurityService.getMerchantUserId(request);
-            if (!StringUtils.isEmpty(merchantUserId)) {
-                String[] items = merchantUserId.split(",");
-                Long customerId = Long.parseLong(items[0]);
-                if (currentCustomerId.equals(customerId)) {
-                    Long userId = Long.parseLong(items[1]);
-                    AppPublicModel appPublicModel = new AppPublicModel();
-                    appPublicModel.setIp(StringHelper.getIp(request));
-                    appPublicModel.setCustomerId(customerId);
-                    appPublicModel.setCurrentUser(userRepository.findOne(userId));
-                    PublicParameterHolder.putParameters(appPublicModel);
-
-                    return true;
-                }
-            }
+            if (setUserInfo(request, currentCustomerId)) return true;
             //用户模块需要检测用户是否登录,没有登录则跳转到登录页面
             throw new NeedLoginException(AppCode.ERROR_USER_NEED_LOGIN.getValue(), AppCode.ERROR_USER_NEED_LOGIN.getName());
+        } else {
+            setUserInfo(request, currentCustomerId);
         }
 
 
@@ -94,6 +81,25 @@ public class AppCommonInterceptor implements HandlerInterceptor {
         appPublicModel.setCustomerId(currentCustomerId);
         PublicParameterHolder.putParameters(appPublicModel);
         return true;
+    }
+
+    private boolean setUserInfo(HttpServletRequest request, Long currentCustomerId) {
+        String merchantUserId = appSecurityService.getMerchantUserId(request);
+        if (!StringUtils.isEmpty(merchantUserId)) {
+            String[] items = merchantUserId.split(",");
+            Long customerId = Long.parseLong(items[0]);
+            if (currentCustomerId.equals(customerId)) {
+                Long userId = Long.parseLong(items[1]);
+                AppPublicModel appPublicModel = new AppPublicModel();
+                appPublicModel.setIp(StringHelper.getIp(request));
+                appPublicModel.setCustomerId(customerId);
+                appPublicModel.setCurrentUser(userRepository.findOne(userId));
+                PublicParameterHolder.putParameters(appPublicModel);
+
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
