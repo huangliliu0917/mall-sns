@@ -77,9 +77,7 @@ public class AppCommonInterceptor implements HandlerInterceptor {
 //            PublicParameterHolder.putParameters(appPublicModel);
 //        }
 
-        AppPublicModel appPublicModel = new AppPublicModel();
-        appPublicModel.setCustomerId(currentCustomerId);
-        PublicParameterHolder.putParameters(appPublicModel);
+
         return true;
     }
 
@@ -99,6 +97,10 @@ public class AppCommonInterceptor implements HandlerInterceptor {
                 return true;
             }
         }
+
+        AppPublicModel appPublicModel = new AppPublicModel();
+        appPublicModel.setCustomerId(currentCustomerId);
+        PublicParameterHolder.putParameters(appPublicModel);
         return false;
     }
 
