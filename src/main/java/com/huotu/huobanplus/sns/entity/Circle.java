@@ -28,7 +28,7 @@ public class Circle {
     /**
      * 是否可用
      */
-    private boolean enabled=true;
+    private boolean enabled = true;
 
     /**
      * 圈子所属分类
@@ -68,20 +68,21 @@ public class Circle {
     /**
      * 是否热门推荐
      */
-    private boolean suggested=true;
+    private boolean suggested = true;
 
     /**
      * 圈子关注人数
      */
-    private long userAmount=0;
+    private long userAmount = 0;
 
     /**
      * 文章数
      */
-    private long articleAmount=0;
+    private long articleAmount = 0;
 
     /**
      * 圈子标签
      */
+    @OneToMany(cascade = {CascadeType.REFRESH}, fetch = FetchType.LAZY)
     private List<Tag> tags;
 }

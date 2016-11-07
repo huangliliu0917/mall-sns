@@ -38,7 +38,7 @@
             </div>
         </div>
     </div>
-    <form role="form" id="edit_form" th:action="@{/top/tags/tagsEdit.save}">
+    <form role="form" id="edit_form" th:action="@{/top/tags/tagsEdit.save}" onsubmit="return page.check()">
         <div class="row">
             <div class="col-lg-12">
                 <div class="ibox float-e-margins">
@@ -98,13 +98,21 @@
 
 <script src="/js/bootstrap.hot.extra-utils.js"></script>
 <script src="/js/bootstrap.hot.extra-init.js"></script>
-
+<script src="http://resali.huobanplus.com/cdn/layer/2.4/layer.js"></script>
 <script>
     var page = {};
     page.save = function () {
         $("#edit_form").submit();
     }
 
+    page.check =function () {
+        if ($("#name").val() == "") {
+            layer.msg("请输入标题！", {time: 2000});
+            $("#name").focus();
+            return false;
+        }
+        return true;
+    }
 </script>
 </body>
 

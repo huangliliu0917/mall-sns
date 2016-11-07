@@ -80,7 +80,7 @@ public class Article extends AbstractArticle {
     /**
      * 文章标签
      */
-    @OneToMany(cascade = {CascadeType.REFRESH})
+    @OneToMany(cascade = {CascadeType.REFRESH}, fetch = FetchType.LAZY)
     private Set<Tag> tags;
 
     /**
