@@ -18,6 +18,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -31,6 +32,8 @@ public interface ArticleCommentRepository extends JpaRepository<ArticleComment, 
 
 //    @Query("select ac from ArticleComment as ac where ac.article.id=?1 and ac.customerId=?2")
     Page<ArticleComment> findByArticle_IdAndCustomerId( Long articleId,Long customerId, Pageable pageable);
+
+    List<ArticleComment> findByPathLike(@Param("path") String path);
 
 
 }

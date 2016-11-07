@@ -219,10 +219,22 @@ public class UserControllerImplTest extends CommonTestBase {
     }
 
     @Test
+//    @Transactional
     public void replyComment() throws Exception {
         Article article = randomArticle();
         int index = random.nextInt(20);
+//        articleCommentRedisTemplate.multi();
         ArticleComment comment = randomArticleComment(article, null, user);
+//        articleCommentRedisTemplate.exec();
+
+//        String data = mockMvc.perform(device.postApi("/user/commentArticle").param("id", article.getId() + "")
+//                .param("content", UUID.randomUUID().toString()).build())
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$.resultCode").value(AppCode.SUCCESS.getValue()))
+//                .andReturn().getResponse().getContentAsString();
+//        Long commentId = Long.parseLong(JsonPath.read(data, "$.resultData.data").toString());
+//        Thread.sleep(1000L);
+//        ArticleComment comment = articleCommentRepository.getOne(commentId);
         List<String> idList = new ArrayList<>();
         String replyId = comment.getId() + "";
         idList.add(replyId);
@@ -241,7 +253,20 @@ public class UserControllerImplTest extends CommonTestBase {
         assertEquals("评论列表长度", list.size(), index + 1);
         List<AppArticleCommentModel> replayList = listOperations.range(ContractHelper.articleReplyCommentFlag + replyId, 0L, -1);
         assertEquals("冗余评论列表长度", replayList.size(), index);
-        ArticleComment newComment = articleCommentRepository.getOne(Long.parseLong(replyId));
-        System.out.println(newComment);
+        String str = "";
+        for (String id : idList) {
+            ArticleComment newComment = articleCommentRepository.getOne(Long.parseLong(id));
+            assertEquals("路径存储", str, newComment.getPath() == null ? "" : newComment.getPath());
+            str = str.length() == 0 ? "," + newComment.getId() + "," : str + newComment.getId() + ",";
+        }
+        String removeId = idList.get(random.nextInt(idList.size() - 1));
+        ArticleComment removeComment = articleCommentRepository.getOne(Long.parseLong(removeId));
+        List<ArticleComment> removeList;
+        if (null == removeComment.getPath()) {
+            removeList = articleCommentRepository.findByPathLike("%," + removeComment.getId() + ",%");
+        } else {
+            removeList = articleCommentRepository.findByPathLike("%" + removeComment.getPath() + "%");
+        }
+        System.out.println(removeList);
     }
 }
