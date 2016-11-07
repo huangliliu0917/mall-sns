@@ -12,6 +12,7 @@ package com.huotu.huobanplus.sns.boot;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 
@@ -21,10 +22,15 @@ import org.springframework.data.redis.core.RedisTemplate;
 @Configuration
 public class RedisConfig {
 
+    @Autowired
+    private Environment env;
+
     @Bean
     @Autowired
     RedisTemplate<?, ?> redisTemplate(@SuppressWarnings("SpringJavaAutowiringInspection") JedisConnectionFactory jedisConnectionFactory) {
         RedisTemplate redisTemplate = new RedisTemplate();
+        if (!env.acceptsProfiles("development"))
+            redisTemplate.setEnableTransactionSupport(true);
         redisTemplate.setConnectionFactory(jedisConnectionFactory);
         return redisTemplate;
     }

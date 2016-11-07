@@ -115,10 +115,11 @@ public abstract class CommonTestBase extends BaseTest {
         articleCommentRepository.saveAndFlush(comment);
         BoundHashOperations<String, String, Long> articleOperations = redisTemplate
                 .boundHashOps(ContractHelper.articleFlag + article.getId());
-        articleOperations.putIfAbsent("comments", 0L);
         Long comments = articleOperations.get("comments");
-        articleOperations.put("comments", comments + 1L);
-
+        if (Objects.isNull(comments))
+            articleOperations.put("comments", 1L);
+        else
+            articleOperations.put("comments", comments + 1L);
         BoundListOperations<String, AppArticleCommentModel> articleCommentBoundListOperations =
                 articleCommentRedisTemplate.boundListOps(ContractHelper.articleCommentFlag + article.getId());
         articleCommentBoundListOperations.leftPush(articleService.changeModel(comment));

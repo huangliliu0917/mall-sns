@@ -9,9 +9,11 @@
 
 package com.huotu.huobanplus.sns.boot;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.env.Environment;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 
 /**
@@ -21,12 +23,17 @@ import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 @Configuration
 public class LocalRuntimeConfig {
 
+    @Autowired
+    private Environment env;
+
     @Bean
     JedisConnectionFactory jedisConnectionFactory() {
         JedisConnectionFactory factory = new JedisConnectionFactory();
         factory.setHostName("120.24.243.104");
         factory.setPort(6380);
-        factory.setDatabase(10);
+        if (env.acceptsProfiles("development"))
+            factory.setDatabase(11);
+        else factory.setDatabase(10);
         factory.setPassword("k2928jdjh37ejGHUjq82jdjfuKOOOO93jdckr8xnvbuYy38djU38zjOYTNC1838djaj");
         return factory;
     }

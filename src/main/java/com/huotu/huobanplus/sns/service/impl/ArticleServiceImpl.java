@@ -349,9 +349,11 @@ public class ArticleServiceImpl implements ArticleService {
 //        articleRepository.addComments(id);
         BoundHashOperations<String, String, Long> articleOperations = redisTemplate
                 .boundHashOps(ContractHelper.articleFlag + id);
-        articleOperations.putIfAbsent("comments", 0L);
         Long comments = articleOperations.get("comments");
-        articleOperations.put("comments", comments + 1L);
+        if (Objects.isNull(comments))
+            articleOperations.put("comments", 1L);
+        else
+            articleOperations.put("comments", comments + 1L);
 
         BoundListOperations<String, AppArticleCommentModel> articleCommentBoundListOperations =
                 articleCommentRedisTemplate.boundListOps(ContractHelper.articleCommentFlag + id);
@@ -500,7 +502,7 @@ public class ArticleServiceImpl implements ArticleService {
         AppArticleCommentModel model = changeModel(articleComment);
 
         models.add(model);
-        Collections.sort(models, (o1, o2) -> o1.getPid().intValue() - o2.getPid().intValue());
+        Collections.sort(models, (o1, o2) -> o1.getDate().intValue() - o2.getDate().intValue());
         replyArticleComment.setExtend(objectMapper.writeValueAsString(models));
         if (null == articleComment.getPath()) {
             replyArticleComment.setPath("," + articleComment.getId() + ",");
