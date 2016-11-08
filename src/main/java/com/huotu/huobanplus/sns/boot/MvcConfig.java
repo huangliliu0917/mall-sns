@@ -139,7 +139,7 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/app/**")
                 .allowedOrigins("*")
-                .allowedMethods("*")
+                .allowedMethods("GET", "POST")
                 .allowedHeaders("*")
 //                .exposedHeaders("header1", "header2")
                 .allowCredentials(true).maxAge(3600);
