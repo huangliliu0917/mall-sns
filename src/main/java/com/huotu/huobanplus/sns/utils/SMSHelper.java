@@ -5,8 +5,8 @@ import com.huotu.huobanplus.sns.model.common.ResultModel;
 
 public class SMSHelper {
 	private static String serverUrl = "http://222.73.117.156/msg/HttpBatchSendSM";
-	private static String account = "qibingdb";//fenmao
-	private static String pswd = "Qbdb147258";//Txb123456
+	private static String account = "fenmao";//fenmao
+	private static String pswd = "Txb123456";//Txb123456
 
 	public SMSHelper() {
 	}

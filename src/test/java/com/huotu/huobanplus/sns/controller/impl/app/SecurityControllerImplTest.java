@@ -83,7 +83,7 @@ public class SecurityControllerImplTest extends BaseTest {
 
     @Test
     public void sendCode() throws Exception {
-        mockMvc.perform(device.getApi("/app/security/sendCode")
+        mockMvc.perform(device.postApi("/security/sendCode")
                 .param("customerId",customerId.toString())
                 .param("phone","18368893860")
                 .param("type","1")
