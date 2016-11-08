@@ -6,13 +6,14 @@ import com.huotu.huobanplus.sns.boot.PublicParameterHolder;
 import com.huotu.huobanplus.sns.controller.app.CircleController;
 import com.huotu.huobanplus.sns.entity.*;
 import com.huotu.huobanplus.sns.model.*;
-import com.huotu.huobanplus.sns.model.admin.CircleSearchModel;
 import com.huotu.huobanplus.sns.model.common.AppCode;
 import com.huotu.huobanplus.sns.repository.ArticleRepository;
 import com.huotu.huobanplus.sns.repository.CircleRepository;
 import com.huotu.huobanplus.sns.repository.NoticeRepository;
-import com.huotu.huobanplus.sns.repository.UserCircleRepository;
-import com.huotu.huobanplus.sns.service.*;
+import com.huotu.huobanplus.sns.service.ArticleService;
+import com.huotu.huobanplus.sns.service.CircleService;
+import com.huotu.huobanplus.sns.service.NoticeService;
+import com.huotu.huobanplus.sns.service.SlideService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -34,12 +35,6 @@ public class CircleControllerImpl implements CircleController {
     private CircleRepository circleRepository;
 
     @Autowired
-    private UserCircleService userCircleService;
-
-    @Autowired
-    private UserCircleRepository userCircleRepository;
-
-    @Autowired
     private NoticeService noticeService;
 
     @Autowired
@@ -59,14 +54,7 @@ public class CircleControllerImpl implements CircleController {
         AppCircleIndexSlideModel[] slideModels= slideService.getSlideModelList(slides);
         slideList.outputData(slideModels);
 
-        CircleSearchModel model=new CircleSearchModel();
-        model.setPageNo(0);
-        model.setPageSize(20);
-        model.setCustomerId(customerId);
-        model.setSuggested(1);
-        model.setSortField("userAmount");
-        model.setAscOrdesc(0);
-        List<Circle> circles=circleService.findCircleList(model).getContent();
+        List<Circle> circles=circleService.findAppCircleList(customerId,null);
         AppCircleIndexSuggestModel[] circleModels= circleService.getCircleAppModels(circles);
         suggestList.outputData(circleModels);
 
@@ -74,19 +62,14 @@ public class CircleControllerImpl implements CircleController {
     }
 
     @Override
-    public ApiResult circleIndexSuggestList(Output<AppCircleIndexSuggestModel[]> suggestList,Integer pageNo,Integer pageSize) throws Exception {
+    public ApiResult circleIndexSuggestList(Output<AppCircleIndexSuggestModel[]> suggestList,
+                                            Long lastId) throws Exception {
         Long customerId=PublicParameterHolder.getParameters().getCustomerId();
         if(customerId==null){
             return ApiResult.resultWith(AppCode.NOCUSTOMERID_ERROR);
         }
 
-        CircleSearchModel model=new CircleSearchModel();
-        model.setPageNo(pageNo);
-        model.setPageSize(pageSize);
-        model.setCustomerId(customerId);
-        model.setSortField("userAmount");
-        model.setAscOrdesc(0);
-        List<Circle> circles=circleService.findCircleList(model).getContent();
+        List<Circle> circles=circleService.findAppCircleList(customerId,lastId);
 
         AppCircleIndexSuggestModel[] circleModels= circleService.getCircleAppModels(circles);
 
@@ -192,7 +175,7 @@ public class CircleControllerImpl implements CircleController {
     }
 
     @Override
-    public ApiResult articleCommentsTop(Output<AppClickUserListModel[]> userList, Long id) throws Exception {
+    public ApiResult articleCommentsTop(Output<AppCircleArticleDetailModel> userList, Long id) throws Exception {
         return null;
     }
 

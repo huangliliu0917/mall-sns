@@ -143,6 +143,15 @@ public class CircleServiceImpl implements CircleService {
     }
 
     @Override
+    public List<Circle> findAppCircleList(Long customerId,Long lastId) throws IOException {
+        if(lastId==null){
+            return circleRepository.findByCustomerIdOrderByUserAmountDesc(customerId,new PageRequest(0,20));
+        }else {
+            return circleRepository.findByCustomerIdAndIdLessThanOrderByUserAmountDesc(customerId,lastId,new PageRequest(0,20));
+        }
+    }
+
+    @Override
     public void addCircle(CircleListModel circleListModel) throws IOException {
         Category category=circleListModel.getCategoryId()==null?null: categoryRepository.findOne(circleListModel.getCategoryId());
         User leader=circleListModel.getLeaderId()==null?null:userRepository.findOne(circleListModel.getLeaderId());
@@ -185,7 +194,7 @@ public class CircleServiceImpl implements CircleService {
             if(!circle.isEnabled()){
                 continue;
             }
-            String returnUrl=""+circle.getId();
+            String returnUrl=""+circle.getId();//todo url
             models[i]=new AppCircleIndexSuggestModel(circle.getName(),circle.getPictureUrl(),returnUrl,circle.getUserAmount());
         }
         return models;

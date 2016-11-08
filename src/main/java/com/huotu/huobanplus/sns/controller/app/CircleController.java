@@ -9,16 +9,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * 圈子
- * Created by Administrator on 2016/9/29.
+ * Created by slt on 2016/9/29.
  */
 @RequestMapping("/app/circle")
 public interface CircleController {
 
     /**
-     * 圈子首页幻灯及推荐
+     * 圈子首页的幻灯片和推荐的圈子列表
      *
-     * @param slideList   幻灯轮播
-     * @param suggestList 推荐
+     * @param slideList   幻灯轮播列表
+     * @param suggestList 推荐列表
      * @return
      * @throws Exception
      */
@@ -27,15 +27,15 @@ public interface CircleController {
             , Output<AppCircleIndexSuggestModel[]> suggestList) throws Exception;
 
     /**
-     * 圈子推荐列表
+     * 圈子列表
      *
-     * @param suggestList
+     * @param suggestList   圈子列表
      * @return
      * @throws Exception
      */
     @RequestMapping(value = "/circleIndexSuggestList", method = RequestMethod.GET)
     ApiResult circleIndexSuggestList(Output<AppCircleIndexSuggestModel[]> suggestList,
-                                     Integer pageNo,Integer pageSize) throws Exception;
+                                     Long lastId) throws Exception;
 
     /**
      * 圈子介绍
@@ -95,10 +95,10 @@ public interface CircleController {
             , @RequestParam(value = "id",required = true) Long id) throws Exception;
 
     /**
-     * 圈子公告
+     * 圈子公告详情
      *
      * @param data         公告数据
-     * @param id           文章id
+     * @param id           文章id(必传)
      * @return
      * @throws Exception
      */
@@ -116,7 +116,7 @@ public interface CircleController {
      * @throws Exception
      */
     @RequestMapping(value = "/articleCommentsTop", method = RequestMethod.GET)
-    ApiResult articleCommentsTop(Output<AppClickUserListModel[]> userList
+    ApiResult articleCommentsTop(Output<AppCircleArticleDetailModel> userList
             , @RequestParam("id") Long id) throws Exception;
 
 
@@ -126,7 +126,7 @@ public interface CircleController {
      * @param commentsList 文章评论列表
      * @param id           文章Id
      * @param lastId       上一个评论id
-     * @return
+     * @return             评论model列表
      * @throws Exception
      */
     @RequestMapping(value = "/articleCommentsList", method = RequestMethod.GET)

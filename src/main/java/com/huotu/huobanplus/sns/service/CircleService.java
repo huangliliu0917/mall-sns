@@ -59,6 +59,15 @@ public interface CircleService {
     Page<Circle> findCircleList(CircleSearchModel searchModel) throws IOException;
 
     /**
+     * app获取圈子列表
+     * @param lastId        最后一个记录的ID
+     * @param customerId    商户ID
+     * @return              圈子列表
+     * @throws IOException
+     */
+    List<Circle> findAppCircleList(Long customerId,Long lastId) throws IOException;
+
+    /**
      * 新增圈子
      * @param circleListModel 圈子model
      * @throws IOException

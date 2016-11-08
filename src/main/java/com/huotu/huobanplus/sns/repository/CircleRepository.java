@@ -10,6 +10,7 @@
 package com.huotu.huobanplus.sns.repository;
 
 import com.huotu.huobanplus.sns.entity.Circle;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
@@ -18,6 +19,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Created by jin on 2016/10/10.
@@ -41,4 +43,8 @@ public interface CircleRepository extends JpaRepository<Circle, Long>, JpaSpecif
     @Modifying(clearAutomatically = true)
     @Query("update Circle c set c.userAmount=c.userAmount-1 where c.id = :id")
     void reduceUserAmount(@Param("id") Long id);
+
+    List<Circle> findByCustomerIdAndIdLessThanOrderByUserAmountDesc(Long customerId, Long lastId, Pageable pageable);
+
+    List<Circle> findByCustomerIdOrderByUserAmountDesc(Long customerId,Pageable pageable);
 }

@@ -104,8 +104,7 @@ public class CircleControllerImplTest extends CommonTestBase {
         AppCircleIndexSuggestModel[] oldCircleModels=circleService.getCircleAppModels(circles);
 
         String result=mockMvc.perform(device.getApi("/circle/circleIndexSuggestList")
-                .param("pageNo","0")
-                .param("pageSize","12")
+//                .param("lastId",""+circles.get(0).getId())
                 .build())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.resultCode").value(AppCode.SUCCESS.getValue()))
