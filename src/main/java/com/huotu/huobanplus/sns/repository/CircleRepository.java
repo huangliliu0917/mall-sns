@@ -44,7 +44,7 @@ public interface CircleRepository extends JpaRepository<Circle, Long>, JpaSpecif
     @Query("update Circle c set c.userAmount=c.userAmount-1 where c.id = :id")
     void reduceUserAmount(@Param("id") Long id);
 
-    List<Circle> findByCustomerIdAndIdLessThanOrderByUserAmountDesc(Long customerId, Long lastId, Pageable pageable);
+    List<Circle> findByCustomerIdAndUserAmountLessThanOrderByUserAmountDesc(Long customerId, Long userAmount, Pageable pageable);
 
     List<Circle> findByCustomerIdOrderByUserAmountDesc(Long customerId,Pageable pageable);
 }

@@ -144,10 +144,11 @@ public class CircleServiceImpl implements CircleService {
 
     @Override
     public List<Circle> findAppCircleList(Long customerId,Long lastId) throws IOException {
-        if(lastId==null){
+        if(lastId==null||lastId<=0){
             return circleRepository.findByCustomerIdOrderByUserAmountDesc(customerId,new PageRequest(0,20));
         }else {
-            return circleRepository.findByCustomerIdAndIdLessThanOrderByUserAmountDesc(customerId,lastId,new PageRequest(0,20));
+            Circle circle=circleRepository.findOne(lastId);
+            return circleRepository.findByCustomerIdAndUserAmountLessThanOrderByUserAmountDesc(customerId,circle.getUserAmount(),new PageRequest(0,20));
         }
     }
 
@@ -194,8 +195,7 @@ public class CircleServiceImpl implements CircleService {
             if(!circle.isEnabled()){
                 continue;
             }
-            String returnUrl=""+circle.getId();//todo url
-            models[i]=new AppCircleIndexSuggestModel(circle.getName(),circle.getPictureUrl(),returnUrl,circle.getUserAmount());
+            models[i]=new AppCircleIndexSuggestModel(circle.getId(),circle.getName(),circle.getPictureUrl(),circle.getUserAmount());
         }
         return models;
     }
@@ -234,10 +234,11 @@ public class CircleServiceImpl implements CircleService {
         if(circle==null){
             return appCircleModel;
         }
+        appCircleModel.setCircleId(circle.getId());
         appCircleModel.setDate(circle.getDate().getTime());
         appCircleModel.setName(circle.getName());
         appCircleModel.setPictureUrl(circle.getPictureUrl());
-        appCircleModel.setUrl(commonConfigService.getWebUrl()+"/app/circle/introduce?id="+circle.getId());//todo 圈子appmodel地址
+//        appCircleModel.setUrl(commonConfigService.getWebUrl()+"/app/circle/introduce?id="+circle.getId());//todo 圈子appmodel地址
         return appCircleModel;
     }
 }

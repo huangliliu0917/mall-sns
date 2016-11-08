@@ -13,7 +13,6 @@ import com.huotu.huobanplus.sns.entity.Notice;
 import com.huotu.huobanplus.sns.model.AppCircleNoticeDetailModel;
 import com.huotu.huobanplus.sns.model.AppCircleNoticeModel;
 import com.huotu.huobanplus.sns.repository.NoticeRepository;
-import com.huotu.huobanplus.sns.service.CommonConfigService;
 import com.huotu.huobanplus.sns.service.NoticeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,9 +29,6 @@ public class NoticeServiceImpl implements NoticeService {
     @Autowired
     private NoticeRepository noticeRepository;
 
-    @Autowired
-    private CommonConfigService commonConfigService;
-
     @Override
     public AppCircleNoticeModel[] getNoticeModels(Long circleId) throws IOException {
         List<Notice> notices=noticeRepository.findByCircle_IdAndEnabledOrderByIdDesc(circleId,true);
@@ -40,8 +36,8 @@ public class NoticeServiceImpl implements NoticeService {
         for(int i=0,size=notices.size();i<size;i++){
             AppCircleNoticeModel model=new AppCircleNoticeModel();
             Notice notice=notices.get(i);
+            model.setNoticeId(notice.getId());
             model.setName(notice.getName());
-            model.setUrl(commonConfigService.getWebUrl()+"/app/circle/notice?id="+notice.getId());//todo 公告详情页面
             models[i]=model;
         }
         return models;

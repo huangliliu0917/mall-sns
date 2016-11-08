@@ -12,6 +12,10 @@ import lombok.*;
 @EqualsAndHashCode
 public class AppCircleIndexSuggestModel {
     /**
+     * 圈子ID
+     */
+    private Long circleId;
+    /**
      * 标题
      */
     private String title;
@@ -19,10 +23,6 @@ public class AppCircleIndexSuggestModel {
      * 图片地址
      */
     private String pictureUrl;
-    /**
-     * 跳转地址
-     */
-    private String url;
     /**
      * 人数
      */

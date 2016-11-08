@@ -11,12 +11,13 @@ import lombok.Setter;
 @Setter
 @EqualsAndHashCode
 public class AppCircleNoticeModel {
+
+    /**
+     * 公告ID
+     */
+    private Long noticeId;
     /**
      * 公告标题
      */
     private String name;
-    /**
-     * 公告地址
-     */
-    private String url;
 }

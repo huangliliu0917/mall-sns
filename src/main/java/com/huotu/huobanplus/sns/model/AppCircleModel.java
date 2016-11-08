@@ -11,7 +11,10 @@ import lombok.Setter;
 @Setter
 @EqualsAndHashCode
 public class AppCircleModel {
-
+    /**
+     * 圈子ID
+     */
+    private Long circleId;
     /**
      * 名称
      */
