@@ -242,7 +242,7 @@
             circleModel.circleName=$("input[name='circleName']").val();
             circleModel.summary=$("input[name='summary']").val();
             circleModel.categoryId=$("input[name='categoryId']").val();
-            circleModel.pictureUrl=circleConfig.geturlPath($(".image-crop img").attr("src"));
+            circleModel.pictureUrl=$(".image-crop img").attr("src");
             circleModel.suggested=$("input[name='suggested']:checked").val();
             circleModel.enabled=$("input[name='enabled']:checked").val();
             circleModel.leaderId=$("input[name='leaderId']").val();

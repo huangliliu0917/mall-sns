@@ -12,8 +12,10 @@ package com.huotu.huobanplus.sns.repository;
 import com.huotu.huobanplus.sns.entity.Circle;
 import com.huotu.huobanplus.sns.entity.User;
 import com.huotu.huobanplus.sns.entity.UserCircle;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
@@ -27,7 +29,9 @@ public interface UserCircleRepository extends JpaRepository<UserCircle, Long>, J
 
     List<UserCircle> findByUserAndCircle(@Param("user") User user, @Param("circle") Circle circle);
 
-    List<UserCircle> findTop5ByCustomerIdAndUser_IdAndIdLessThanOrderByIdDesc(Long customerId,Long userId,Long id);
+    @Query("select uc from UserCircle as uc where uc.customerId=?1 and uc.user.id=?2 and uc.id<?3 order by uc.id desc ")
+    List<UserCircle> findTop5ByCustomerIdAndUser_IdAndIdLessThanOrderByIdDesc(Long customerId, Long userId, Long id, Pageable pageable);
 
-    List<UserCircle> findTop5ByCustomerIdAndUser_IdOrderByIdDesc(Long customerId,Long userId);
+    @Query("select uc from UserCircle as uc where uc.customerId=?1 and uc.user.id=?2 order by uc.id desc ")
+    List<UserCircle> findTop5ByCustomerIdAndUser_IdOrderByIdDesc(Long customerId,Long userId,Pageable pageable);
 }

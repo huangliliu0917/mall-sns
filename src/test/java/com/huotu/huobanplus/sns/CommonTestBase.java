@@ -88,6 +88,15 @@ public abstract class CommonTestBase extends BaseTest {
     @Autowired
     private AppSecurityService appSecurityService;
 
+    @Autowired
+    protected NoticeRepository noticeRepository;
+
+    @Autowired
+    protected NoticeService noticeService;
+
+    @Autowired
+    protected LevelRepository levelRepository;
+
     @Before
     public void prepareDevice() throws UnsupportedEncodingException {
         device = Device.newDevice(DeviceType.Android);

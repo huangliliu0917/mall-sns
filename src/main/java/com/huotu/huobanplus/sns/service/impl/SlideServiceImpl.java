@@ -52,7 +52,7 @@ public class SlideServiceImpl implements SlideService {
 
     @Override
     public AppCircleIndexSlideModel getSlideModel(Slide slide) {
-        String pictureUrl=commonConfigService.getResourcesUri()+slide.getPictureUrl();
+        String pictureUrl=slide.getPictureUrl();
         String skipUrl=slide.getUrl();
         return new AppCircleIndexSlideModel(pictureUrl,skipUrl);
     }

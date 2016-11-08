@@ -78,7 +78,7 @@ public interface CircleController {
      */
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     ApiResult list(Output<AppCircleArticleModel[]> articleList
-            , @RequestParam("id") Long id
+            , @RequestParam(value = "id",required = true) Long id
             , @RequestParam(value = "type" ,required = false) Integer type
             , @RequestParam(value = "lastId",required = false) Long lastId) throws Exception;
 
@@ -86,15 +86,13 @@ public interface CircleController {
      * 圈子文章
      *
      * @param data         文章数据
-     * @param commentsList 评论列表 (显示最新5条)
      * @param id           文章id
      * @return
      * @throws Exception
      */
     @RequestMapping(value = "/article", method = RequestMethod.GET)
     ApiResult article(Output<AppCircleArticleDetailModel> data
-            , Output<AppCircleArticleCommentsModel[]> commentsList
-            , @RequestParam("id") Long id) throws Exception;
+            , @RequestParam(value = "id",required = true) Long id) throws Exception;
 
 
     /**

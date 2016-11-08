@@ -25,6 +25,7 @@ import com.huotu.huobanplus.sns.service.CommonConfigService;
 import com.huotu.huobanplus.sns.service.UserCircleService;
 import com.huotu.huobanplus.sns.utils.UserHelper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -96,9 +97,9 @@ public class UserCircleServiceImpl implements UserCircleService {
     @Override
     public List<UserCircle> getUserCircleList(Long customerId,Long userId, Long lastId) throws IOException {
         if(lastId==null){
-            return userCircleRepository.findTop5ByCustomerIdAndUser_IdOrderByIdDesc(customerId,userId);
+            return userCircleRepository.findTop5ByCustomerIdAndUser_IdOrderByIdDesc(customerId,userId,new PageRequest(0,5));
         }else {
-            return userCircleRepository.findTop5ByCustomerIdAndUser_IdAndIdLessThanOrderByIdDesc(customerId,userId,lastId);
+            return userCircleRepository.findTop5ByCustomerIdAndUser_IdAndIdLessThanOrderByIdDesc(customerId,userId,lastId,new PageRequest(0,5));
 
         }
     }
@@ -121,13 +122,13 @@ public class UserCircleServiceImpl implements UserCircleService {
         model.setPid(userCircle.getId());
         model.setCircleId(userCircle.getCircle().getId());
         model.setName(userCircle.getCircle().getName());
-        String circlePictureUrl=commonConfigService.getResourcesUri()+userCircle.getCircle().getPictureUrl();
+        String circlePictureUrl=userCircle.getCircle().getPictureUrl();
         model.setPictureUrl(circlePictureUrl);
         model.setNum(userCircle.getCircle().getUserAmount());
         model.setIntroduceUrl(""+userCircle.getCircle().getId());//todo 圈子介绍链接地址
         model.setUrl(""+userCircle.getCircle().getId());//todo 圈子页面
 
-        List<Article> circles=articleRepository.findTop3ByCircle_IdAndEnabledOrderByIdDesc(userCircle.getCircle().getId(),true);
+        List<Article> circles=articleRepository.findTop3ByCircle_IdAndEnabledOrderByIdDesc(userCircle.getCircle().getId(),true,new PageRequest(0,3));
 
         List<AppCircleIndexArticleListModel> articleModels=getArticleModelList(circles);
         model.setList(articleModels);

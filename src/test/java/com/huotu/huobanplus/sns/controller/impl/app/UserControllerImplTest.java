@@ -93,7 +93,7 @@ public class UserControllerImplTest extends CommonTestBase {
         }
 
         for (User concernUser : list) {
-            randomConcernOwner(concernUser);
+            randomConcernOther(concernUser);
         }
         Circle circle = randomCircle();
         String data = mockMvc.perform(device.postApi("/user/publishArticle").param("name", UUID.randomUUID().toString())
