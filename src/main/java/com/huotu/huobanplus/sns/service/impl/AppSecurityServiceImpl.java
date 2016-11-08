@@ -66,7 +66,7 @@ public class AppSecurityServiceImpl implements AppSecurityService {
         try {
             String authentication = request.getHeader("authentication");
             if (!StringUtils.isEmpty(authentication)) return parseJWT(authentication);
-        } catch (ExpiredJwtException ex) {
+        } catch (Exception ex) {
         }
         return null;
     }

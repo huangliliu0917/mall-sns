@@ -52,13 +52,14 @@ public interface SecurityController {
      * @param voiceAble  是否支持语音播报
      * @param customerId 商户id
      * @param phone      String(11)
-     * @param type       类型1：注册    2：忘记密码    3:绑定(更换)手机
+     * @param type       类型1：注册
      * @param codeType   0文本 1语音
      * @return <ul>
      * <li>20003 不合法的手机号</li>
      * <li>20104 验证码发送间隔为90秒</li>
      * <li>20109 短信发送通道不稳定，请重新尝试</li>
      * <li>20108  "还不支持的语音播报"</li>
+     * <li>20006,"手机号已存在，请换用其他手机号"</li>
      * </ul>
      */
     @RequestMapping(value = "/sendCode", method = RequestMethod.POST)
@@ -67,7 +68,7 @@ public interface SecurityController {
             , @RequestParam("phone") String phone
             , @RequestParam("type") Integer type
             , @RequestParam("codeType") Integer codeType)
-            throws VericationCodeIntervalException, WrongMobileException, NotSupportVoiceException, MessageInternetException;
+            throws VericationCodeIntervalException, WrongMobileException, NotSupportVoiceException, MessageInternetException, MobileExistException;
 
     /***
      * 用户手机登录
@@ -78,7 +79,7 @@ public interface SecurityController {
      * @param openId     openid
      * @param nickName   用户昵称
      * @param imageUrl   用户头像
-     * @return* token数据
+     * @return token数据
      * <ul>
      *     <li>20004, "错误的用户名密码"</li>
      *     <li>20005, "密码长度需要大于6"</li>
@@ -86,7 +87,6 @@ public interface SecurityController {
      *     <li>20007,"手机号不存在，请换用其他手机号"</li>
      * </ul>
      */
-    @Deprecated
     @RequestMapping(value = "/mobileLogin", method = RequestMethod.POST)
     ApiResult mobileLogin(Output<String> data
             , @RequestParam("customerId") Long customerId
@@ -109,7 +109,7 @@ public interface SecurityController {
      * @param openId     openid
      * @param nickName   用户昵称
      * @param imageUrl   用户头像
-     * @return* token数据
+     * @return token数据
      * <ul>
      * <li>20107, "验证码到期了"</li>
      * <li>20106, "验证码错误"</li>
@@ -118,6 +118,7 @@ public interface SecurityController {
      * <li>20006,"手机号已存在，请换用其他手机号"</li>
      * </ul>
      */
+    @RequestMapping(value = "/mobileRegister", method = RequestMethod.POST)
     ApiResult mobileRegister(Output<String> data
             , @RequestParam("customerId") Long customerId
             , @RequestParam("phone") String phone

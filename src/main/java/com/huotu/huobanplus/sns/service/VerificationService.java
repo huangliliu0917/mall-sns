@@ -1,10 +1,7 @@
 package com.huotu.huobanplus.sns.service;
 
 
-import com.huotu.huobanplus.sns.exception.MessageInternetException;
-import com.huotu.huobanplus.sns.exception.NotSupportVoiceException;
-import com.huotu.huobanplus.sns.exception.VericationCodeIntervalException;
-import com.huotu.huobanplus.sns.exception.WrongMobileException;
+import com.huotu.huobanplus.sns.exception.*;
 import com.huotu.huobanplus.sns.model.common.CodeType;
 import com.huotu.huobanplus.sns.model.common.VerificationType;
 import org.springframework.transaction.annotation.Transactional;
@@ -82,7 +79,7 @@ public interface VerificationService {
      */
     @Transactional
     void sendCode(Long customerId, String mobile, VerificationProject project, String code, Date currentDate, VerificationType type, CodeType sentType)
-            throws VericationCodeIntervalException, NotSupportVoiceException, WrongMobileException, MessageInternetException;
+            throws VericationCodeIntervalException, NotSupportVoiceException, WrongMobileException, MessageInternetException, MobileExistException;
 
     /**
      * 验证该验证码

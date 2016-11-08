@@ -83,8 +83,13 @@ public class SecurityControllerImplTest extends BaseTest {
 
     @Test
     public void sendCode() throws Exception {
-//        mockMvc.perform(device.getApi("/app/security/sendCode").build())
-//                .andDo(print());
+        mockMvc.perform(device.getApi("/app/security/sendCode")
+                .param("customerId",customerId.toString())
+                .param("phone","18368893860")
+                .param("type","1")
+                .param("codeType","0")
+                .build())
+                .andDo(print());
     }
 
     @Autowired

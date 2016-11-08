@@ -7,7 +7,7 @@ import com.huotu.common.api.ICommonEnum;
  */
 public enum VerificationType implements ICommonEnum {
 
-    BIND_REGISTER(1, "注册登录");
+    BIND_REGISTER(1, "注册");
 
     private int value;
 

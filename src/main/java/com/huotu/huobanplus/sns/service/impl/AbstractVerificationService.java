@@ -2,10 +2,9 @@ package com.huotu.huobanplus.sns.service.impl;
 
 
 import com.huotu.huobanplus.sns.entity.VerificationCode;
-import com.huotu.huobanplus.sns.exception.MessageInternetException;
-import com.huotu.huobanplus.sns.exception.NotSupportVoiceException;
-import com.huotu.huobanplus.sns.exception.VericationCodeIntervalException;
-import com.huotu.huobanplus.sns.exception.WrongMobileException;
+import com.huotu.huobanplus.sns.exception.*;
+import com.huotu.huobanplus.sns.mallentity.MallUser;
+import com.huotu.huobanplus.sns.mallrepository.MallUserRepository;
 import com.huotu.huobanplus.sns.model.common.AppCode;
 import com.huotu.huobanplus.sns.model.common.CodeType;
 import com.huotu.huobanplus.sns.model.common.VerificationType;
@@ -29,9 +28,12 @@ public abstract class AbstractVerificationService implements VerificationService
      */
     private int gapSeconds = 60;
 
+    @Autowired
+    private MallUserRepository mallUserRepository;
+
     @Transactional
     public void sendCode(Long customerId, String mobile, VerificationProject project, String code, Date currentDate, VerificationType type, CodeType sentType)
-            throws VericationCodeIntervalException, NotSupportVoiceException, WrongMobileException, MessageInternetException {
+            throws VericationCodeIntervalException, NotSupportVoiceException, WrongMobileException, MessageInternetException, MobileExistException {
         if (!RegexHelper.IsValidMobileNo(mobile)) {
             throw new WrongMobileException(AppCode.MOBILE_INVOID.getValue(), AppCode.MOBILE_INVOID.getName());
         }
@@ -42,6 +44,15 @@ public abstract class AbstractVerificationService implements VerificationService
         if (!supportVoice() && sentType == CodeType.voice) {
             throw new NotSupportVoiceException(AppCode.NOT_SUPPORT_VOICE.getValue(), AppCode.NOT_SUPPORT_VOICE.getName());
         }
+
+        MallUser mallUser = mallUserRepository.findByCustomerIdAndLoginName(customerId, mobile);
+        //商城中判断用户是否存在
+        if (type == VerificationType.BIND_REGISTER) {
+            if (mallUser != null) {
+                throw new MobileExistException(AppCode.MOBILE_EXIST.getValue(), AppCode.MOBILE_EXIST.getName());
+            }
+        }
+
 
         VerificationCode verificationCode = verificationCodeRepository.findByCustomerIdAndMobileAndTypeAndCodeType(customerId, mobile, type, sentType);
         if (verificationCode != null) {

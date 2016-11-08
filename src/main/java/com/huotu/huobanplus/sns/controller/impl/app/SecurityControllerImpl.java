@@ -64,7 +64,7 @@ public class SecurityControllerImpl implements SecurityController {
 
     @Override
     public ApiResult sendCode(Output<Boolean> voiceAble, Long customerId, String phone, Integer type, Integer codeType)
-            throws VericationCodeIntervalException, WrongMobileException, NotSupportVoiceException, MessageInternetException {
+            throws VericationCodeIntervalException, WrongMobileException, NotSupportVoiceException, MessageInternetException, MobileExistException {
         //todo 需要根据costomerid进行修改
         voiceAble.outputData(verificationService.supportVoice());
         VerificationType verificationType = EnumHelper.getEnumType(VerificationType.class, type);
