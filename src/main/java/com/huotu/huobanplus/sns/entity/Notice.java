@@ -32,10 +32,22 @@ public class Notice {
     private Circle circle;
 
     /**
+     * 发布用户
+     */
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH})
+    private User publisher;
+
+    /**
      * 标题
      */
     @Column(length = 100)
     private String name;
+
+    /**
+     * 封面图片地址
+     */
+    @Column(length = 200)
+    private String pictureUrl;
 
     /**
      * 内容
@@ -49,6 +61,16 @@ public class Notice {
      */
     @Temporal(TemporalType.TIMESTAMP)
     private Date date;
+
+    /**
+     * 点赞量
+     */
+    private long click;
+
+    /**
+     * 浏览量
+     */
+    private long view;
 
     /**
      * 启用

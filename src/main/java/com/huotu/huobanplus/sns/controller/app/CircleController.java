@@ -94,19 +94,29 @@ public interface CircleController {
     ApiResult article(Output<AppCircleArticleDetailModel> data
             , @RequestParam(value = "id",required = true) Long id) throws Exception;
 
+    /**
+     * 圈子公告
+     *
+     * @param data         公告数据
+     * @param id           文章id
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/notice", method = RequestMethod.GET)
+    ApiResult notice(Output<AppCircleNoticeDetailModel> data
+            , @RequestParam(value = "id",required = true) Long id) throws Exception;
+
 
     /**
      * 文章评论
      *
-     * @param articleData 文章数据
      * @param userList    评论用户列表
      * @param id          文章id
      * @return
      * @throws Exception
      */
     @RequestMapping(value = "/articleCommentsTop", method = RequestMethod.GET)
-    ApiResult articleCommentsTop(Output<AppCircleArticleDetailModel> articleData
-            , Output<AppClickUserListModel[]> userList
+    ApiResult articleCommentsTop(Output<AppClickUserListModel[]> userList
             , @RequestParam("id") Long id) throws Exception;
 
 

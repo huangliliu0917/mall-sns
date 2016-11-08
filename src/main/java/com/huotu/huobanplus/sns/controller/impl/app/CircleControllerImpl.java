@@ -4,15 +4,13 @@ import com.huotu.common.api.ApiResult;
 import com.huotu.common.api.Output;
 import com.huotu.huobanplus.sns.boot.PublicParameterHolder;
 import com.huotu.huobanplus.sns.controller.app.CircleController;
-import com.huotu.huobanplus.sns.entity.Article;
-import com.huotu.huobanplus.sns.entity.Circle;
-import com.huotu.huobanplus.sns.entity.Slide;
-import com.huotu.huobanplus.sns.entity.User;
+import com.huotu.huobanplus.sns.entity.*;
 import com.huotu.huobanplus.sns.model.*;
 import com.huotu.huobanplus.sns.model.admin.CircleSearchModel;
 import com.huotu.huobanplus.sns.model.common.AppCode;
 import com.huotu.huobanplus.sns.repository.ArticleRepository;
 import com.huotu.huobanplus.sns.repository.CircleRepository;
+import com.huotu.huobanplus.sns.repository.NoticeRepository;
 import com.huotu.huobanplus.sns.repository.UserCircleRepository;
 import com.huotu.huobanplus.sns.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +46,8 @@ public class CircleControllerImpl implements CircleController {
     private ArticleService articleService;
     @Autowired
     private ArticleRepository articleRepository;
+    @Autowired
+    private NoticeRepository noticeRepository;
     @Override
     public ApiResult circleIndexTop(Output<AppCircleIndexSlideModel[]> slideList, Output<AppCircleIndexSuggestModel[]> suggestList) throws Exception {
         Long customerId=PublicParameterHolder.getParameters().getCustomerId();
@@ -157,7 +157,6 @@ public class CircleControllerImpl implements CircleController {
         }
         type=type==null?0:type;
 
-
         AppCircleArticleModel[] articleModels=articleService.getArticleListModels(customerId,user.getId(),lastId,circle.getId(),type);
 
         articleList.outputData(articleModels);
@@ -180,7 +179,20 @@ public class CircleControllerImpl implements CircleController {
     }
 
     @Override
-    public ApiResult articleCommentsTop(Output<AppCircleArticleDetailModel> articleData, Output<AppClickUserListModel[]> userList, Long id) throws Exception {
+    public ApiResult notice(Output<AppCircleNoticeDetailModel> data, Long id) throws Exception {
+        Notice notice=noticeRepository.findOne(id);
+        if(notice==null){
+            return ApiResult.resultWith(AppCode.ERROR_NO_NOTICE);
+        }
+        AppCircleNoticeDetailModel noticeDetailModel=noticeService.getAppNoticeDetailModel(notice);
+
+        data.outputData(noticeDetailModel);
+
+        return ApiResult.resultWith(AppCode.SUCCESS);
+    }
+
+    @Override
+    public ApiResult articleCommentsTop(Output<AppClickUserListModel[]> userList, Long id) throws Exception {
         return null;
     }
 

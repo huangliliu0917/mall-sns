@@ -23,11 +23,9 @@ public class AppCircleArticleModel {
      * 图片地址
      */
     private String pictureUrl;
-
     /**
      * 用户Id
      */
-
     private Long userId;
     /**
      * 用户名称

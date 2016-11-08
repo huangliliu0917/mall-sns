@@ -125,8 +125,8 @@ public class UserCircleServiceImpl implements UserCircleService {
         String circlePictureUrl=userCircle.getCircle().getPictureUrl();
         model.setPictureUrl(circlePictureUrl);
         model.setNum(userCircle.getCircle().getUserAmount());
-        model.setIntroduceUrl(""+userCircle.getCircle().getId());//todo 圈子介绍链接地址
-        model.setUrl(""+userCircle.getCircle().getId());//todo 圈子页面
+        model.setIntroduceUrl(commonConfigService.getWebUrl()+"/app/circle/introduce?id="+userCircle.getCircle().getId());//todo 圈子介绍链接地址
+        model.setUrl(commonConfigService.getWebUrl()+"/app/circle/list?id="+userCircle.getCircle().getId());//todo 圈子页面
 
         List<Article> circles=articleRepository.findTop3ByCircle_IdAndEnabledOrderByIdDesc(userCircle.getCircle().getId(),true,new PageRequest(0,3));
 

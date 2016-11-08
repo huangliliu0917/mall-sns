@@ -9,6 +9,8 @@
 
 package com.huotu.huobanplus.sns.service;
 
+import com.huotu.huobanplus.sns.entity.Notice;
+import com.huotu.huobanplus.sns.model.AppCircleNoticeDetailModel;
 import com.huotu.huobanplus.sns.model.AppCircleNoticeModel;
 
 import java.io.IOException;
@@ -25,5 +27,12 @@ public interface NoticeService {
      * @throws IOException
      */
     AppCircleNoticeModel[] getNoticeModels(Long circleId) throws IOException;
+
+    /**
+     * 根据公告实体转换为model
+     * @param notice    实体
+     * @return          model
+     */
+    AppCircleNoticeDetailModel getAppNoticeDetailModel(Notice notice);
 
 }

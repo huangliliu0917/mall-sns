@@ -10,8 +10,10 @@
 package com.huotu.huobanplus.sns.service.impl;
 
 import com.huotu.huobanplus.sns.entity.Notice;
+import com.huotu.huobanplus.sns.model.AppCircleNoticeDetailModel;
 import com.huotu.huobanplus.sns.model.AppCircleNoticeModel;
 import com.huotu.huobanplus.sns.repository.NoticeRepository;
+import com.huotu.huobanplus.sns.service.CommonConfigService;
 import com.huotu.huobanplus.sns.service.NoticeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,6 +30,9 @@ public class NoticeServiceImpl implements NoticeService {
     @Autowired
     private NoticeRepository noticeRepository;
 
+    @Autowired
+    private CommonConfigService commonConfigService;
+
     @Override
     public AppCircleNoticeModel[] getNoticeModels(Long circleId) throws IOException {
         List<Notice> notices=noticeRepository.findByCircle_IdAndEnabledOrderByIdDesc(circleId,true);
@@ -36,15 +41,23 @@ public class NoticeServiceImpl implements NoticeService {
             AppCircleNoticeModel model=new AppCircleNoticeModel();
             Notice notice=notices.get(i);
             model.setName(notice.getName());
-            model.setUrl(""+notice.getId());//todo 公告详情页面
+            model.setUrl(commonConfigService.getWebUrl()+"/app/circle/notice?id="+notice.getId());//todo 公告详情页面
             models[i]=model;
         }
-//        notices.forEach(notice -> {
-//            AppCircleNoticeModel model=new AppCircleNoticeModel();
-//            model.setName(notice.getName());
-//            model.setUrl(""+notice.getId());//todo 公告详情页面
-//        });
-
         return models;
+    }
+
+    @Override
+    public AppCircleNoticeDetailModel getAppNoticeDetailModel(Notice notice) {
+        AppCircleNoticeDetailModel model=new AppCircleNoticeDetailModel();
+        model.setPid(notice.getId());
+        model.setName(notice.getName());
+        model.setContent(notice.getContent());
+        model.setTime(notice.getDate().getTime());
+        model.setUserName(notice.getPublisher().getNickName());
+        model.setUserHeadUrl(notice.getPublisher().getImgURL());
+        model.setPictureUrl(notice.getPictureUrl());
+        model.setClickAmount(notice.getClick());
+        return model;
     }
 }

@@ -4,22 +4,22 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * 圈子文章详情model
+ * 圈子公告详情model
  * Created by slt on 2016/9/29.
  */
 @Getter
 @Setter
-public class AppCircleArticleDetailModel {
+public class AppCircleNoticeDetailModel {
     /**
-     * 文章id
+     * 公告id
      */
     private Long pid;
     /**
-     * 文章标题
+     * 公告标题
      */
     private String name;
     /**
-     * 文章内容
+     * 公告内容
      */
     private String content;
     /**
@@ -35,7 +35,7 @@ public class AppCircleArticleDetailModel {
      */
     private String userHeadUrl;
     /**
-     * 文章发表时间
+     * 公告发表时间
      */
     private Long time;
     /**

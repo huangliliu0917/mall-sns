@@ -60,7 +60,9 @@ public enum AppCode implements ICommonEnum {
      */
     ERROR_NO_CIRCLE(40001,"未找到圈子"),
 
-    ERROR_NO_ARTICLE(40002,"未找到文章");
+    ERROR_NO_ARTICLE(40002,"未找到文章"),
+
+    ERROR_NO_NOTICE(40003,"未找到公告");
 
 
 

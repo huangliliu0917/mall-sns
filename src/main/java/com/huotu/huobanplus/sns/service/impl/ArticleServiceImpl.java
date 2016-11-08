@@ -684,6 +684,7 @@ public class ArticleServiceImpl implements ArticleService {
         AppCircleArticleDetailModel model=new AppCircleArticleDetailModel();
         model.setPid(article.getId());
         model.setName(article.getName());
+        model.setContent(article.getContent());
         model.setPictureUrl(article.getPictureUrl());
         model.setUserName(article.getPublisher().getNickName());
         model.setUserHeadUrl(article.getPublisher().getImgURL());

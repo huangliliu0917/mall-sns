@@ -228,7 +228,7 @@ public class CircleServiceImpl implements CircleService {
         appCircleModel.setDate(circle.getDate().getTime());
         appCircleModel.setName(circle.getName());
         appCircleModel.setPictureUrl(circle.getPictureUrl());
-        appCircleModel.setUrl(""+circle.getId());//todo 圈子appmodel地址
+        appCircleModel.setUrl(commonConfigService.getWebUrl()+"/app/circle/introduce?id="+circle.getId());//todo 圈子appmodel地址
         return appCircleModel;
     }
 }
