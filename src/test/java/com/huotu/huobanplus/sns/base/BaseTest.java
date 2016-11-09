@@ -1,7 +1,9 @@
 package com.huotu.huobanplus.sns.base;
 
 
-import com.huotu.huobanplus.sns.entity.*;
+import com.huotu.huobanplus.sns.entity.Article;
+import com.huotu.huobanplus.sns.entity.Category;
+import com.huotu.huobanplus.sns.entity.User;
 import com.huotu.huobanplus.sns.model.common.ArticleType;
 import com.huotu.huobanplus.sns.model.common.CategoryType;
 import com.huotu.huobanplus.sns.repository.*;
@@ -10,18 +12,13 @@ import com.huotu.huobanplus.sns.service.UserService;
 import com.huotu.huobanplus.sns.utils.StringHelper;
 import org.junit.Before;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.util.DigestUtils;
-import org.springframework.util.StringUtils;
 import org.springframework.web.context.WebApplicationContext;
 
-import javax.persistence.EntityManager;
-import javax.validation.constraints.NotNull;
-import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
-import java.util.*;
+import java.util.Date;
+import java.util.Random;
+import java.util.UUID;
 
 /**
  * Created by lgh on 2016/1/12.
@@ -34,7 +31,7 @@ public class BaseTest {
     @Autowired
     private WebApplicationContext webApplicationContext;
 
-    protected Long customerId = 3447L;
+    protected Long customerId = 7788L;
     @Autowired
     private CategoryRepository categoryRepository;
 

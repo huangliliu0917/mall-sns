@@ -30,9 +30,9 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public Long currentCustomerId(HttpServletRequest request) {
         Long defaultValue = null;
-        if (environment.acceptsProfiles("develop") && !environment.acceptsProfiles("no_mock_customerid")) {
+        if (environment.acceptsProfiles("develop","development") && !environment.acceptsProfiles("no_mock_customerid")) {
             defaultValue = 4471L;
-        } else if (environment.acceptsProfiles("test") && !environment.acceptsProfiles("no_mock_customerid")) {
+        } else if (environment.acceptsProfiles("test","staging")&& !environment.acceptsProfiles("no_mock_customerid")) {
             defaultValue = 3447L;
         }
 

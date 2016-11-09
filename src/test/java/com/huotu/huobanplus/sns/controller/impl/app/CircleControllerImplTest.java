@@ -24,7 +24,7 @@ public class CircleControllerImplTest extends CommonTestBase {
 
         for (int i=0;i<4;i++){
             Slide slide=new Slide();
-            slide.setCustomerId(3447L);
+            slide.setCustomerId(customerId);
             slide.setPictureUrl("/slideTest/"+i);
             slide.setUrl("www.baidu.com"+i);
             slide.setTitle(i+"");
@@ -43,7 +43,7 @@ public class CircleControllerImplTest extends CommonTestBase {
             Circle circle=new Circle();
             circle.setEnabled(true);
             circle.setName("title"+i);
-            circle.setCustomerId(3447L);
+            circle.setCustomerId(customerId);
             circle.setPictureUrl("pictureUrl"+i);
             circle.setUserAmount(1000+i);
             circles.add(circleRepository.saveAndFlush(circle));
@@ -84,7 +84,7 @@ public class CircleControllerImplTest extends CommonTestBase {
             Circle circle=new Circle();
             circle.setEnabled(true);
             circle.setName("title"+i);
-            circle.setCustomerId(3447L);
+            circle.setCustomerId(customerId);
             if(i>5){
                 circle.setSuggested(false);
             }else {
@@ -127,7 +127,7 @@ public class CircleControllerImplTest extends CommonTestBase {
 
         User puser=new User();
         puser.setId(8888L);
-        puser.setCustomerId(3447L);
+        puser.setCustomerId(customerId);
         puser.setNickName("wy");
         puser=userRepository.saveAndFlush(puser);
 
@@ -147,7 +147,7 @@ public class CircleControllerImplTest extends CommonTestBase {
                 Article article=new Article();
                 article.setEnabled(true);
                 article.setPublisher(puser);
-                article.setCustomerId(3447L);
+                article.setCustomerId(customerId);
                 article.setCircle(circle);
                 article.setName("圈子:"+i+" 文章:"+j);
                 article.setComments(j*100L);
@@ -166,7 +166,7 @@ public class CircleControllerImplTest extends CommonTestBase {
             userCircle.setCircle(circle);
             userCircle.setUser(user);
             userCircle.setDate(new Date());
-            userCircle.setCustomerId(3447L);
+            userCircle.setCustomerId(customerId);
             userCircles.add(userCircleRepository.saveAndFlush(userCircle));
 
 
