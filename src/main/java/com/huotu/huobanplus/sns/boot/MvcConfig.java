@@ -135,15 +135,15 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
     }
 
 
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/app/**")
-                .allowedOrigins("*")
-                .allowedMethods("*")
-                .allowedHeaders("*")
-//                .exposedHeaders("header1", "header2")
-                .allowCredentials(true).maxAge(3600);
-    }
+//    @Override
+//    public void addCorsMappings(CorsRegistry registry) {
+//        registry.addMapping("/app/**")
+//                .allowedOrigins("http://localhost:8081")
+//                .allowedMethods("*")
+//                .allowedHeaders("*")
+////                .exposedHeaders("header1", "header2")
+//                .allowCredentials(false).maxAge(3600);
+//    }
 
 
     /**
