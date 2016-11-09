@@ -214,7 +214,8 @@ public class UserServiceImpl implements UserService {
             , String imageUrl) throws UnsupportedEncodingException, UserNamePasswordInvoidException, MobileInvoidException, PasswordLengthLackException, MobileNotExistException {
 
         if (!RegexHelper.IsValidMobileNo(phone)) throw new MobileInvoidException(AppCode.MOBILE_INVOID.getValue(), AppCode.MOBILE_INVOID.getName());
-        if (password.length() < 6) throw new PasswordLengthLackException(AppCode.PASSWORD_LENGTH_LACK.getValue(), AppCode.PASSWORD_LENGTH_LACK.getName());
+        if (StringUtils.isEmpty(password) || password.length() < 6)
+            throw new PasswordLengthLackException(AppCode.PASSWORD_LENGTH_LACK.getValue(), AppCode.PASSWORD_LENGTH_LACK.getName());
 
         MallUser mallUser = mallUserRepository.findByCustomerIdAndLoginName(customerId, phone);
 
