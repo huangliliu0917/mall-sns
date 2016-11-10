@@ -15,15 +15,13 @@ import com.huotu.huobanplus.sns.base.DeviceType;
 import com.huotu.huobanplus.sns.entity.*;
 import com.huotu.huobanplus.sns.mallservice.MallUserService;
 import com.huotu.huobanplus.sns.model.AppArticleCommentModel;
+import com.huotu.huobanplus.sns.model.AppCircleArticleCommentsModel;
 import com.huotu.huobanplus.sns.model.common.CommentStatus;
 import com.huotu.huobanplus.sns.repository.*;
 import com.huotu.huobanplus.sns.service.*;
-import com.huotu.huobanplus.sns.utils.ContractHelper;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.BoundHashOperations;
-import org.springframework.data.redis.core.BoundListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -74,6 +72,8 @@ public abstract class CommonTestBase extends BaseTest {
     @Autowired
     protected CircleService circleService;
     @Autowired
+    protected RedisTemplate<String, AppCircleArticleCommentsModel> circleArticleCommentsModelRedisTemplate;
+    @Autowired
     protected RedisTemplate<String, AppArticleCommentModel> articleCommentRedisTemplate;
     @Autowired
     protected ReportRepository reportRepository;
@@ -82,20 +82,17 @@ public abstract class CommonTestBase extends BaseTest {
     @Autowired
     protected ArticleService articleService;
     @Autowired
-    protected RedisTemplate<String, String> redisTemplate;
+    protected RedisService redisService;
+    @Autowired
+    protected NoticeRepository noticeRepository;
+    @Autowired
+    protected NoticeService noticeService;
+    @Autowired
+    protected LevelRepository levelRepository;
     @Autowired
     private MallUserService mallUserService;
     @Autowired
     private AppSecurityService appSecurityService;
-
-    @Autowired
-    protected NoticeRepository noticeRepository;
-
-    @Autowired
-    protected NoticeService noticeService;
-
-    @Autowired
-    protected LevelRepository levelRepository;
 
     @Before
     public void prepareDevice() throws UnsupportedEncodingException {
@@ -122,16 +119,8 @@ public abstract class CommonTestBase extends BaseTest {
         Optional<Long> maxFloor = articleCommentRepository.getMaxFloorByArticleId(article.getId());
         comment.setFloor(maxFloor.orElse(0L) + 1L);
         articleCommentRepository.saveAndFlush(comment);
-        BoundHashOperations<String, String, Long> articleOperations = redisTemplate
-                .boundHashOps(ContractHelper.articleFlag + article.getId());
-        Long comments = articleOperations.get("comments");
-        if (Objects.isNull(comments))
-            articleOperations.put("comments", 1L);
-        else
-            articleOperations.put("comments", comments + 1L);
-        BoundListOperations<String, AppArticleCommentModel> articleCommentBoundListOperations =
-                articleCommentRedisTemplate.boundListOps(ContractHelper.articleCommentFlag + article.getId());
-        articleCommentBoundListOperations.leftPush(articleService.changeModel(comment));
+        redisService.addArticleCommentNum(article.getId());
+        redisService.addArticleComment(article.getId(), comment);
         return comment;
     }
 
