@@ -28,7 +28,6 @@ import org.springframework.data.redis.core.ListOperations;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -282,18 +281,29 @@ public class UserControllerImplTest extends CommonTestBase {
         System.out.println(removeList);
     }
 
-    @Test
-    public void testAddRedisList() throws Exception {
-        ListOperations<String, AppArticleCommentModel> listOperations = articleCommentRedisTemplate.opsForList();
-        System.out.println(articleCommentRedisTemplate.getExpire("_test_list_" + 1));
-        listOperations.leftPush("_test_list_" + 1, null);
-        System.out.println(articleCommentRedisTemplate.hasKey("_test_list_" + 1));
-        articleCommentRedisTemplate.expire("_test_list_" + 1, 1, TimeUnit.SECONDS);
+//    @Test
+//    public void testAddRedisList() throws Exception {
+//        ListOperations<String, AppArticleCommentModel> listOperations = articleCommentRedisTemplate.opsForList();
+//        System.out.println(articleCommentRedisTemplate.getExpire("_test_list_" + 1));
+//        listOperations.leftPush("_test_list_" + 1, null);
+//        System.out.println(articleCommentRedisTemplate.hasKey("_test_list_" + 1));
+//        articleCommentRedisTemplate.expire("_test_list_" + 1, 1, TimeUnit.SECONDS);
+//
+//        Thread.sleep(2000);
+//        System.out.println(articleCommentRedisTemplate.hasKey("_test_list_" + 1));
+//        System.out.println(articleCommentRedisTemplate.getExpire("_test_list_" + 1));
+//
+//    }
 
-        Thread.sleep(2000);
-        System.out.println(articleCommentRedisTemplate.hasKey("_test_list_" + 1));
-        System.out.println(articleCommentRedisTemplate.getExpire("_test_list_" + 1));
-
-    }
+//    @Autowired
+//    private RedisTemplate<String,Integer> longRedisTemplate;
+//    @Test
+//    public void testRedisTest() throws Exception {
+//        longRedisTemplate.setValueSerializer(new GenericToStringSerializer<>(Integer.class));
+//        ValueOperations<String,Integer> valueOperations = longRedisTemplate.opsForValue();
+//        System.out.println(valueOperations.setIfAbsent("testNum",0));
+//        valueOperations.increment("testNum",-1);
+//        System.out.println(valueOperations.get("testNum"));
+//    }
 
 }

@@ -22,6 +22,7 @@ import org.springframework.data.redis.core.BoundHashOperations;
 import org.springframework.data.redis.core.BoundListOperations;
 import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.GenericToStringSerializer;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -49,13 +50,20 @@ public class RedisServiceImpl implements RedisService {
 
     @Override
     public void addArticleCommentNum(Long articleId) throws IOException {
+        redisTemplate.setValueSerializer(new GenericToStringSerializer<>(Long.class));
         BoundHashOperations<String, String, Long> articleOperations = redisTemplate
                 .boundHashOps(ContractHelper.articleFlag + articleId);
+//        articleOperations.putIfAbsent("comments",0L);
+//        articleOperations.increment("comments",1L);
         Long comments = articleOperations.get("comments");
         if (Objects.isNull(comments))
             articleOperations.put("comments", 1L);
         else
             articleOperations.put("comments", comments + 1L);
+//        redisTemplate.setValueSerializer(new StringRedisSerializer());
+//        HashOperations<String, String,Long> hashOperations = redisTemplate.opsForHash();
+//        hashOperations.putIfAbsent(ContractHelper.articleFlag + articleId,"comments",0L);
+//        hashOperations.increment(ContractHelper.articleFlag + articleId,"comments",1L);
     }
 
     @Override
