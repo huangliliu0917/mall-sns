@@ -36,6 +36,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.BoundHashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.script.DigestUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -223,14 +224,14 @@ public class UserServiceImpl implements UserService {
         if (mallUser == null) {
             throw new MobileNotExistException(AppCode.MOBILE_NOT_EXIST.getValue(), AppCode.MOBILE_NOT_EXIST.getName());
         } else {
-            if (!password.equals(mallUser.getPassword()))
+            if (!org.springframework.util.DigestUtils.md5DigestAsHex(password.getBytes("utf-8")).equals(mallUser.getPassword()))
                 throw new UserNamePasswordInvoidException(AppCode.USERNAME_PASSWORD_INVOID.getValue(), AppCode.USERNAME_PASSWORD_INVOID.getName());
         }
 
         //判断本地用户是否存在，不存在则创建本地用户
         User user = userRepository.findOne(mallUser.getId());
         if (user == null) {
-            register(mallUser.getId(), customerId, phone, openId, nickName, imageUrl);
+            register(customerId, mallUser.getId(), phone, openId, nickName, imageUrl);
         }
         //返回token
         String token = appSecurityService.createJWT("sns", customerId + "," + mallUser.getId(), 1000 * 3600 * 24 * 30);
@@ -266,7 +267,7 @@ public class UserServiceImpl implements UserService {
         //判断本地用户是否存在，不存在则创建本地用户
         User user = userRepository.findOne(userId);
         if (user == null) {
-            user = register(userId, customerId, phone, openId, nickName, imageUrl);
+            user = register(customerId, userId, phone, openId, nickName, imageUrl);
         }
         //返回token
         String token = appSecurityService.createJWT("sns", customerId.toString() + "," + user.getId().toString(), 1000 * 3600 * 24 * 30);

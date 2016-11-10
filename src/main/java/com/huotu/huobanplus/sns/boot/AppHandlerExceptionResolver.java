@@ -40,8 +40,8 @@ public class AppHandlerExceptionResolver implements HandlerExceptionResolver {
             try {
                 throw ex;
             } catch (SnsException e) {
-                result.setSystemResultCode(e.getCode());
-                result.setSystemResultDescription(e.getMessage());
+                result.setResultCode(e.getCode());
+                result.setResultDescription(e.getMessage());
             } catch (MissingServletRequestParameterException e) {
                 result.setSystemResultCode(AppCode.PARAMETER_ERROR.getValue());
                 result.setSystemResultDescription(AppCode.PARAMETER_ERROR.getName());
