@@ -36,7 +36,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.BoundHashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.script.DigestUtils;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -66,7 +66,7 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private RedisTemplate<String, String> redisTemplate;
+    private RedisTemplate<String, Long> redisTemplate;
 
     @Autowired
     private VerificationCodeRepository verificationCodeRepository;
@@ -154,14 +154,15 @@ public class UserServiceImpl implements UserService {
         model.setUserLevel(article.getPublisherLevelId());
         model.setTime(article.getDate().getTime());
 //        model.setCommentsAmount(article.geta);
-        BoundHashOperations<String, String, Long> articleOperations = redisTemplate
-                .boundHashOps(ContractHelper.articleFlag + article.getArticleId());
-        if (Objects.isNull(articleOperations.get("comments"))) {
+//        BoundHashOperations<String, String, Long> articleOperations = redisTemplate
+//                .boundHashOps(ContractHelper.articleFlag + article.getArticleId());
+        ValueOperations<String, Long> valueOperations = redisTemplate.opsForValue();
+        if (Objects.isNull(valueOperations.get("comments"))) {
             Optional<Long> optional = userArticleRepository.countByArticleId(article.getArticleId());
-            articleOperations.put("comments", optional.orElse(0L));
+            valueOperations.set(ContractHelper.articleCommentNumFlag, optional.orElse(0L));
             model.setCommentsAmount(optional.orElse(0L));
         } else {
-            model.setCommentsAmount(articleOperations.get("comments"));
+            model.setCommentsAmount(valueOperations.get(ContractHelper.articleCommentNumFlag));
         }
         //浏览量不知道怎么统计
         return model;

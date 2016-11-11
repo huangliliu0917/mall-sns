@@ -18,11 +18,12 @@ import com.huotu.huobanplus.sns.service.RedisService;
 import com.huotu.huobanplus.sns.utils.ContractHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.redis.core.BoundHashOperations;
 import org.springframework.data.redis.core.BoundListOperations;
 import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.data.redis.serializer.GenericToStringSerializer;
+import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -40,7 +41,7 @@ public class RedisServiceImpl implements RedisService {
 
     private static ObjectMapper objectMapper = new ObjectMapper();
     @Autowired
-    private RedisTemplate<String, String> redisTemplate;
+    private RedisTemplate<String, Long> redisTemplate;
     @Autowired
     private RedisTemplate<String, AppArticleCommentModel> articleCommentRedisTemplate;
     @Autowired
@@ -51,19 +52,18 @@ public class RedisServiceImpl implements RedisService {
     @Override
     public void addArticleCommentNum(Long articleId) throws IOException {
         redisTemplate.setValueSerializer(new GenericToStringSerializer<>(Long.class));
-        BoundHashOperations<String, String, Long> articleOperations = redisTemplate
-                .boundHashOps(ContractHelper.articleFlag + articleId);
-//        articleOperations.putIfAbsent("comments",0L);
-//        articleOperations.increment("comments",1L);
-        Long comments = articleOperations.get("comments");
-        if (Objects.isNull(comments))
-            articleOperations.put("comments", 1L);
-        else
-            articleOperations.put("comments", comments + 1L);
+//        BoundHashOperations<String, String, Long> articleOperations = redisTemplate
+//                .boundHashOps(ContractHelper.articleCommentNumFlag + articleId);
+//        Long comments = articleOperations.get("comments");
+//        if (Objects.isNull(comments))
+//            articleOperations.put("comments", 1L);
+//        else
+//            articleOperations.put("comments", comments + 1L);
 //        redisTemplate.setValueSerializer(new StringRedisSerializer());
-//        HashOperations<String, String,Long> hashOperations = redisTemplate.opsForHash();
-//        hashOperations.putIfAbsent(ContractHelper.articleFlag + articleId,"comments",0L);
-//        hashOperations.increment(ContractHelper.articleFlag + articleId,"comments",1L);
+        ValueOperations<String, Long> valueOperations = redisTemplate.opsForValue();
+        valueOperations.setIfAbsent(ContractHelper.articleCommentNumFlag + articleId, 0L);
+        valueOperations.increment(ContractHelper.articleCommentNumFlag + articleId, 1L);
+        redisTemplate.setValueSerializer(new JdkSerializationRedisSerializer());
     }
 
     @Override
@@ -71,7 +71,8 @@ public class RedisServiceImpl implements RedisService {
 //        BoundListOperations<String, AppArticleCommentModel> articleCommentBoundListOperations =
 //                articleCommentRedisTemplate.boundListOps(ContractHelper.articleCommentFlag + articleId);
 //        articleCommentBoundListOperations.leftPush(model);
-
+//        appCircleArticleCommentsModelRedisTemplate.setValueSerializer(new StringRedisSerializer());
+//        appCircleArticleCommentsModelRedisTemplate.setValueSerializer(new JdkSerializationRedisSerializer());
         ListOperations<String, AppCircleArticleCommentsModel> circleArticleCommentsModelListOperations =
                 appCircleArticleCommentsModelRedisTemplate.opsForList();
         if (appCircleArticleCommentsModelRedisTemplate.getExpire(ContractHelper.articleCommentFlag + articleId) == -2) {

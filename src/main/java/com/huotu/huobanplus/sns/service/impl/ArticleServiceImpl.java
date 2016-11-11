@@ -492,7 +492,7 @@ public class ArticleServiceImpl implements ArticleService {
         Optional<Long> maxFloor = articleCommentRepository.getMaxFloorByArticleId(articleId);
         replyArticleComment.setFloor(maxFloor.orElse(0L) + 1L);
 
-
+//        articleCommentRedisTemplate.setValueSerializer(new JdkSerializationRedisSerializer());
         ListOperations<String, AppArticleCommentModel> listOperations = articleCommentRedisTemplate.opsForList();
         //取出上一条评论的冗余列表
         List<AppArticleCommentModel> models = listOperations

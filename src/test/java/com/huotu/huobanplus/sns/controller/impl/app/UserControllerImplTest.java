@@ -24,6 +24,9 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.data.redis.core.ListOperations;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.data.redis.serializer.GenericToStringSerializer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +43,8 @@ public class UserControllerImplTest extends CommonTestBase {
 
     @Autowired
     private Environment env;
+    @Autowired
+    private RedisTemplate<String, Integer> longRedisTemplate;
 
     @Test
     public void concern() throws Exception {
@@ -225,6 +230,20 @@ public class UserControllerImplTest extends CommonTestBase {
 
     }
 
+//    @Test
+//    public void testAddRedisList() throws Exception {
+//        ListOperations<String, AppArticleCommentModel> listOperations = articleCommentRedisTemplate.opsForList();
+//        System.out.println(articleCommentRedisTemplate.getExpire("_test_list_" + 1));
+//        listOperations.leftPush("_test_list_" + 1, null);
+//        System.out.println(articleCommentRedisTemplate.hasKey("_test_list_" + 1));
+//        articleCommentRedisTemplate.expire("_test_list_" + 1, 1, TimeUnit.SECONDS);
+//
+//        Thread.sleep(2000);
+//        System.out.println(articleCommentRedisTemplate.hasKey("_test_list_" + 1));
+//        System.out.println(articleCommentRedisTemplate.getExpire("_test_list_" + 1));
+//
+//    }
+
     @Test
 //    @Transactional
     public void replyComment() throws Exception {
@@ -255,6 +274,8 @@ public class UserControllerImplTest extends CommonTestBase {
             replyId = JsonPath.read(body, "$.resultData.data") + "";
             idList.add(replyId);
         }
+//        circleArticleCommentsModelRedisTemplate.setValueSerializer(new JdkSerializationRedisSerializer());
+//        articleCommentRedisTemplate.setValueSerializer(new JdkSerializationRedisSerializer());
         ListOperations<String, AppCircleArticleCommentsModel> circleArticleCommentsModelListOperations =
                 circleArticleCommentsModelRedisTemplate.opsForList();
         ListOperations<String, AppArticleCommentModel> listOperations = articleCommentRedisTemplate.opsForList();
@@ -281,29 +302,13 @@ public class UserControllerImplTest extends CommonTestBase {
         System.out.println(removeList);
     }
 
-//    @Test
-//    public void testAddRedisList() throws Exception {
-//        ListOperations<String, AppArticleCommentModel> listOperations = articleCommentRedisTemplate.opsForList();
-//        System.out.println(articleCommentRedisTemplate.getExpire("_test_list_" + 1));
-//        listOperations.leftPush("_test_list_" + 1, null);
-//        System.out.println(articleCommentRedisTemplate.hasKey("_test_list_" + 1));
-//        articleCommentRedisTemplate.expire("_test_list_" + 1, 1, TimeUnit.SECONDS);
-//
-//        Thread.sleep(2000);
-//        System.out.println(articleCommentRedisTemplate.hasKey("_test_list_" + 1));
-//        System.out.println(articleCommentRedisTemplate.getExpire("_test_list_" + 1));
-//
-//    }
-
-//    @Autowired
-//    private RedisTemplate<String,Integer> longRedisTemplate;
-//    @Test
-//    public void testRedisTest() throws Exception {
-//        longRedisTemplate.setValueSerializer(new GenericToStringSerializer<>(Integer.class));
-//        ValueOperations<String,Integer> valueOperations = longRedisTemplate.opsForValue();
-//        System.out.println(valueOperations.setIfAbsent("testNum",0));
-//        valueOperations.increment("testNum",-1);
-//        System.out.println(valueOperations.get("testNum"));
-//    }
+    @Test
+    public void testRedisTest() throws Exception {
+        longRedisTemplate.setValueSerializer(new GenericToStringSerializer<>(Integer.class));
+        ValueOperations<String, Integer> valueOperations = longRedisTemplate.opsForValue();
+        System.out.println(valueOperations.setIfAbsent("testNum", 0));
+        valueOperations.increment("testNum", -1);
+        System.out.println(valueOperations.get("testNum"));
+    }
 
 }
