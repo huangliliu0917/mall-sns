@@ -36,6 +36,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.BoundHashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -65,7 +66,7 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private RedisTemplate<String, String> redisTemplate;
+    private RedisTemplate<String, Long> redisTemplate;
 
     @Autowired
     private VerificationCodeRepository verificationCodeRepository;
@@ -153,14 +154,15 @@ public class UserServiceImpl implements UserService {
         model.setUserLevel(article.getPublisherLevelId());
         model.setTime(article.getDate().getTime());
 //        model.setCommentsAmount(article.geta);
-        BoundHashOperations<String, String, Long> articleOperations = redisTemplate
-                .boundHashOps(ContractHelper.articleFlag + article.getArticleId());
-        if (Objects.isNull(articleOperations.get("comments"))) {
+//        BoundHashOperations<String, String, Long> articleOperations = redisTemplate
+//                .boundHashOps(ContractHelper.articleFlag + article.getArticleId());
+        ValueOperations<String, Long> valueOperations = redisTemplate.opsForValue();
+        if (Objects.isNull(valueOperations.get("comments"))) {
             Optional<Long> optional = userArticleRepository.countByArticleId(article.getArticleId());
-            articleOperations.put("comments", optional.orElse(0L));
+            valueOperations.set(ContractHelper.articleCommentNumFlag, optional.orElse(0L));
             model.setCommentsAmount(optional.orElse(0L));
         } else {
-            model.setCommentsAmount(articleOperations.get("comments"));
+            model.setCommentsAmount(valueOperations.get(ContractHelper.articleCommentNumFlag));
         }
         //浏览量不知道怎么统计
         return model;
@@ -214,7 +216,8 @@ public class UserServiceImpl implements UserService {
             , String imageUrl) throws UnsupportedEncodingException, UserNamePasswordInvoidException, MobileInvoidException, PasswordLengthLackException, MobileNotExistException {
 
         if (!RegexHelper.IsValidMobileNo(phone)) throw new MobileInvoidException(AppCode.MOBILE_INVOID.getValue(), AppCode.MOBILE_INVOID.getName());
-        if (password.length() < 6) throw new PasswordLengthLackException(AppCode.PASSWORD_LENGTH_LACK.getValue(), AppCode.PASSWORD_LENGTH_LACK.getName());
+        if (StringUtils.isEmpty(password) || password.length() < 6)
+            throw new PasswordLengthLackException(AppCode.PASSWORD_LENGTH_LACK.getValue(), AppCode.PASSWORD_LENGTH_LACK.getName());
 
         MallUser mallUser = mallUserRepository.findByCustomerIdAndLoginName(customerId, phone);
 
@@ -222,14 +225,14 @@ public class UserServiceImpl implements UserService {
         if (mallUser == null) {
             throw new MobileNotExistException(AppCode.MOBILE_NOT_EXIST.getValue(), AppCode.MOBILE_NOT_EXIST.getName());
         } else {
-            if (!password.equals(mallUser.getPassword()))
+            if (!org.springframework.util.DigestUtils.md5DigestAsHex(password.getBytes("utf-8")).equals(mallUser.getPassword()))
                 throw new UserNamePasswordInvoidException(AppCode.USERNAME_PASSWORD_INVOID.getValue(), AppCode.USERNAME_PASSWORD_INVOID.getName());
         }
 
         //判断本地用户是否存在，不存在则创建本地用户
         User user = userRepository.findOne(mallUser.getId());
         if (user == null) {
-            register(mallUser.getId(), customerId, phone, openId, nickName, imageUrl);
+            register(customerId, mallUser.getId(), phone, openId, nickName, imageUrl);
         }
         //返回token
         String token = appSecurityService.createJWT("sns", customerId + "," + mallUser.getId(), 1000 * 3600 * 24 * 30);
@@ -265,7 +268,7 @@ public class UserServiceImpl implements UserService {
         //判断本地用户是否存在，不存在则创建本地用户
         User user = userRepository.findOne(userId);
         if (user == null) {
-            user = register(userId, customerId, phone, openId, nickName, imageUrl);
+            user = register(customerId, userId, phone, openId, nickName, imageUrl);
         }
         //返回token
         String token = appSecurityService.createJWT("sns", customerId.toString() + "," + user.getId().toString(), 1000 * 3600 * 24 * 30);

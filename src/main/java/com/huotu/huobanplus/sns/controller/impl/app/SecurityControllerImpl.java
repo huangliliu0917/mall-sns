@@ -48,22 +48,29 @@ public class SecurityControllerImpl implements SecurityController {
 
 
     @Override
-    public ApiResult getSecondDomain(Output<String> data, Long customerId) {
+    public ApiResult getSecondDomain(Output<String> data, @RequestParam("customerId") Long customerId) {
         String subDomain = mallMerchantRepository.findSubDomainByMerchantId(customerId);
         data.outputData(subDomain + "." + commonConfigService.getMallDomain());
         return ApiResult.resultWith(AppCode.SUCCESS);
     }
 
     @Override
-    public ApiResult weixinLogin(Output<String> data, Long customerId, String openId
-            , String nickName, String imageUrl) throws WeixinLoginFailException {
+    public ApiResult weixinLogin(Output<String> data
+            , @RequestParam("customerId") Long customerId
+            , @RequestParam(value = "openId") String openId
+            , @RequestParam(value = "nickName", required = false) String nickName
+            , @RequestParam(value = "imageUrl", required = false) String imageUrl) throws WeixinLoginFailException {
 
         userService.weixinLogin(customerId, openId, nickName, imageUrl);
         return ApiResult.resultWith(AppCode.SUCCESS);
     }
 
     @Override
-    public ApiResult sendCode(Output<Boolean> voiceAble, Long customerId, String phone, Integer type, Integer codeType)
+    public ApiResult sendCode(Output<Boolean> voiceAble
+            , @RequestParam("customerId") Long customerId
+            , @RequestParam("phone") String phone
+            , @RequestParam("type") Integer type
+            , @RequestParam("codeType") Integer codeType)
             throws VericationCodeIntervalException, WrongMobileException, NotSupportVoiceException, MessageInternetException, MobileExistException {
         //todo 需要根据costomerid进行修改
         voiceAble.outputData(verificationService.supportVoice());
@@ -79,10 +86,13 @@ public class SecurityControllerImpl implements SecurityController {
     }
 
     @Override
-    public ApiResult mobileLogin(Output<String> data, Long customerId, String phone, String password
-            , String openId
-            , String nickName
-            , String imageUrl) throws UnsupportedEncodingException, UserNamePasswordInvoidException, PasswordLengthLackException, MobileInvoidException, MobileNotExistException {
+    public ApiResult mobileLogin(Output<String> data
+            , @RequestParam("customerId") Long customerId
+            , @RequestParam("phone") String phone
+            , @RequestParam("password") String password
+            , @RequestParam(value = "openId", required = false) String openId
+            , @RequestParam(value = "nickName", required = false) String nickName
+            , @RequestParam(value = "imageUrl", required = false) String imageUrl) throws UnsupportedEncodingException, UserNamePasswordInvoidException, PasswordLengthLackException, MobileInvoidException, MobileNotExistException {
         data.outputData(userService.userLogin(customerId, phone, password
                 , openId
                 , nickName
@@ -91,10 +101,14 @@ public class SecurityControllerImpl implements SecurityController {
     }
 
     @Override
-    public ApiResult mobileRegister(Output<String> data, Long customerId
-            , String phone, String code
-            , String password, String openId
-            , String nickName, String imageUrl) throws PasswordLengthLackException, UnsupportedEncodingException
+    public ApiResult mobileRegister(Output<String> data
+            , @RequestParam("customerId") Long customerId
+            , @RequestParam("phone") String phone
+            , @RequestParam("code") String code
+            , @RequestParam("password") String password
+            , @RequestParam(value = "openId", required = false) String openId
+            , @RequestParam(value = "nickName", required = false) String nickName
+            , @RequestParam(value = "imageUrl", required = false) String imageUrl) throws PasswordLengthLackException, UnsupportedEncodingException
             , VerificationCodeInvoidException, MobileInvoidException, MobileExistException, VerificationCodeDuedException {
         data.outputData(userService.userRegister(customerId, phone, code, password
                 , openId

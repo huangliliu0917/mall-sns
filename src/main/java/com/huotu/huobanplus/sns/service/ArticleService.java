@@ -119,8 +119,6 @@ public interface ArticleService {
      */
     List<AppCircleIndexArticleListModel> search(Long customerId, String key, Long lastId);
 
-    AppArticleCommentModel changeModel(ArticleComment articleComment);
-
     /**
      * 根据圈子ID，获取该圈子下置顶的文章
      * @param circleId      圈子ID

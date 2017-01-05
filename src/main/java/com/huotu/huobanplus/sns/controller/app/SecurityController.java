@@ -23,7 +23,7 @@ public interface SecurityController {
      * @param customerId 商户Id
      * @return 商家二级域名
      */
-    @RequestMapping(value = "/getSecondDomain", method = RequestMethod.POST)
+    @RequestMapping(value = "/getSecondDomain", method = RequestMethod.GET)
     ApiResult getSecondDomain(Output<String> data, @RequestParam("customerId") Long customerId);
 
 

@@ -341,10 +341,8 @@ public class ArticleServiceImpl implements ArticleService {
         articleComment.setCommentStatus(CommentStatus.Normal);
         articleComment.setArticle(article);
         Optional<Long> maxFloor = articleCommentRepository.getMaxFloorByArticleId(id);
-        synchronized (maxFloor) {
-            articleComment.setFloor(maxFloor.orElse(0L) + 1L);
-            articleComment = articleCommentRepository.saveAndFlush(articleComment);
-        }
+        articleComment.setFloor(maxFloor.orElse(0L) + 1L);
+        articleCommentRepository.saveAndFlush(articleComment);
 //        articleRepository.addComments(id);
 //        BoundHashOperations<String, String, Long> articleOperations = redisTemplate
 //                .boundHashOps(ContractHelper.articleFlag + id);
@@ -358,7 +356,7 @@ public class ArticleServiceImpl implements ArticleService {
 //        BoundListOperations<String, AppArticleCommentModel> articleCommentBoundListOperations =
 //                articleCommentRedisTemplate.boundListOps(ContractHelper.articleCommentFlag + id);
 //        articleCommentBoundListOperations.leftPush(changeModel(articleComment));
-        redisService.addArticleComment(id, changeModel(articleComment));
+        redisService.addArticleComment(id, articleComment);
         return articleComment;
     }
 
@@ -368,7 +366,7 @@ public class ArticleServiceImpl implements ArticleService {
      * @param articleType
      * @param id
      * @param name
-     * @param user
+     * @param user  用户
      * @param pictureUrl
      * @param summary
      * @throws IOException
@@ -494,13 +492,13 @@ public class ArticleServiceImpl implements ArticleService {
         Optional<Long> maxFloor = articleCommentRepository.getMaxFloorByArticleId(articleId);
         replyArticleComment.setFloor(maxFloor.orElse(0L) + 1L);
 
-
+//        articleCommentRedisTemplate.setValueSerializer(new JdkSerializationRedisSerializer());
         ListOperations<String, AppArticleCommentModel> listOperations = articleCommentRedisTemplate.opsForList();
         //取出上一条评论的冗余列表
         List<AppArticleCommentModel> models = listOperations
                 .range(ContractHelper.articleReplyCommentFlag + articleComment.getId(), 0L, -1);
         //转化model
-        AppArticleCommentModel model = changeModel(articleComment);
+        AppArticleCommentModel model = redisService.changeModel(articleComment);
 
         models.add(model);
         Collections.sort(models, (o1, o2) -> o1.getDate().intValue() - o2.getDate().intValue());
@@ -515,7 +513,7 @@ public class ArticleServiceImpl implements ArticleService {
 //        BoundListOperations<String, AppArticleCommentModel> articleCommentBoundListOperations =
 //                articleCommentRedisTemplate.boundListOps(ContractHelper.articleCommentFlag + articleId);
 //        articleCommentBoundListOperations.leftPush(changeModel(replyArticleComment));
-        redisService.addArticleComment(articleId, changeModel(replyArticleComment));
+        redisService.addArticleComment(articleId, replyArticleComment);
         //本次评论的redis缓存
 //        BoundListOperations<String, AppArticleCommentModel> ArticleReplyCommentBoundListOperations =
 //                articleCommentRedisTemplate.boundListOps(ContractHelper.articleReplyCommentFlag + replyArticleComment.getId());
@@ -533,20 +531,6 @@ public class ArticleServiceImpl implements ArticleService {
 //        articleOperations.put("comments", comments + 1L);
         return replyArticleComment;
         //        articleRepository.addComments(id);
-    }
-
-    public AppArticleCommentModel changeModel(ArticleComment articleComment) {
-        if (Objects.nonNull(articleComment)) {
-            AppArticleCommentModel model = new AppArticleCommentModel();
-            model.setContent(articleComment.getContent());
-            model.setDate(articleComment.getDate().getTime());
-            model.setFloor(articleComment.getFloor());
-            model.setPid(articleComment.getId());
-            model.setUserHeadUrl(articleComment.getUser().getImgURL());
-            model.setUserName(articleComment.getUser().getNickName());
-            return model;
-        }
-        return null;
     }
 
     public List<AppCircleIndexArticleListModel> search(Long customerId, String key, Long lastId) {

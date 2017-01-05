@@ -20,4 +20,5 @@ public class ContractHelper {
     public static final String articleFlag = "_article_";
     public static final String articleCommentFlag = "_articleComment_";
     public static final String articleReplyCommentFlag = "_articleReplyComment_";
+    public static final String articleCommentNumFlag = "_articleCommentFlag_";
 }

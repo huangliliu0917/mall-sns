@@ -12,6 +12,7 @@ package com.huotu.huobanplus.sns.controller.impl.app;
 import com.huotu.huobanplus.sns.CommonTestBase;
 import com.huotu.huobanplus.sns.entity.*;
 import com.huotu.huobanplus.sns.model.AppArticleCommentModel;
+import com.huotu.huobanplus.sns.model.AppCircleArticleCommentsModel;
 import com.huotu.huobanplus.sns.model.AppCircleArticleModel;
 import com.huotu.huobanplus.sns.model.AppUserConcermListModel;
 import com.huotu.huobanplus.sns.model.common.AppCode;
@@ -20,7 +21,12 @@ import com.huotu.huobanplus.sns.model.common.ReportTargetType;
 import com.huotu.huobanplus.sns.utils.ContractHelper;
 import com.jayway.jsonpath.JsonPath;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.data.redis.core.ListOperations;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.data.redis.serializer.GenericToStringSerializer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +40,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Created by Administrator on 2016/11/1.
  */
 public class UserControllerImplTest extends CommonTestBase {
+
+    @Autowired
+    private Environment env;
+    @Autowired
+    private RedisTemplate<String, Integer> longRedisTemplate;
+
     @Test
     public void concern() throws Exception {
         Circle circle = randomCircle();
@@ -120,8 +132,8 @@ public class UserControllerImplTest extends CommonTestBase {
                 .andExpect(jsonPath("$.resultCode").value(AppCode.SUCCESS.getValue()))
                 .andReturn().getResponse().getContentAsString();
         Long commentId = Long.parseLong(JsonPath.read(data, "$.resultData.data").toString());
-        List<AppArticleCommentModel> list = articleCommentRedisTemplate.opsForList()
-                .range(ContractHelper.articleCommentFlag + article.getId(), 0L, 0L);
+        List<AppCircleArticleCommentsModel> list = circleArticleCommentsModelRedisTemplate.opsForList()
+                .range(ContractHelper.articleCommentFlag + article.getId(), 0L, -1);
         assertEquals("评论id", list.get(0).getPid(), commentId);
 
     }
@@ -218,6 +230,20 @@ public class UserControllerImplTest extends CommonTestBase {
 
     }
 
+//    @Test
+//    public void testAddRedisList() throws Exception {
+//        ListOperations<String, AppArticleCommentModel> listOperations = articleCommentRedisTemplate.opsForList();
+//        System.out.println(articleCommentRedisTemplate.getExpire("_test_list_" + 1));
+//        listOperations.leftPush("_test_list_" + 1, null);
+//        System.out.println(articleCommentRedisTemplate.hasKey("_test_list_" + 1));
+//        articleCommentRedisTemplate.expire("_test_list_" + 1, 1, TimeUnit.SECONDS);
+//
+//        Thread.sleep(2000);
+//        System.out.println(articleCommentRedisTemplate.hasKey("_test_list_" + 1));
+//        System.out.println(articleCommentRedisTemplate.getExpire("_test_list_" + 1));
+//
+//    }
+
     @Test
 //    @Transactional
     public void replyComment() throws Exception {
@@ -248,8 +274,13 @@ public class UserControllerImplTest extends CommonTestBase {
             replyId = JsonPath.read(body, "$.resultData.data") + "";
             idList.add(replyId);
         }
+//        circleArticleCommentsModelRedisTemplate.setValueSerializer(new JdkSerializationRedisSerializer());
+//        articleCommentRedisTemplate.setValueSerializer(new JdkSerializationRedisSerializer());
+        ListOperations<String, AppCircleArticleCommentsModel> circleArticleCommentsModelListOperations =
+                circleArticleCommentsModelRedisTemplate.opsForList();
         ListOperations<String, AppArticleCommentModel> listOperations = articleCommentRedisTemplate.opsForList();
-        List<AppArticleCommentModel> list = listOperations.range(ContractHelper.articleCommentFlag + article.getId(), 0L, -1);
+        List<AppCircleArticleCommentsModel> list = circleArticleCommentsModelListOperations
+                .range(ContractHelper.articleCommentFlag + article.getId(), 0L, -1);
         assertEquals("评论列表长度", list.size(), index + 1);
         List<AppArticleCommentModel> replayList = listOperations.range(ContractHelper.articleReplyCommentFlag + replyId, 0L, -1);
         assertEquals("冗余评论列表长度", replayList.size(), index);
@@ -261,6 +292,7 @@ public class UserControllerImplTest extends CommonTestBase {
         }
         String removeId = idList.get(random.nextInt(idList.size() - 1));
         ArticleComment removeComment = articleCommentRepository.getOne(Long.parseLong(removeId));
+        List<AppArticleCommentModel> models = redisService.getArticleCommentModelList(removeComment.getId());
         List<ArticleComment> removeList;
         if (null == removeComment.getPath()) {
             removeList = articleCommentRepository.findByPathLike("%," + removeComment.getId() + ",%");
@@ -269,4 +301,14 @@ public class UserControllerImplTest extends CommonTestBase {
         }
         System.out.println(removeList);
     }
+
+    @Test
+    public void testRedisTest() throws Exception {
+        longRedisTemplate.setValueSerializer(new GenericToStringSerializer<>(Integer.class));
+        ValueOperations<String, Integer> valueOperations = longRedisTemplate.opsForValue();
+        System.out.println(valueOperations.setIfAbsent("testNum", 0));
+        valueOperations.increment("testNum", -1);
+        System.out.println(valueOperations.get("testNum"));
+    }
+
 }
