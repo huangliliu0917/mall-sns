@@ -16,6 +16,7 @@ import com.huotu.huobanplus.sns.model.AppCircleModel;
 import com.huotu.huobanplus.sns.model.admin.CircleListModel;
 import com.huotu.huobanplus.sns.model.admin.CircleSearchModel;
 import org.springframework.data.domain.Page;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import java.io.IOException;
 import java.util.List;
@@ -111,5 +112,7 @@ public interface CircleService {
      * @return              model
      */
     AppCircleModel getAppCircleModel(Circle circle);
+
+    Page getDataList(JpaSpecificationExecutor executor);
 
 }

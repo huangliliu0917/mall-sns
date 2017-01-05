@@ -27,6 +27,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -138,6 +139,7 @@ public class CircleServiceImpl implements CircleService {
             return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
         };
 
+
         return circleRepository.findAll(
                 specification, new PageRequest(searchModel.getPageNo(), searchModel.getPageSize(), sort));
     }
@@ -240,5 +242,17 @@ public class CircleServiceImpl implements CircleService {
         appCircleModel.setPictureUrl(circle.getPictureUrl());
 //        appCircleModel.setUrl(commonConfigService.getWebUrl()+"/app/circle/introduce?id="+circle.getId());//todo 圈子appmodel地址
         return appCircleModel;
+    }
+
+    @Override
+    public Page getDataList(JpaSpecificationExecutor executor) {
+
+        executor.findAll((root, query, cb) -> {
+            Predicate predicate = cb.and(cb.isTrue(root.get("enabled")));
+            if (Objects.nonNull(1))
+                predicate = cb.and(predicate, cb.equal(root.get("suggested"), 1));
+            return predicate;
+        }, new Sort(Sort.Direction.DESC, "date"));
+        return null;
     }
 }
